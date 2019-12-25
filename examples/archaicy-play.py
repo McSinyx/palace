@@ -36,7 +36,7 @@ def pretty_time(seconds: float) -> str:
     return time.strftime('%H:%M:%S')
 
 
-def play(files: Iterable[str], device: str):
+def play(files: Iterable[str], device: str) -> None:
     """Load and play files on the given device."""
     devmrg = DeviceManager()
     try:
@@ -44,7 +44,7 @@ def play(files: Iterable[str], device: str):
     except RuntimeError:
         stderr.write(f'Failed to open "{device}" - trying default\n')
         dev = devmrg.open_playback()
-    print('Opened', dev.full_name)
+    print('Opened', dev.name['full'])
 
     ctx = dev.create_context()
     Context.make_current(ctx)
@@ -62,14 +62,14 @@ def play(files: Iterable[str], device: str):
 
         invfreq = 1 / buffer.frequency
         for i in takewhile(lambda i: source.playing, count()):
-            print(f' {pretty_time(source.sample_offset*invfreq)} /'
+            print(f' {pretty_time(source.offset*invfreq)} /'
                   f' {pretty_time(buffer.length*invfreq)}',
                   end='\r', flush=True)
             sleep(PERIOD)
         print()
         source.destroy()
         ctx.remove_buffer(buffer)
-    Context.make_current()
+    Context.make_current(None)
     ctx.destroy()
     dev.close()
 
@@ -77,6 +77,6 @@ def play(files: Iterable[str], device: str):
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('files', nargs='+', help='audio files')
-    parser.add_argument('-d', '--device', help='device name')
+    parser.add_argument('-d', '--device', default='', help='device name')
     args = parser.parse_args()
     play(args.files, args.device)

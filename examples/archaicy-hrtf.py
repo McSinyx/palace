@@ -37,14 +37,17 @@ def pretty_time(seconds: float) -> str:
 
 
 def hrtf(files: Iterable[str], device: str, hrtf_name: str,
-         omega: float, angle: float):
+         omega: float, angle: float) -> None:
+    """HRTF render files with stereo source (angle radians apart)
+    rotating around in omega rad/s using ALC_SOFT_HRTF extension.
+    """
     devmrg = DeviceManager()
     try:
         dev = devmrg.open_playback(device)
     except RuntimeError:
         stderr.write(f'Failed to open "{device}" - trying default\n')
         dev = devmrg.open_playback()
-    print('Opened', dev.full_name)
+    print('Opened', dev.name['full'])
 
     hrtf_names = dev.hrtf_names
     if hrtf_names:
@@ -80,7 +83,7 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
             invfreq = 1 / decoder.frequency
             for i in takewhile(lambda i: source.playing, count(step=PERIOD)):
                 source.stereo_angles = i*omega, i*omega+angle
-                print(f' {pretty_time(source.sample_offset*invfreq)} /'
+                print(f' {pretty_time(source.offset*invfreq)} /'
                       f' {pretty_time(decoder.length*invfreq)}',
                       end='\r', flush=True)
                 sleep(PERIOD)
@@ -93,7 +96,7 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('files', nargs='+', help='audio files')
-    parser.add_argument('-d', '--device', help='device name')
+    parser.add_argument('-d', '--device', default='', help='device name')
     parser.add_argument('-n', '--hrtf', dest='hrtf_name', help='HRTF name')
     parser.add_argument('-o', '--omega', type=float, default=1.0,
                         help='angular velocity')

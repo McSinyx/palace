@@ -19,8 +19,8 @@
 from libc.stdint cimport uint64_t
 from libcpp cimport bool, nullptr_t
 from libcpp.memory cimport shared_ptr
-from libcpp.pair cimport pair
 from libcpp.string cimport string
+from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
 
@@ -38,10 +38,29 @@ cdef extern from '<AL/alure2-alext.h>' nogil:
     cdef int ALC_HRTF_ID_SOFT
 
 
+# Enum classes
+cdef extern from '<AL/alure2.h>' namespace 'alure::DeviceEnumeration' nogil:
+    cdef enum DeviceEnumeration 'alure::DeviceEnumeration':
+        Basic
+        Full
+        Capture
+
+cdef extern from '<AL/alure2.h>' namespace 'alure::DefaultDeviceType' nogil:
+    cdef enum DefaultDeviceType 'alure::DefaultDeviceType':
+        Basic
+        Full
+        Capture
+
 cdef extern from '<AL/alure2.h>' namespace 'alure::PlaybackName' nogil:
     cdef enum PlaybackName 'alure::PlaybackName':
         Basic
         Full
+
+cdef extern from '<AL/alure2.h>' namespace 'alure::Spatialize' nogil:
+    cdef enum Spatialize 'alure::Spatialize':
+        Off
+        On
+        Auto
 
 
 cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
@@ -80,24 +99,19 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
     cdef unsigned frames_to_bytes 'FramesToBytes'(unsigned, ChannelConfig, SampleType) except +
     cdef unsigned bytes_to_frames 'BytesToFrames'(unsigned, ChannelConfig, SampleType)
 
-    cdef cppclass DeviceEnumeration:
-        pass
-
-    cdef cppclass DefaultDeviceType:
-        pass
-
     cdef cppclass DistanceModel:
-        pass
-
-    cdef cppclass Spatialize:
         pass
 
 
     # Helper classes
     cdef cppclass Vector3:
-        pass
+        Vector3()
+        Vector3(float, float, float)
+        float& operator[](size_t)
+
     cdef cppclass Version:
-        pass
+        unsigned get_major 'getMajor'()
+        unsigned get_minor 'getMinor'()
 
 
     # Opaque class implementations:
@@ -139,7 +153,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         bool query_extension 'queryExtension'(const string&) except +
 
         vector[string] enumerate(DeviceEnumeration) except +
-        string defaultDeviceName(DefaultDeviceType) except +
+        string default_device_name 'defaultDeviceName'(DefaultDeviceType) except +
 
         Device open_playback 'openPlayback'() except +
         Device open_playback 'openPlayback'(const string&) except +
