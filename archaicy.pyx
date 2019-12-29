@@ -71,12 +71,15 @@ cdef class DeviceManager:
     """
     cdef alure.DeviceManager impl
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Multiple calls will give the same instance as long as
         there is still a pre-existing reference to the instance,
         or else a new instance will be created.
         """
         self.impl = alure.DeviceManager.get_instance()
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
 
     def query_extension(self, name: str) -> bool:
         """Return if a non-device-specific ALC extension exists."""

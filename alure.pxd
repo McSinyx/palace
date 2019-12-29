@@ -17,7 +17,7 @@
 # along with archaicy.  If not, see <https://www.gnu.org/licenses/>.
 
 from libc.stdint cimport uint64_t
-from libcpp cimport bool, nullptr_t
+from libcpp cimport bool as boolean, nullptr_t
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
@@ -36,31 +36,6 @@ cdef extern from '<alc.h>' nogil:
 cdef extern from '<AL/alure2-alext.h>' nogil:
     cdef int ALC_HRTF_SOFT
     cdef int ALC_HRTF_ID_SOFT
-
-
-# Enum classes
-cdef extern from '<AL/alure2.h>' namespace 'alure::DeviceEnumeration' nogil:
-    cdef enum DeviceEnumeration 'alure::DeviceEnumeration':
-        Basic
-        Full
-        Capture
-
-cdef extern from '<AL/alure2.h>' namespace 'alure::DefaultDeviceType' nogil:
-    cdef enum DefaultDeviceType 'alure::DefaultDeviceType':
-        Basic
-        Full
-        Capture
-
-cdef extern from '<AL/alure2.h>' namespace 'alure::PlaybackName' nogil:
-    cdef enum PlaybackName 'alure::PlaybackName':
-        Basic
-        Full
-
-cdef extern from '<AL/alure2.h>' namespace 'alure::Spatialize' nogil:
-    cdef enum Spatialize 'alure::Spatialize':
-        Off
-        On
-        Auto
 
 
 cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
@@ -99,8 +74,27 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
     cdef unsigned frames_to_bytes 'FramesToBytes'(unsigned, ChannelConfig, SampleType) except +
     cdef unsigned bytes_to_frames 'BytesToFrames'(unsigned, ChannelConfig, SampleType)
 
+    cdef enum DeviceEnumeration:
+        Basic 'alure::DeviceEnumeration::Basic'
+        Full 'alure::DeviceEnumeration::Full'
+        Capture 'alure::DeviceEnumeration::Capture'
+
+    cdef enum DefaultDeviceType:
+        Basic 'alure::DefaultDeviceType::Basic'
+        Full 'alure::DefaultDeviceType::Full'
+        Capture 'alure::DefaultDeviceType::Capture'
+
+    cdef enum PlaybackName:
+        Basic 'alure::PlaybackName::Basic'
+        Full 'alure::PlaybackName::Full'
+
     cdef cppclass DistanceModel:
         pass
+
+    cdef enum Spatialize:
+        Off 'alure::Spatialize::Off'
+        On 'alure::Spatialize::On'
+        Auto 'alure::Spatialize::Auto'
 
 
     # Helper classes
@@ -144,13 +138,9 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         DeviceManager(const DeviceManager&)
         DeviceManager(DeviceManager&&)
 
-        DeviceManager& operator=(const DeviceManager&)
-        DeviceManager& operator=(DeviceManager&&)
-        DeviceManager& operator=(nullptr_t)
+        boolean operator bool()
 
-        bool operator bool()
-
-        bool query_extension 'queryExtension'(const string&) except +
+        boolean query_extension 'queryExtension'(const string&) except +
 
         vector[string] enumerate(DeviceEnumeration) except +
         string default_device_name 'defaultDeviceName'(DefaultDeviceType) except +
@@ -170,21 +160,21 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         Device& operator=(const Device&)
         Device& operator=(Device&&)
 
-        bool operator==(const Device&)
-        bool operator!=(const Device&)
-        bool operator<=(const Device&)
-        bool operator>=(const Device&)
-        bool operator<(const Device&)
-        bool operator>(const Device&)
+        boolean operator==(const Device&)
+        boolean operator!=(const Device&)
+        boolean operator<=(const Device&)
+        boolean operator>=(const Device&)
+        boolean operator<(const Device&)
+        boolean operator>(const Device&)
 
-        bool operator bool()
+        boolean operator bool()
 
         handle_type get_handle 'getHandle'()
 
         string get_name 'getName'() except +
         string get_name 'getName'(PlaybackName) except +
 
-        bool query_extension 'queryExtension'(const string&) except +
+        boolean query_extension 'queryExtension'(const string&) except +
 
         Version get_alc_version 'getALCVersion'() except +
         Version get_efx_version 'getEFXVersion'() except +
@@ -193,7 +183,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         unsigned get_max_auxiliary_sends 'getMaxAuxiliarySends'() except +
 
         vector[string] enumerate_hrtf_names 'enumerateHRTFNames'() except +
-        bool is_hrtf_enabled 'isHRTFEnabled'() except +
+        boolean is_hrtf_enabled 'isHRTFEnabled'() except +
         string get_current_hrtf 'getCurrentHRTF'() except +
 
         void reset(vector[AttributePair]) except +
@@ -220,14 +210,14 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         Context& operator=(const Context&)
         Context& operator=(Context&&)
 
-        bool operator==(const Context&)
-        bool operator!=(const Context&)
-        bool operator<=(const Context&)
-        bool operator>=(const Context&)
-        bool operator<(const Context&)
-        bool operator>(const Context&)
+        boolean operator==(const Context&)
+        boolean operator!=(const Context&)
+        boolean operator<=(const Context&)
+        boolean operator>=(const Context&)
+        boolean operator<(const Context&)
+        boolean operator>(const Context&)
 
-        bool operator bool()
+        boolean operator bool()
 
         handle_type get_handle 'getHandle'()
 
@@ -258,7 +248,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
 
         shared_ptr[Decoder] create_decoder 'createDecoder'(string) except +
 
-        bool is_supported 'isSupported'(ChannelConfig, SampleType) except +
+        boolean is_supported 'isSupported'(ChannelConfig, SampleType) except +
 
         vector[string] get_available_resamplers 'getAvailableResamplers'() except +
         int get_default_resampler_index 'getDefaultResamplerIndex'() except +
@@ -304,14 +294,14 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         Buffer& operator=(const Buffer&)
         Buffer& operator=(Buffer&&)
 
-        bool operator==(const Buffer&)
-        bool operator!=(const Buffer&)
-        bool operator<=(const Buffer&)
-        bool operator>=(const Buffer&)
-        bool operator<(const Buffer&)
-        bool operator>(const Buffer&)
+        boolean operator==(const Buffer&)
+        boolean operator!=(const Buffer&)
+        boolean operator<=(const Buffer&)
+        boolean operator>=(const Buffer&)
+        boolean operator<(const Buffer&)
+        boolean operator>(const Buffer&)
 
-        bool operator bool()
+        boolean operator bool()
 
         handle_type get_handle 'getHandle'()
 
@@ -338,14 +328,14 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         Source& operator=(const Source&)
         Source& operator=(Source&&)
 
-        bool operator==(const Source&)
-        bool operator!=(const Source&)
-        bool operator<=(const Source&)
-        bool operator>=(const Source&)
-        bool operator<(const Source&)
-        bool operator>(const Source&)
+        boolean operator==(const Source&)
+        boolean operator!=(const Source&)
+        boolean operator<=(const Source&)
+        boolean operator>=(const Source&)
+        boolean operator<(const Source&)
+        boolean operator>(const Source&)
 
-        bool operator bool()
+        boolean operator bool()
 
         handle_type get_handle 'getHandle'()
 
@@ -358,10 +348,10 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void pause() except +
         void resume() except +
 
-        bool is_pending 'isPending'() except +
-        bool is_playing 'isPlaying'() except +
-        bool is_paused 'isPaused'() except +
-        bool is_playing_or_pending 'isPlayingOrPending'() except +
+        boolean is_pending 'isPending'() except +
+        boolean is_playing 'isPlaying'() except +
+        boolean is_paused 'isPaused'() except +
+        boolean is_playing_or_pending 'isPlayingOrPending'() except +
 
         void set_group 'setGroup'(SourceGroup) except +
         SourceGroup get_group 'getGroup'() except +
@@ -375,8 +365,8 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         # get_sec_offset_latency
         # get_sec_offset
 
-        void set_looping 'setLooping'(bool) except +
-        bool get_looping 'getLooping'() except +
+        void set_looping 'setLooping'(boolean) except +
+        boolean get_looping 'getLooping'() except +
 
         void set_pitch 'setPitch'(float) except +
         float get_pitch 'getPitch'() except +
@@ -433,8 +423,8 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void set_doppler_factor 'setDopplerFactor'(float) except +
         float set_doppler_factor 'getDopplerFactor'() except +
 
-        void set_relative 'setRelative'(bool) except +
-        bool get_relative 'getRelative'() except +
+        void set_relative 'setRelative'(boolean) except +
+        boolean get_relative 'getRelative'() except +
 
         void set_radius 'setRadius'(float) except +
         float get_radius 'getRadius'() except +
@@ -451,11 +441,11 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void set_air_absorption_factor 'setAirAbsorptionFactor'(float) except +
         float get_air_absorption_factor 'getAirAbsorptionFactor'() except +
 
-        void set_gain_auto 'setGainAuto'(bool, bool, bool) except +
+        void set_gain_auto 'setGainAuto'(boolean, boolean, boolean) except +
         # get_gain_auto
-        bool get_direct_gain_hf_auto 'getDirectGainHFAuto'() except +
-        bool get_send_gain_auto 'getSendGainAuto'() except +
-        bool get_send_gain_hf_auto 'getSendGainHFAuto'() except +
+        boolean get_direct_gain_hf_auto 'getDirectGainHFAuto'() except +
+        boolean get_send_gain_auto 'getSendGainAuto'() except +
+        boolean get_send_gain_hf_auto 'getSendGainHFAuto'() except +
 
         void set_direct_filter 'setDirectFilter'(const FilterParams&) except +
         void set_send_filter 'setSendFilter'(unsigned, const FilterParams&) except +
@@ -483,7 +473,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         SampleType get_sample_type 'getSampleType'()
 
         uint64_t get_length 'getLength'()
-        bool seek(uint64_t)
+        boolean seek(uint64_t)
 
         pair[uint64_t, uint64_t] get_loop_points 'getLoopPoints'()
 
