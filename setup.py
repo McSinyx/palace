@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setup(
     name='archaicy',
-    version='0.0.1',
+    version='0.0.2',
     description='Wrapper for Audio Library Utilities REtooled in Cython',
     long_description=long_description,
     long_description_content_type='text/markdown',

@@ -660,6 +660,42 @@ cdef class Source:
         self.impl.set_rolloff_factors(factor, room_factor)
 
     @property
+    def doppler_factor(self) -> float:
+        """The doppler factor for the doppler effect's pitch shift.
+        This effectively scales the source and listener velocities
+        for the doppler calculation.
+        """
+        return self.impl.get_doppler_factor()
+
+    @doppler_factor.setter
+    def doppler_factor(self, value: float) -> None:
+        self.impl.set_doppler_factor(value)
+
+    @property
+    def relative(self) -> bool:
+        """Whether the source's position, velocity, and orientation
+        are relative to the listener.
+        """
+        return self.impl.get_relative()
+
+    @relative.setter
+    def relative(self, value: bool) -> None:
+        self.impl.set_relative(value)
+
+    @property
+    def radius(self) -> float:
+        """Radius of the source.  This causes the source to behave
+        as if every point within the spherical area emits sound.
+
+        This has no effect without the AL_EXT_SOURCE_RADIUS extension.
+        """
+        return self.impl.get_radius()
+
+    @radius.setter
+    def radius(self, value: float) -> None:
+        self.impl.set_radius(value)
+
+    @property
     def stereo_angles(self) -> Tuple[float, float]:
         """Left and right channel angles, in radians, when playing
         a stereo buffer or stream. The angles go counter-clockwise,
@@ -693,6 +729,53 @@ cdef class Source:
         if value is None: self.impl.set_3d_spatialize(alure.Spatialize.Auto)
         if value: self.impl.set_3d_spatialize(alure.Spatialize.On)
         self.impl.set_3d_spatialize(alure.Spatialize.Off)
+
+    @property
+    def resampler_index(self) -> int:
+        """Index of the resampler to use for this source.  The index is
+        from the resamplers returned by `Context.get_available_resamplers,
+        and must be nonnegative.
+
+        This has no effect without the AL_SOFT_source_resampler extension.
+        """
+        return self.impl.get_resampler_index()
+
+    @resampler_index.setter
+    def resampler_index(self, value: int) -> None:
+        self.impl.set_resampler_index(value)
+
+    @property
+    def air_absorption_factor(self) -> float:
+        """Multiplier for the amount of atmospheric high-frequency
+        absorption, ranging from 0 to 10.  A factor of 1 results in
+        a nominal -0.05 dB per meter, with higher values simulating
+        foggy air and lower values simulating dryer air; default to 0.
+        """
+        return self.impl.get_air_absorption_factor()
+
+    @air_absorption_factor.setter
+    def air_absorption_factor(self, value: float) -> None:
+        self.impl.set_air_absorption_factor(value)
+
+    @property
+    def gain_auto(self) -> Tuple[bool, bool, bool]:
+        """Whether the direct path's high frequency gain,
+        send paths' gain and send paths' high-frequency gain are
+        automatically adjusted.  The default is `True` for all.
+        """
+        return (self.impl.get_direct_gain_hf_auto(),
+                self.impl.get_send_gain_auto(),
+                self.impl.get_send_gain_hf_auto())
+
+    @gain_auto.setter
+    def gain_auto(self, value: Tuple[bool, bool, bool]) -> None:
+        directhf, send, sendhf = value
+        self.impl.set_gain_auto(directhf, send, sendhf)
+
+    # TODO: set direct filter
+    # TODO: set send filter
+    # TODO: set auxiliary send
+    # TODO: set auxiliary send filter
 
     def destroy(self) -> None:
         """Destroy the source, stop playback and release resources."""

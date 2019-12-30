@@ -421,7 +421,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         float get_room_rolloff_factor 'getRoomRolloffFactor'() except +
 
         void set_doppler_factor 'setDopplerFactor'(float) except +
-        float set_doppler_factor 'getDopplerFactor'() except +
+        float get_doppler_factor 'getDopplerFactor'() except +
 
         void set_relative 'setRelative'(boolean) except +
         boolean get_relative 'getRelative'() except +
