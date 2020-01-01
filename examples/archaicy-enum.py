@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Enumerate available devices and show their capabilities
-# Copyright (C) 2019  Nguyễn Gia Phong
+# Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
 # This file is part of archaicy.
 #
@@ -19,29 +19,28 @@
 
 from argparse import ArgumentParser
 
-from archaicy import DeviceManager
+from archaicy import device_names, device_name_default, Device
 
 
 parser = ArgumentParser()
-parser.add_argument('device', default='', nargs='?',
+parser.add_argument('device', type=Device, default='', nargs='?',
                     help='name of device to give extra info')
 args = parser.parse_args()
 
-devmgr = DeviceManager()
-names = devmgr.device_names
-for kind, default in devmgr.device_name_default.items():
-    i = names[kind].index(default)
-    names[kind][i] += '  [DEFAULT]'
-print('Available basic devices:', *names['basic'], sep='\n  ')
-print('\nAvailable devices:', *names['full'], sep='\n  ')
-print('\nAvailable capture devices:', *names['capture'], sep='\n  ')
+with args.device:
+    names = device_names.copy()
+    for kind, default in device_name_default.items():
+        i = names[kind].index(default)
+        names[kind][i] += '  [DEFAULT]'
+    print('Available basic devices:', *names['basic'], sep='\n  ')
+    print('\nAvailable devices:', *names['full'], sep='\n  ')
+    print('\nAvailable capture devices:', *names['capture'], sep='\n  ')
 
-with devmgr.open_playback(args.device) as dev:
-    print(f'\nInfo of device "{dev.name["full"]}":')
-    print('ALC version: {}.{}'.format(*dev.alc_version))
-    efx = dev.efx_version
+    print(f'\nInfo of device "{args.device.name["full"]}":')
+    print('ALC version: {}.{}'.format(*args.device.alc_version))
+    efx = args.device.efx_version
     if efx == (0, 0):
         print('EFX not supported!')
     else:
         print('EFX version: {}.{}'.format(*efx))
-        print('Max auxiliary sends:', dev.max_auxiliary_sends)
+        print('Max auxiliary sends:', args.device.max_auxiliary_sends)

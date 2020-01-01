@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # A simple example showing how to load and play a sound.
-# Copyright (C) 2019  Nguyễn Gia Phong
+# Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
 # This file is part of archaicy.
 #
@@ -24,7 +24,7 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from archaicy import DeviceManager, Context
+from archaicy import Device, Context, Source, Buffer
 
 PERIOD = 0.025
 
@@ -38,40 +38,26 @@ def pretty_time(seconds: float) -> str:
 
 def play(files: Iterable[str], device: str) -> None:
     """Load and play files on the given device."""
-    devmrg = DeviceManager()
-    try:
-        dev = devmrg.open_playback(device)
-    except RuntimeError:
-        stderr.write(f'Failed to open "{device}" - trying default\n')
-        dev = devmrg.open_playback()
-    print('Opened', dev.name['full'])
+    with Device(device, fail_safe=True) as dev, Context(dev) as ctx:
+        print('Opened', dev.name['full'])
+        for filename in files:
+            try:
+                buffer = Buffer(ctx, filename)
+            except RuntimeError:
+                stderr.write(f'Failed to open file: {filename}\n')
+                continue
+            with Source(ctx) as src, buffer:
+                src.play_from_buffer(buffer)
+                print(f'Playing {filename} ({buffer.sample_type_name},',
+                      f'{buffer.channel_config_name}, {buffer.frequency} Hz)')
 
-    ctx = dev.create_context()
-    Context.make_current(ctx)
-    for filename in files:
-        try:
-            buffer = ctx.get_buffer(filename)
-        except RuntimeError:
-            stderr.write(f'Failed to open file: {filename}\n')
-            continue
-        source = ctx.create_source()
-
-        source.play_from_buffer(buffer)
-        print(f'Playing {filename} ({buffer.sample_type_name},',
-              f'{buffer.channel_config_name}, {buffer.frequency} Hz)')
-
-        invfreq = 1 / buffer.frequency
-        for i in takewhile(lambda i: source.playing, count()):
-            print(f' {pretty_time(source.offset*invfreq)} /'
-                  f' {pretty_time(buffer.length*invfreq)}',
-                  end='\r', flush=True)
-            sleep(PERIOD)
-        print()
-        source.destroy()
-        ctx.remove_buffer(buffer)
-    Context.make_current(None)
-    ctx.destroy()
-    dev.close()
+                invfreq = 1 / buffer.frequency
+                for i in takewhile(lambda i: src.playing, count()):
+                    print(f' {pretty_time(src.offset*invfreq)} /'
+                          f' {pretty_time(buffer.length*invfreq)}',
+                          end='\r', flush=True)
+                    sleep(PERIOD)
+                print()
 
 
 if __name__ == '__main__':

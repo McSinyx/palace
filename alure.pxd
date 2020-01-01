@@ -1,5 +1,5 @@
 # Cython declarations of alure
-# Copyright (C) 2019  Nguyễn Gia Phong
+# Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
 # This file is part of archaicy.
 #
@@ -53,8 +53,8 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
 
     # Structs:
     cdef cppclass AttributePair:
-        int mAttribute
-        int mValue
+        int attribute 'mAttribute'
+        int value 'mValue'
 
     cdef cppclass FilterParams:
         pass

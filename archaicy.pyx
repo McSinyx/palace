@@ -1,6 +1,6 @@
 # cython: binding=True
 # Python object wrappers for alure
-# Copyright (C) 2019  Nguyễn Gia Phong
+# Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
 # This file is part of archaicy.
 #
@@ -17,11 +17,26 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with archaicy.  If not, see <https://www.gnu.org/licenses/>.
 
-__doc__ = 'Wrapper for Audio Library Utilities REtooled in Cython'
-__all__ = ['ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
-           'DeviceManager', 'Device', 'Context', 'Buffer', 'Source', 'Decoder']
+"""Wrapper for Audio Library Utilities REtooled in Cython
 
-from typing import Any, Dict, List, Tuple
+Attributes
+----------
+device_manager : DeviceManager
+    Manager of `Device` objects and other related functionality.
+device_names : Dict[str, List[str]]
+    Dictionary of available device names corresponding to each type.
+device_name_default : Dict[str, str]
+    Dictionary of the default device name corresponding to each type.
+"""
+
+__all__ = ['ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
+           'device_manager', 'device_name_default', 'device_names',
+           'query_extension',
+           'Device', 'Context', 'Buffer', 'Source', 'Decoder']
+
+from types import TracebackType
+from typing import Any, Dict, List, Optional, Tuple, Type
+from warnings import warn
 
 from libcpp cimport bool as boolean, nullptr
 from libcpp.memory cimport shared_ptr
@@ -44,10 +59,10 @@ cdef vector[alure.AttributePair] mkattrs(vector[pair[int, int]] attrs):
     cdef vector[alure.AttributePair] attributes
     cdef alure.AttributePair pair
     for attribute, value in attrs:
-        pair.mAttribute = attribute
-        pair.mValue = value
+        pair.attribute = attribute
+        pair.value = value
         attributes.push_back(pair)  # insert a copy
-    pair.mAttribute = pair.mValue = 0
+    pair.attribute = pair.value = 0
     attributes.push_back(pair)  # insert a copy
     return attributes
 
@@ -65,14 +80,16 @@ cdef alure.Vector3 to_vector3(vector[float] v):
 
 
 cdef class DeviceManager:
-    """Manager of Device objects and other related functionality.
+    """Manager of `Device` objects and other related functionality.
     This class is a singleton, only one instance will exist in a process
     at a time.
     """
     cdef alure.DeviceManager impl
 
     def __init__(self) -> None:
-        """Multiple calls will give the same instance as long as
+        """Initialize the process' device manager.
+
+        Multiple calls will give the same instance as long as
         there is still a pre-existing reference to the instance,
         or else a new instance will be created.
         """
@@ -81,13 +98,9 @@ cdef class DeviceManager:
     def __bool__(self) -> bool:
         return <boolean> self.impl
 
-    def query_extension(self, name: str) -> bool:
-        """Return if a non-device-specific ALC extension exists."""
-        return self.impl.query_extension(name.encode())
-
     @property
     def device_names(self) -> Dict[str, List[str]]:
-        """A dictionary of available device names
+        """Dictionary of available device names
         corresponding to each type.
         """
         basic = self.impl.enumerate(alure.DeviceEnumeration.Basic)
@@ -99,7 +112,7 @@ cdef class DeviceManager:
 
     @property
     def device_name_default(self) -> Dict[str, str]:
-        """A dictionary of the default device name
+        """Dictionary of the default device name
         corresponding to each type.
         """
         return dict(
@@ -110,36 +123,62 @@ cdef class DeviceManager:
             capture=self.impl.default_device_name(
                 alure.DefaultDeviceType.Capture).decode())
 
-    def open_playback(self, name: str = '') -> Device:
-        """Return the playback device given by name.
 
-        Raise RuntimeError on failure.
-        """
-        device = Device()
-        device.impl = self.impl.open_playback(name.encode())
-        return device
+# Since multiple calls of DeviceManager() will give the same instance,
+# we can create this global variable and expose its methods and attributes
+# at module level.  This also prevents the device manager from being
+# garbage collected.
+device_manager: DeviceManager = DeviceManager()
+device_names: Dict[str, List[str]] = device_manager.device_names
+device_name_default: Dict[str, str] = device_manager.device_name_default
+
+
+def query_extension(name: str) -> bool:
+    """Return if a non-device-specific ALC extension exists."""
+    return device_manager.impl.query_extension(name.encode())
 
 
 cdef class Device:
     """Audio mix output, which is either a system audio output stream
     or an actual audio port.
 
-    The with statement is supported, e.g. ::
+    The `with` statement is supported, e.g. ::
 
         with device:
             ...
 
     is equivalent to ::
 
-        ...
-        device.close()
+        try:
+            ...
+        finally:
+            device.close()
     """
     cdef alure.Device impl
+
+    def __init__(self, name: str = '', fail_safe: bool = False) -> None:
+        """Initialize the playback device given by `name`.
+
+        On failure, fallback to the default device if `fail_safe`
+        is `True`, otherwise `RuntimeError` is raised.
+        """
+        cdef alure.DeviceManager devmgr = (<DeviceManager> device_manager).impl
+        try:
+            self.impl = devmgr.open_playback(name.encode())
+        except RuntimeError as exc:
+            if fail_safe:
+                warn(f'Failed to open device "{name}" - trying default',
+                     category=RuntimeWarning)
+                self.impl = devmgr.open_playback()
+            else:
+                raise exc
 
     def __enter__(self) -> Device:
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> bool:
+    def __exit__(self, exc_type: Optional[Type[BaseException]],
+                 exc_val: Optional[BaseException],
+                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
         self.close()
 
     def __lt__(self, other: Any) -> bool:
@@ -202,7 +241,7 @@ cdef class Device:
         """EFX version supported by this device.
 
         If the ALC_EXT_EFX extension is unsupported,
-        this will be (0, 0).
+        this will be `(0, 0)`.
         """
         cdef alure.Version version = self.impl.get_efx_version()
         return version.get_major(), version.get_minor()
@@ -258,19 +297,6 @@ cdef class Device:
         """
         self.impl.reset(mkattrs(attrs.items()))
 
-    def create_context(self, attrs: Dict[int, int] = {}) -> Context:
-        """Return a newly created Context on this device,
-        using the specified attributes.
-
-        Raise RuntimeError on failure.
-        """
-        context = Context()
-        if attrs:
-            context.impl = self.impl.create_context(mkattrs(attrs.items()))
-        else:
-            context.impl = self.impl.create_context()
-        return context
-
     def pause_dsp(self) -> None:
         """Pause device processing, stopping updates for its contexts.
         Multiple calls are allowed but it is not reference counted,
@@ -297,9 +323,9 @@ cdef class Device:
 
 cdef class Context:
     """Container maintaining the entire audio environment, its settings
-    and components, e.g. sources, buffers and effects.
+    and components such as sources, buffers and effects.
 
-    The with statement is supported, for example ::
+    The `with` statement is supported, e.g. ::
 
         with context:
             ...
@@ -307,27 +333,46 @@ cdef class Context:
     is equivalent to ::
 
         Context.make_current(context)
-        ...
-        Context.make_current(None)
-        context.destroy()
+        try:
+            ...
+        finally:
+            Context.make_current(None)
+            context.destroy()
+
+    Attributes
+    ----------
+    device : Device
+        The device this context was created from.
     """
     cdef alure.Context impl
+    cdef readonly Device device
+
+    def __init__(self, device: Device, attrs: Dict[int, int] = {}) -> None:
+        """Create a new context on `device`
+        using the specified attributes.
+
+        Raise `RuntimeError` on failure.
+        """
+        self.impl = device.impl.create_context(mkattrs(attrs.items()))
+        self.device = device
 
     def __enter__(self) -> Context:
         Context.make_current(self)
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> bool:
+    def __exit__(self, exc_type: Optional[Type[BaseException]],
+                 exc_val: Optional[BaseException],
+                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
         Context.make_current(None)
         self.destroy()
 
     @staticmethod
-    def make_current(context: Context) -> None:
+    def make_current(context: Optional[Context]) -> None:
         """Make the specified context current for OpenAL operations."""
         if context is None:
             alure.Context.make_current(<alure.Context> nullptr)
         else:
-            alure.Context.make_current(context.impl)
+            alure.Context.make_current((<Context> context).impl)
 
     def destroy(self) -> None:
         """Destroy the context.  The context must not be current
@@ -335,49 +380,47 @@ cdef class Context:
         """
         self.impl.destroy()
 
-    def create_decoder(self, name: str) -> Decoder:
-        """Return a Decoder instance for the given audio file
-        or resource name.
-        """
-        decoder = Decoder()
-        decoder.pimpl = self.impl.create_decoder(name.encode())
-        return decoder
-
-    def get_buffer(self, name: str) -> Buffer:
-        """Create and cache a Buffer for the given audio file
-        or resource name.  Multiple calls with the same name will
-        return the same Buffer object.  Cached buffers must be
-        freed using remove_buffer before destroying the context.
-
-        If the buffer can't be loaded RuntimeError will be raised.
-        """
-        buffer = Buffer()
-        buffer.impl = self.impl.get_buffer(name.encode())
-        return buffer
-
-    def remove_buffer(self, buffer: Buffer) -> None:
-        """Delete the given cached buffer, invalidating all other
-        Buffer objects with the same name.
-        """
-        self.impl.remove_buffer(buffer.impl)
-
-    def create_source(self) -> Source:
-        """Return a newly created Source for playing audio.
-        There is no practical limit to the number of sources you may create.
-        You must call Source.destroy when the source is no longer needed.
-        """
-        source = Source()
-        source.impl = self.impl.create_source()
-        return source
-
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
 
 
 cdef class Buffer:
-    """Buffer of preloaded PCM samples coming from a Decoder."""
+    """Buffer of preloaded PCM samples coming from a Decoder.
+
+    The `with` statement is supported, e.g. ::
+
+        with buffer:
+            ...
+
+    is equivalent to ::
+
+        try:
+            ...
+        finally:
+            buffer.destroy()
+    """
+    cdef alure.Context ctx
     cdef alure.Buffer impl
+
+    def __init__(self, context: Context, name: str) -> None:
+        """Create and cache a `Buffer` for the given audio file
+        or resource name.  Multiple calls with the same name will
+        return the same Buffer object.  Cached buffers must be
+        freed using `destroy` before destroying `context`.
+
+        If the buffer can't be loaded `RuntimeError` will be raised.
+        """
+        self.ctx = context.impl
+        self.impl = self.ctx.get_buffer(name.encode())
+
+    def __enter__(self) -> Buffer:
+        return self
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]],
+                 exc_val: Optional[BaseException],
+                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+        self.destroy()
 
     @property
     def length(self) -> int:
@@ -401,16 +444,51 @@ cdef class Buffer:
         return alure.get_sample_type_name(
             self.impl.get_sample_type()).decode()
 
+    def destroy(self) -> None:
+        """Free the buffer's cache, invalidating all other
+        `Buffer` objects with the same name.
+        """
+        self.ctx.remove_buffer(self.impl)
+
 
 cdef class Source:
-    """Sound source for playing samples."""
+    """Sound source for playing samples.
+
+    The `with` statement is supported, e.g. ::
+
+        with source:
+            ...
+
+    is equivalent to ::
+
+        try:
+            ...
+        finally:
+            source.destroy()
+    """
     cdef alure.Source impl
+
+    def __init__(self, context: Context) -> None:
+        """Create a new `Source` for playing audio.  There is no
+        practical limit to the number of sources you may create.
+        Unless context manager is used, `Source.destroy` must be called
+        when the source is no longer needed.
+        """
+        self.impl = context.impl.create_source()
+
+    def __enter__(self) -> Source:
+        return self
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]],
+                 exc_val: Optional[BaseException],
+                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+        self.destroy()
 
     def play_from_buffer(self, buffer: Buffer) -> None:
         """Play the source using a buffer.  The same buffer
         may be played from multiple sources simultaneously.
         """
-        self.impl.play(buffer.impl);
+        self.impl.play(buffer.impl)
 
     def play_from_decoder(self, decoder: Decoder,
                           chunk_len: int, queue_size: int) -> None:
@@ -711,7 +789,7 @@ cdef class Source:
         self.impl.set_stereo_angles(left, right)
 
     @property
-    def spatialize(self) -> bool:
+    def spatialize(self) -> Optional[bool]:
         """Either `True` (the source always has 3D spatialization
         features), `False` (never has 3D spatialization features),
         or `None` (spatialization is enabled based on playing
@@ -725,7 +803,7 @@ cdef class Source:
         return False
 
     @spatialize.setter
-    def spatialize(self, value: bool) -> None:
+    def spatialize(self, value: Optional[bool]) -> None:
         if value is None: self.impl.set_3d_spatialize(alure.Spatialize.Auto)
         if value: self.impl.set_3d_spatialize(alure.Spatialize.On)
         self.impl.set_3d_spatialize(alure.Spatialize.Off)
@@ -733,7 +811,7 @@ cdef class Source:
     @property
     def resampler_index(self) -> int:
         """Index of the resampler to use for this source.  The index is
-        from the resamplers returned by `Context.get_available_resamplers,
+        from the resamplers returned by `Context.get_available_resamplers`,
         and must be nonnegative.
 
         This has no effect without the AL_SOFT_source_resampler extension.
@@ -786,6 +864,12 @@ cdef class Decoder:
     """Audio decoder interface."""
     cdef shared_ptr[alure.Decoder] pimpl
 
+    def __init__(self, context: Context, name: str) -> None:
+        """Create a `Decoder` instance for the given audio file
+        or resource name.
+        """
+        self.pimpl = context.impl.create_decoder(name.encode())
+
     @property
     def frequency(self) -> int:
         """Sample frequency, in hertz, of the audio being decoded."""
@@ -807,6 +891,6 @@ cdef class Decoder:
     def length(self) -> int:
         """Total length of the audio, in sample frames,
         falling-back to 0.  Note that if the length is 0,
-        the decoder may not be used to load a Buffer.
+        the decoder may not be used to load a `Buffer`.
         """
         return self.pimpl.get()[0].get_length()

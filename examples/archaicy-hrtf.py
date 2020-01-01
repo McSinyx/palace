@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # HRTF rendering example using ALC_SOFT_HRTF extension
-# Copyright (C) 2019  Nguyễn Gia Phong
+# Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
 # This file is part of archaicy.
 #
@@ -24,7 +24,8 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from archaicy import ALC_TRUE, ALC_HRTF_SOFT, ALC_HRTF_ID_SOFT, DeviceManager
+from archaicy import (ALC_TRUE, ALC_HRTF_SOFT, ALC_HRTF_ID_SOFT,
+                      Device, Context, Source, Decoder)
 
 PERIOD = 0.025
 
@@ -41,56 +42,47 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
     """HRTF render files with stereo source (angle radians apart)
     rotating around in omega rad/s using ALC_SOFT_HRTF extension.
     """
-    devmrg = DeviceManager()
-    try:
-        dev = devmrg.open_playback(device)
-    except RuntimeError:
-        stderr.write(f'Failed to open "{device}" - trying default\n')
-        dev = devmrg.open_playback()
-    print('Opened', dev.name['full'])
-
-    hrtf_names = dev.hrtf_names
-    if hrtf_names:
-        print('Available HRTFs:')
-        for name in hrtf_names: print(f'    {name}')
-    else:
-        print('No HRTF found!')
-    attrs = {ALC_HRTF_SOFT: ALC_TRUE}
-    if hrtf_name is not None:
-        try:
-            attrs[ALC_HRTF_ID_SOFT] = hrtf_names.index(hrtf_name)
-        except ValueError:
-            stderr.write(f'HRTF "{hrtf_name}" not found\n')
-
-    with dev.create_context(attrs) as ctx:
-        if dev.hrtf_enabled:
-            print(f'Using HRTF "{dev.current_hrtf}"')
+    with Device(device, fail_safe=True) as dev:
+        print('Opened', dev.name['full'])
+        hrtf_names = dev.hrtf_names
+        if hrtf_names:
+            print('Available HRTFs:')
+            for name in hrtf_names: print(f'    {name}')
         else:
-            print('HRTF not enabled!')
-
-        for filename in files:
+            print('No HRTF found!')
+        attrs = {ALC_HRTF_SOFT: ALC_TRUE}
+        if hrtf_name is not None:
             try:
-                decoder = ctx.create_decoder(filename)
-            except RuntimeError:
-                stderr.write(f'Failed to open file: {filename}\n')
-                continue
-            source = ctx.create_source()
+                attrs[ALC_HRTF_ID_SOFT] = hrtf_names.index(hrtf_name)
+            except ValueError:
+                stderr.write(f'HRTF "{hrtf_name}" not found\n')
 
-            source.play_from_decoder(decoder, 12000, 4)
-            print(f'Playing {filename} ({decoder.sample_type_name},',
-                  f'{decoder.channel_config_name}, {decoder.frequency} Hz)')
+        with Context(dev, attrs) as ctx, Source(ctx) as src:
+            if dev.hrtf_enabled:
+                print(f'Using HRTF "{dev.current_hrtf}"')
+            else:
+                print('HRTF not enabled!')
+            for filename in files:
+                try:
+                    decoder = Decoder(ctx, filename)
+                except RuntimeError:
+                    stderr.write(f'Failed to open file: {filename}\n')
+                    continue
+                src.play_from_decoder(decoder, 12000, 4)
+                print(f'Playing {filename} ({decoder.sample_type_name},',
+                      f'{decoder.channel_config_name},',
+                      f'{decoder.frequency} Hz)')
 
-            invfreq = 1 / decoder.frequency
-            for i in takewhile(lambda i: source.playing, count(step=PERIOD)):
-                source.stereo_angles = i*omega, i*omega+angle
-                print(f' {pretty_time(source.offset*invfreq)} /'
-                      f' {pretty_time(decoder.length*invfreq)}',
-                      end='\r', flush=True)
-                sleep(PERIOD)
-                ctx.update()
-            print()
-            source.destroy()
-    dev.close()
+                invfreq = 1 / decoder.frequency
+                for i in takewhile(lambda i: src.playing,
+                                   count(step=PERIOD)):
+                    src.stereo_angles = i*omega, i*omega+angle
+                    print(f' {pretty_time(src.offset*invfreq)} /'
+                          f' {pretty_time(decoder.length*invfreq)}',
+                          end='\r', flush=True)
+                    sleep(PERIOD)
+                    ctx.update()
+                print()
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ is to OpenGL (except that all the heavy-lifting are taken are by alure):
 
 ## Installation
 ### Via PyPI
-Archaicy requires Python 3.5+ and [alure][0].
+Archaicy requires Python 3.6+ and [alure][0].
 Given these dependencies satisfied, archaicy could be installed using `pip` via
 
     pip install archaicy
@@ -42,7 +42,6 @@ python setup.py install --user
 
 ## Usage
 One may start with the `examples` for sample usage of archaicy.
-These requires Python 3.6+ mostly for the f-strings.
 For further information, Python's `help` is your friend.
 
 [0]: https://github.com/kcat/alure
