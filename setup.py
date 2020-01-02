@@ -34,5 +34,7 @@ setup(
         Extension('archaicy', ['archaicy.pyx'],
                   include_dirs=['/usr/include/AL/'],
                   libraries=['alure2'], language='c++'),
-        compiler_directives={'language_level': 3}),
+        compiler_directives=dict(
+            binding=False, embedsignature=True, language_level='3str',
+            c_string_type='str', c_string_encoding='utf8')),
     zip_safe=False)

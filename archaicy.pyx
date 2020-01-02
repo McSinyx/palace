@@ -1,4 +1,3 @@
-# cython: binding=True
 # Python object wrappers for alure
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
@@ -31,7 +30,7 @@ device_name_default : Dict[str, str]
 
 __all__ = ['ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
            'device_manager', 'device_name_default', 'device_names',
-           'query_extension',
+           'query_extension', 'use_context',
            'Device', 'Context', 'Buffer', 'Source', 'Decoder']
 
 from types import TracebackType
@@ -52,6 +51,22 @@ Vector3 = Tuple[float, float, float]
 ALC_TRUE = alure.ALC_TRUE
 ALC_HRTF_SOFT = alure.ALC_HRTF_SOFT
 ALC_HRTF_ID_SOFT = alure.ALC_HRTF_ID_SOFT
+
+
+# Since multiple calls of DeviceManager() will give the same instance,
+# we can create this global variable and expose its methods and attributes
+# at module level.  This also prevents the device manager from being
+# garbage collected.
+device_manager: DeviceManager = DeviceManager()
+cdef alure.DeviceManager devmgr = (<DeviceManager> device_manager).impl
+device_names: Dict[str, List[str]] = dict(
+    basic=devmgr.enumerate(alure.DeviceEnumeration.Basic),
+    full=devmgr.enumerate(alure.DeviceEnumeration.Full),
+    capture=devmgr.enumerate(alure.DeviceEnumeration.Capture))
+device_name_default: Dict[str, str] = dict(
+    basic=devmgr.default_device_name(alure.DefaultDeviceType.Basic),
+    full=devmgr.default_device_name(alure.DefaultDeviceType.Full),
+    capture=devmgr.default_device_name(alure.DefaultDeviceType.Capture))
 
 
 cdef vector[alure.AttributePair] mkattrs(vector[pair[int, int]] attrs):
@@ -79,6 +94,19 @@ cdef alure.Vector3 to_vector3(vector[float] v):
     return alure.Vector3(v[0], v[1], v[2])
 
 
+def query_extension(name: str) -> bool:
+    """Return if a non-device-specific ALC extension exists."""
+    return device_manager.impl.query_extension(name)
+
+
+def use_context(context: Optional[Context]) -> None:
+    """Make the specified context current for OpenAL operations."""
+    if context is None:
+        alure.Context.make_current(<alure.Context> nullptr)
+    else:
+        alure.Context.make_current((<Context> context).impl)
+
+
 cdef class DeviceManager:
     """Manager of `Device` objects and other related functionality.
     This class is a singleton, only one instance will exist in a process
@@ -97,45 +125,6 @@ cdef class DeviceManager:
 
     def __bool__(self) -> bool:
         return <boolean> self.impl
-
-    @property
-    def device_names(self) -> Dict[str, List[str]]:
-        """Dictionary of available device names
-        corresponding to each type.
-        """
-        basic = self.impl.enumerate(alure.DeviceEnumeration.Basic)
-        full = self.impl.enumerate(alure.DeviceEnumeration.Full)
-        capture = self.impl.enumerate(alure.DeviceEnumeration.Capture)
-        return {'basic': [name.decode() for name in basic],
-                'full': [name.decode() for name in full],
-                'capture': [name.decode() for name in capture]}
-
-    @property
-    def device_name_default(self) -> Dict[str, str]:
-        """Dictionary of the default device name
-        corresponding to each type.
-        """
-        return dict(
-            basic=self.impl.default_device_name(
-                alure.DefaultDeviceType.Basic).decode(),
-            full=self.impl.default_device_name(
-                alure.DefaultDeviceType.Full).decode(),
-            capture=self.impl.default_device_name(
-                alure.DefaultDeviceType.Capture).decode())
-
-
-# Since multiple calls of DeviceManager() will give the same instance,
-# we can create this global variable and expose its methods and attributes
-# at module level.  This also prevents the device manager from being
-# garbage collected.
-device_manager: DeviceManager = DeviceManager()
-device_names: Dict[str, List[str]] = device_manager.device_names
-device_name_default: Dict[str, str] = device_manager.device_name_default
-
-
-def query_extension(name: str) -> bool:
-    """Return if a non-device-specific ALC extension exists."""
-    return device_manager.impl.query_extension(name.encode())
 
 
 cdef class Device:
@@ -164,7 +153,7 @@ cdef class Device:
         """
         cdef alure.DeviceManager devmgr = (<DeviceManager> device_manager).impl
         try:
-            self.impl = devmgr.open_playback(name.encode())
+            self.impl = devmgr.open_playback(name)
         except RuntimeError as exc:
             if fail_safe:
                 warn(f'Failed to open device "{name}" - trying default',
@@ -223,12 +212,12 @@ cdef class Device:
     @property
     def name(self) -> Dict[str, str]:
         """A dictionary of device name corresponding to each type."""
-        return {'basic': self.impl.get_name(alure.PlaybackName.Basic).decode(),
-                'full': self.impl.get_name(alure.PlaybackName.Full).decode()}
+        return {'basic': self.impl.get_name(alure.PlaybackName.Basic),
+                'full': self.impl.get_name(alure.PlaybackName.Full)}
 
     def query_extension(self, name: str) -> bool:
         """Return if an ALC extension exists on this device."""
-        return self.impl.query_extension(name.encode())
+        return self.impl.query_extension(name)
 
     @property
     def alc_version(self) -> Tuple[int, int]:
@@ -268,7 +257,7 @@ cdef class Device:
         If the ALC_SOFT_HRTF extension is unavailable,
         this will be an empty list.
         """
-        return [name.decode() for name in self.impl.enumerate_hrtf_names()]
+        return self.impl.enumerate_hrtf_names()
 
     @property
     def hrtf_enabled(self) -> bool:
@@ -281,12 +270,12 @@ cdef class Device:
         return self.impl.is_hrtf_enabled()
 
     @property
-    def current_hrtf(self) -> str:
+    def current_hrtf(self) -> Optional[str]:
         """Name of the HRTF currently being used by this device.
 
         If HRTF is not currently enabled, this will be None.
         """
-        name = self.impl.get_current_hrtf().decode()
+        name: str = self.impl.get_current_hrtf()
         return name or None
 
     def reset(self, attrs: Dict[int, int] = {}) -> None:
@@ -332,11 +321,11 @@ cdef class Context:
 
     is equivalent to ::
 
-        Context.make_current(context)
+        use_context(context)
         try:
             ...
         finally:
-            Context.make_current(None)
+            use_context(None)
             context.destroy()
 
     Attributes
@@ -357,22 +346,14 @@ cdef class Context:
         self.device = device
 
     def __enter__(self) -> Context:
-        Context.make_current(self)
+        use_context(self)
         return self
 
     def __exit__(self, exc_type: Optional[Type[BaseException]],
                  exc_val: Optional[BaseException],
                  exc_tb: Optional[TracebackType]) -> Optional[bool]:
-        Context.make_current(None)
+        use_context(None)
         self.destroy()
-
-    @staticmethod
-    def make_current(context: Optional[Context]) -> None:
-        """Make the specified context current for OpenAL operations."""
-        if context is None:
-            alure.Context.make_current(<alure.Context> nullptr)
-        else:
-            alure.Context.make_current((<Context> context).impl)
 
     def destroy(self) -> None:
         """Destroy the context.  The context must not be current
@@ -412,7 +393,7 @@ cdef class Buffer:
         If the buffer can't be loaded `RuntimeError` will be raised.
         """
         self.ctx = context.impl
-        self.impl = self.ctx.get_buffer(name.encode())
+        self.impl = self.ctx.get_buffer(name)
 
     def __enter__(self) -> Buffer:
         return self
@@ -436,13 +417,13 @@ cdef class Buffer:
     def channel_config_name(self) -> str:
         """Buffer's sample configuration name."""
         return alure.get_channel_config_name(
-            self.impl.get_channel_config()).decode()
+            self.impl.get_channel_config())
 
     @property
     def sample_type_name(self) -> str:
         """Buffer's sample type name."""
         return alure.get_sample_type_name(
-            self.impl.get_sample_type()).decode()
+            self.impl.get_sample_type())
 
     def destroy(self) -> None:
         """Free the buffer's cache, invalidating all other
@@ -868,7 +849,7 @@ cdef class Decoder:
         """Create a `Decoder` instance for the given audio file
         or resource name.
         """
-        self.pimpl = context.impl.create_decoder(name.encode())
+        self.pimpl = context.impl.create_decoder(name)
 
     @property
     def frequency(self) -> int:
@@ -879,13 +860,13 @@ cdef class Decoder:
     def channel_config_name(self) -> str:
         """Name of the channel configuration of the audio being decoded."""
         return alure.get_channel_config_name(
-            self.pimpl.get()[0].get_channel_config()).decode()
+            self.pimpl.get()[0].get_channel_config())
 
     @property
     def sample_type_name(self) -> str:
         """Name of the sample type of the audio being decoded."""
         return alure.get_sample_type_name(
-            self.pimpl.get()[0].get_sample_type()).decode()
+            self.pimpl.get()[0].get_sample_type())
 
     @property
     def length(self) -> int:
