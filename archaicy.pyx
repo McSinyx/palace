@@ -20,8 +20,6 @@
 
 Attributes
 ----------
-device_manager : DeviceManager
-    Manager of `Device` objects and other related functionality.
 device_names : Dict[str, List[str]]
     Dictionary of available device names corresponding to each type.
 device_name_default : Dict[str, str]
@@ -29,7 +27,7 @@ device_name_default : Dict[str, str]
 """
 
 __all__ = ['ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
-           'device_manager', 'device_name_default', 'device_names',
+           'device_name_default', 'device_names',
            'query_extension', 'use_context',
            'Device', 'Context', 'Buffer', 'Source', 'Decoder']
 
@@ -52,13 +50,12 @@ ALC_TRUE = alure.ALC_TRUE
 ALC_HRTF_SOFT = alure.ALC_HRTF_SOFT
 ALC_HRTF_ID_SOFT = alure.ALC_HRTF_ID_SOFT
 
+# Since multiple calls of DeviceManager.get_instance() will give
+# the same instance, we can create module-level variable and expose
+# its attributes and methods.  This also prevents the device manager
+# from being garbage collected by keeping a reference to the instance.
+cdef alure.DeviceManager devmgr = alure.DeviceManager.get_instance()
 
-# Since multiple calls of DeviceManager() will give the same instance,
-# we can create this global variable and expose its methods and attributes
-# at module level.  This also prevents the device manager from being
-# garbage collected.
-device_manager: DeviceManager = DeviceManager()
-cdef alure.DeviceManager devmgr = (<DeviceManager> device_manager).impl
 device_names: Dict[str, List[str]] = dict(
     basic=devmgr.enumerate(alure.DeviceEnumeration.Basic),
     full=devmgr.enumerate(alure.DeviceEnumeration.Full),
@@ -95,36 +92,26 @@ cdef alure.Vector3 to_vector3(vector[float] v):
 
 
 def query_extension(name: str) -> bool:
-    """Return if a non-device-specific ALC extension exists."""
-    return device_manager.impl.query_extension(name)
+    """Return if a non-device-specific ALC extension exists.
+
+    See Also
+    --------
+    Device.query_extension : Query device-specific ALC extension
+    """
+    return devmgr.query_extension(name)
 
 
 def use_context(context: Optional[Context]) -> None:
-    """Make the specified context current for OpenAL operations."""
+    """Make the specified context current for OpenAL operations.
+
+    See Also
+    --------
+    Context : Audio environment container
+    """
     if context is None:
         alure.Context.make_current(<alure.Context> nullptr)
     else:
         alure.Context.make_current((<Context> context).impl)
-
-
-cdef class DeviceManager:
-    """Manager of `Device` objects and other related functionality.
-    This class is a singleton, only one instance will exist in a process
-    at a time.
-    """
-    cdef alure.DeviceManager impl
-
-    def __init__(self) -> None:
-        """Initialize the process' device manager.
-
-        Multiple calls will give the same instance as long as
-        there is still a pre-existing reference to the instance,
-        or else a new instance will be created.
-        """
-        self.impl = alure.DeviceManager.get_instance()
-
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
 
 
 cdef class Device:
@@ -146,11 +133,21 @@ cdef class Device:
     ------
     RuntimeError
         If device creation fails.
+
+    Warns
+    -----
+    RuntimeWarning
+        If `fail_safe` is `True` and the device of given `name`
+        cannot be opened.
+
+    See Also
+    --------
+    device_names : Available device names
+    device_name_default : Default device names
     """
     cdef alure.Device impl
 
     def __init__(self, name: str = '', fail_safe: bool = False) -> None:
-        cdef alure.DeviceManager devmgr = (<DeviceManager> device_manager).impl
         try:
             self.impl = devmgr.open_playback(name)
         except RuntimeError as exc:
@@ -215,7 +212,12 @@ cdef class Device:
                 'full': self.impl.get_name(alure.PlaybackName.Full)}
 
     def query_extension(self, name: str) -> bool:
-        """Return if an ALC extension exists on this device."""
+        """Return if an ALC extension exists on this device.
+
+        See Also
+        --------
+        query_extension : Query non-device-specific ALC extension
+        """
         return self.impl.query_extension(name)
 
     @property
@@ -834,6 +836,10 @@ cdef class Decoder:
         The context from which the decoder is to be created.
     name : str
         Audio file or resource name.
+
+    See Also
+    --------
+    Buffer : Preloaded PCM samples coming from a `Decoder`
     """
     cdef shared_ptr[alure.Decoder] pimpl
     cdef Context context
