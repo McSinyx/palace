@@ -46,8 +46,7 @@ def play(files: Iterable[str], device: str) -> None:
             except RuntimeError:
                 stderr.write(f'Failed to open file: {filename}\n')
                 continue
-            with Source(ctx) as src, buffer:
-                src.play_from_buffer(buffer)
+            with buffer, buffer.play() as src:
                 print(f'Playing {filename} ({buffer.sample_type_name},',
                       f'{buffer.channel_config_name}, {buffer.frequency} Hz)')
 

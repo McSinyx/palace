@@ -68,7 +68,7 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
                 except RuntimeError:
                     stderr.write(f'Failed to open file: {filename}\n')
                     continue
-                src.play_from_decoder(decoder, 12000, 4)
+                decoder.play(12000, 4, src)
                 print(f'Playing {filename} ({decoder.sample_type_name},',
                       f'{decoder.channel_config_name},',
                       f'{decoder.frequency} Hz)')

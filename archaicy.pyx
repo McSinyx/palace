@@ -131,26 +131,25 @@ cdef class Device:
     """Audio mix output, which is either a system audio output stream
     or an actual audio port.
 
-    The `with` statement is supported, e.g. ::
+    This can be used as a context manager that call `close` upon
+    completion of the block, even if an error occurs.
 
-        with device:
-            ...
+    Parameters
+    ----------
+    name : str, optional
+        The name of the playback device.
+    fail_safe : bool, optional
+        On failure, fallback to the default device if this is `True`,
+        otherwise `RuntimeError` is raised.  Default to `False`.
 
-    is equivalent to ::
-
-        try:
-            ...
-        finally:
-            device.close()
+    Raises
+    ------
+    RuntimeError
+        If device creation fails.
     """
     cdef alure.Device impl
 
     def __init__(self, name: str = '', fail_safe: bool = False) -> None:
-        """Initialize the playback device given by `name`.
-
-        On failure, fallback to the default device if `fail_safe`
-        is `True`, otherwise `RuntimeError` is raised.
-        """
         cdef alure.DeviceManager devmgr = (<DeviceManager> device_manager).impl
         try:
             self.impl = devmgr.open_playback(name)
@@ -314,7 +313,7 @@ cdef class Context:
     """Container maintaining the entire audio environment, its settings
     and components such as sources, buffers and effects.
 
-    The `with` statement is supported, e.g. ::
+    This can be used as a context manager, e.g. ::
 
         with context:
             ...
@@ -328,20 +327,27 @@ cdef class Context:
             use_context(None)
             context.destroy()
 
+    Parameters
+    ----------
+    device : Device
+        The `device` on which the context is to be created.
+    attrs : Dict[int, int]
+        Attributes specified for the context to be created.
+
     Attributes
     ----------
     device : Device
         The device this context was created from.
+
+    Raises
+    ------
+    RuntimeError
+        If context creation fails.
     """
     cdef alure.Context impl
     cdef readonly Device device
 
     def __init__(self, device: Device, attrs: Dict[int, int] = {}) -> None:
-        """Create a new context on `device`
-        using the specified attributes.
-
-        Raise `RuntimeError` on failure.
-        """
         self.impl = device.impl.create_context(mkattrs(attrs.items()))
         self.device = device
 
@@ -367,33 +373,32 @@ cdef class Context:
 
 
 cdef class Buffer:
-    """Buffer of preloaded PCM samples coming from a Decoder.
+    """Buffer of preloaded PCM samples coming from a `Decoder`.
 
-    The `with` statement is supported, e.g. ::
+    Cached buffers must be freed using `destroy` before destroying
+    `context`.  Alternatively, this can be used as a context manager
+    that call `destroy` upon completion of the block,
+    even if an error occurs.
 
-        with buffer:
-            ...
+    Parameters
+    ----------
+    context : Context
+        The context from which the buffer is to be created and cached.
+    name : str
+        Audio file or resource name.  Multiple calls with the same name
+        will return the same buffer.
 
-    is equivalent to ::
-
-        try:
-            ...
-        finally:
-            buffer.destroy()
+    Raises
+    ------
+    RuntimeError
+        If the buffer can't be loaded.
     """
-    cdef alure.Context ctx
     cdef alure.Buffer impl
+    cdef Context context
 
     def __init__(self, context: Context, name: str) -> None:
-        """Create and cache a `Buffer` for the given audio file
-        or resource name.  Multiple calls with the same name will
-        return the same Buffer object.  Cached buffers must be
-        freed using `destroy` before destroying `context`.
-
-        If the buffer can't be loaded `RuntimeError` will be raised.
-        """
-        self.ctx = context.impl
-        self.impl = self.ctx.get_buffer(name)
+        self.impl = context.impl.get_buffer(name)
+        self.context = context
 
     def __enter__(self) -> Buffer:
         return self
@@ -425,36 +430,42 @@ cdef class Buffer:
         return alure.get_sample_type_name(
             self.impl.get_sample_type())
 
+    def play(self, source: Optional[Source] = None) -> Source:
+        """Play `source` using the buffer.  The same buffer
+        may be played from multiple sources simultaneously.
+
+        If `source` is `None`, create a new one.
+
+        Return the source used for playing.
+        """
+        if source is None: source = Source(self.context)
+        (<Source> source).impl.play(self.impl)
+        return source
+
     def destroy(self) -> None:
         """Free the buffer's cache, invalidating all other
         `Buffer` objects with the same name.
         """
-        self.ctx.remove_buffer(self.impl)
+        self.context.impl.remove_buffer(self.impl)
 
 
 cdef class Source:
-    """Sound source for playing samples.
+    """Sound source for playing audio.
 
-    The `with` statement is supported, e.g. ::
+    There is no practical limit to the number of sources one may create.
 
-        with source:
-            ...
+    When the source is no longer needed, `destroy` must be called,
+    unless the context manager is used, which guarantees the source's
+    destructioni upon completion of the block, even if an error occurs.
 
-    is equivalent to ::
-
-        try:
-            ...
-        finally:
-            source.destroy()
+    Parameters
+    ----------
+    context : Context
+        The context from which the source is to be created.
     """
     cdef alure.Source impl
 
     def __init__(self, context: Context) -> None:
-        """Create a new `Source` for playing audio.  There is no
-        practical limit to the number of sources you may create.
-        Unless context manager is used, `Source.destroy` must be called
-        when the source is no longer needed.
-        """
         self.impl = context.impl.create_source()
 
     def __enter__(self) -> Source:
@@ -464,33 +475,6 @@ cdef class Source:
                  exc_val: Optional[BaseException],
                  exc_tb: Optional[TracebackType]) -> Optional[bool]:
         self.destroy()
-
-    def play_from_buffer(self, buffer: Buffer) -> None:
-        """Play the source using a buffer.  The same buffer
-        may be played from multiple sources simultaneously.
-        """
-        self.impl.play(buffer.impl)
-
-    def play_from_decoder(self, decoder: Decoder,
-                          chunk_len: int, queue_size: int) -> None:
-        """Play the source by asynchronously streaming audio from
-        a decoder.  The given decoder must NOT have its read or seek
-        methods called from elsewhere while in use.
-
-        Parameters
-        ----------
-        decoder : Decoder
-            The decoder object to play audio from.
-        chunk_len : int
-            The number of sample frames to read for each chunk update.
-            Smaller values will require more frequent updates and
-            larger values will handle more data with each chunk.
-        queue_size : int
-            The number of chunks to keep queued during playback.
-            Smaller values use less memory while larger values
-            improve protection against underruns.
-        """
-        self.impl.play(decoder.pimpl, chunk_len, queue_size)
 
     # TODO: play from future buffer
 
@@ -842,14 +826,24 @@ cdef class Source:
 
 
 cdef class Decoder:
-    """Audio decoder interface."""
+    """Audio decoder interface.
+
+    Parameters
+    ----------
+    context : Context
+        The context from which the decoder is to be created.
+    name : str
+        Audio file or resource name.
+    """
     cdef shared_ptr[alure.Decoder] pimpl
+    cdef Context context
 
     def __init__(self, context: Context, name: str) -> None:
         """Create a `Decoder` instance for the given audio file
         or resource name.
         """
         self.pimpl = context.impl.create_decoder(name)
+        self.context = context
 
     @property
     def frequency(self) -> int:
@@ -875,3 +869,29 @@ cdef class Decoder:
         the decoder may not be used to load a `Buffer`.
         """
         return self.pimpl.get()[0].get_length()
+
+    def play(self, chunk_len: int, queue_size: int,
+             source: Optional[Source] = None) -> Source:
+        """Play `source` by asynchronously streaming audio from
+        the decoder.  The decoder must NOT have its `read or `seek`
+        called from elsewhere while in use.
+
+        Return the source used for playing.
+
+        Parameters
+        ----------
+        chunk_len : int
+            The number of sample frames to read for each chunk update.
+            Smaller values will require more frequent updates and
+            larger values will handle more data with each chunk.
+        queue_size : int
+            The number of chunks to keep queued during playback.
+            Smaller values use less memory while larger values
+            improve protection against underruns.
+        source : Source, optional
+            The source object to play audio.  If this is `None`,
+            a new one will be created.
+        """
+        if source is None: source = Source(self.context)
+        (<Source> source).impl.play(self.pimpl, chunk_len, queue_size)
+        return source
