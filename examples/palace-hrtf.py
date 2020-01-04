@@ -2,20 +2,20 @@
 # HRTF rendering example using ALC_SOFT_HRTF extension
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
-# This file is part of archaicy.
+# This file is part of palace.
 #
-# archaicy is free software: you can redistribute it and/or modify it
+# palace is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
 # by the Free Software Foundation, either version 3 of the License,
 # or (at your option) any later version.
 #
-# archaicy is distributed in the hope that it will be useful,
+# palace is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with archaicy.  If not, see <https://www.gnu.org/licenses/>.
+# along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 from argparse import ArgumentParser
 from datetime import datetime, timedelta
@@ -24,8 +24,8 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from archaicy import (ALC_TRUE, ALC_HRTF_SOFT, ALC_HRTF_ID_SOFT,
-                      Device, Context, Source, Decoder)
+from palace import (ALC_TRUE, ALC_HRTF_SOFT, ALC_HRTF_ID_SOFT,
+                    Device, Context, Source, Decoder)
 
 PERIOD = 0.025
 

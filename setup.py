@@ -6,17 +6,17 @@ with open('README.md') as f:
     long_description = f.read()
 
 setup(
-    name='archaicy',
-    version='0.0.2',
-    description='Wrapper for Audio Library Utilities REtooled in Cython',
+    name='palace',
+    version='0.0.1',
+    description='Pythonic Audio Library and Codecs Environment',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/McSinyx/archaicy',
+    url='https://github.com/McSinyx/palace',
     author='Nguyễn Gia Phong',
     author_email='vn.mcsinyx@gmail.com',
     license='LGPLv3+',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
         'Operating System :: POSIX :: Linux',
@@ -31,7 +31,7 @@ setup(
         'Typing :: Typed'],
     keywords='openal alure hrtf',
     ext_modules=cythonize(
-        Extension('archaicy', ['archaicy.pyx'],
+        Extension('palace', ['palace.pyx'],
                   include_dirs=['/usr/include/AL/'],
                   libraries=['alure2'], language='c++'),
         compiler_directives=dict(

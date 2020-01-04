@@ -1,22 +1,22 @@
 # Python object wrappers for alure
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
-# This file is part of archaicy.
+# This file is part of palace.
 #
-# archaicy is free software: you can redistribute it and/or modify it
+# palace is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
 # by the Free Software Foundation, either version 3 of the License,
 # or (at your option) any later version.
 #
-# archaicy is distributed in the hope that it will be useful,
+# palace is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with archaicy.  If not, see <https://www.gnu.org/licenses/>.
+# along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Wrapper for Audio Library Utilities REtooled in Cython
+"""Pythonic Audio Library and Codecs Environment
 
 Attributes
 ----------
@@ -634,7 +634,9 @@ cdef class Source:
         """3D orientation, using `at` and `up` vectors, which are
         respectively relative position and direction.
 
-        Note: unlike the AL_EXT_BFORMAT extension this property
+        Notes
+        -----
+        Unlike the AL_EXT_BFORMAT extension this property
         comes from, this also affects the facing direction.
         """
         cdef pair[alure.Vector3, alure.Vector3] o = self.impl.get_orientation()
@@ -879,7 +881,7 @@ cdef class Decoder:
     def play(self, chunk_len: int, queue_size: int,
              source: Optional[Source] = None) -> Source:
         """Play `source` by asynchronously streaming audio from
-        the decoder.  The decoder must NOT have its `read or `seek`
+        the decoder.  The decoder must NOT have its `read` or `seek`
         called from elsewhere while in use.
 
         Return the source used for playing.

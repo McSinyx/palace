@@ -1,5 +1,5 @@
-# archaicy
-Archaicy is a Python 3D audio API wrapping around [alure][0].
+# palace
+Palace is a Python 3D audio API wrapping around [alure][0].
 To quote alure's README,
 
 > It uses OpenAL for audio rendering, and provides common higher-level features
@@ -7,8 +7,7 @@ To quote alure's README,
 > and source management for virtually unlimited sound source handles.
 
 ## Features
-
-In some sense, what archaicy aimes to be to OpenAL is what [ModernGL][1]
+In some sense, what palace aimes to be to OpenAL is what [ModernGL][1]
 is to OpenGL (except that all the heavy-lifting are taken are by alure):
 
 * 3D sound rendering
@@ -21,27 +20,27 @@ is to OpenGL (except that all the heavy-lifting are taken are by alure):
 
 ## Installation
 ### Via PyPI
-Archaicy requires Python 3.6+ and [alure][0].
-Given these dependencies satisfied, archaicy could be installed using `pip` via
+Palace requires Python 3.6+ and [alure][0].
+Given these dependencies satisfied, palace could be installed using `pip` via
 
-    pip install archaicy
+    pip install palace
 
 Currently only GNU/Linux is supported.  If you want to help package for
 other operating systems, please head to issue #1.
 
 ### From source
-To build from source, one will also need to have [Cython][2], Python headers
+To build from source, one will also need to have Python headers, [Cython][2],
 and a C++11 compiler (and probably `git` for fetching the source) installed.
-Archaicy can then be compiled and installed by running
+Palace can then be compiled and installed by running
 
 ```sh
-git clone https://github.com/McSinyx/archaicy.git
-cd archaicy
+git clone https://github.com/McSinyx/palace
+cd palace
 python setup.py install --user
 ```
 
 ## Usage
-One may start with the `examples` for sample usage of archaicy.
+One may start with the `examples` for sample usage of palace.
 For further information, Python's `help` is your friend.
 
 [0]: https://github.com/kcat/alure

@@ -1,20 +1,20 @@
 # Cython declarations of alure
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
-# This file is part of archaicy.
+# This file is part of palace.
 #
-# archaicy is free software: you can redistribute it and/or modify it
+# palace is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
 # by the Free Software Foundation, either version 3 of the License,
 # or (at your option) any later version.
 #
-# archaicy is distributed in the hope that it will be useful,
+# palace is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with archaicy.  If not, see <https://www.gnu.org/licenses/>.
+# along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 from libc.stdint cimport uint64_t
 from libcpp cimport bool as boolean, nullptr_t
