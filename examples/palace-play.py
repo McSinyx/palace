@@ -24,7 +24,7 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from palace import Device, Context, Source, Buffer
+from palace import Device, Context, Buffer
 
 PERIOD = 0.025
 
