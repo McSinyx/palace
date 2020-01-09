@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Reference &#8212; palace 0.0.1 documentation</title>
+    <title>Reference &#8212; palace 0.0.2 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -58,27 +58,27 @@
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="function">
 <dt id="palace.query_extension">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">query_extension</code><a class="headerlink" href="#palace.query_extension" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">query_extension</code><span class="sig-paren">(</span><em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#palace.query_extension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return if a non-device-specific ALC extension exists.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#palace.Device.query_extension" title="palace.Device.query_extension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Device.query_extension</span></code></a></dt><dd><p>Query device-specific ALC extension</p>
+<dt><a class="reference internal" href="#palace.Device.query_extension" title="palace.Device.query_extension"><code class="xref py py-func docutils literal notranslate"><span class="pre">Device.query_extension()</span></code></a></dt><dd><p>Query device-specific ALC extension</p>
 </dd>
 </dl>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="function">
 <dt id="palace.use_context">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make the specified context current for OpenAL operations.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#palace.Context" title="palace.Context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context</span></code></a></dt><dd><p>Audio environment container</p>
+<dt><a class="reference internal" href="#palace.Context" title="palace.Context"><code class="xref py py-func docutils literal notranslate"><span class="pre">Context()</span></code></a></dt><dd><p>Audio environment container</p>
 </dd>
 </dl>
 </div>
@@ -86,7 +86,7 @@
 
 <dl class="class">
 <dt id="palace.Device">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param">str name: str = ''</em>, <em class="sig-param">fail_safe: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio mix output, which is either a system audio output stream
 or an actual audio port.</p>
 <p>This can be used as a context manager that call <cite>close</cite> upon
@@ -122,9 +122,9 @@ cannot be opened.</p>
 <dd><p>ALC version supported by this device.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.close">
-<code class="sig-name descname">close</code><a class="headerlink" href="#palace.Device.close" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close and free the device.  All previously-created contexts
 must first be destroyed.</p>
 </dd></dl>
@@ -182,39 +182,39 @@ this will be an empty list.</p>
 <dd><p>A dictionary of device name corresponding to each type.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.pause_dsp">
-<code class="sig-name descname">pause_dsp</code><a class="headerlink" href="#palace.Device.pause_dsp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pause_dsp</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.pause_dsp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause device processing, stopping updates for its contexts.
 Multiple calls are allowed but it is not reference counted,
 so the device will resume after one resume_dsp call.</p>
 <p>This requires the ALC_SOFT_pause_device extension.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.query_extension">
-<code class="sig-name descname">query_extension</code><a class="headerlink" href="#palace.Device.query_extension" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">query_extension</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#palace.Device.query_extension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return if an ALC extension exists on this device.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#palace.query_extension" title="palace.query_extension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_extension</span></code></a></dt><dd><p>Query non-device-specific ALC extension</p>
+<dt><a class="reference internal" href="#palace.query_extension" title="palace.query_extension"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_extension()</span></code></a></dt><dd><p>Query non-device-specific ALC extension</p>
 </dd>
 </dl>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.reset">
-<code class="sig-name descname">reset</code><a class="headerlink" href="#palace.Device.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">attrs: Dict[int</em>, <em class="sig-param">int] = {}</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the device, using the specified attributes.</p>
 <p>If the ALC_SOFT_HRTF extension is unavailable,
 this will be a no-op.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.resume_dsp">
-<code class="sig-name descname">resume_dsp</code><a class="headerlink" href="#palace.Device.resume_dsp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resume_dsp</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.resume_dsp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resume device processing, restarting updates for its contexts.
 Multiple calls are allowed and will no-op.</p>
 </dd></dl>
@@ -223,7 +223,7 @@ Multiple calls are allowed and will no-op.</p>
 
 <dl class="class">
 <dt id="palace.Context">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Context</code><a class="headerlink" href="#palace.Context" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Context</code><span class="sig-paren">(</span><em class="sig-param">Device device: Device</em>, <em class="sig-param">attrs: Dict[int</em>, <em class="sig-param">int] = {}</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container maintaining the entire audio environment, its settings
 and components such as sources, buffers and effects.</p>
 <p>This can be used as a context manager, e.g.</p>
@@ -264,16 +264,16 @@ and components such as sources, buffers and effects.</p>
 <dd class="field-odd"><p><strong>RuntimeError</strong> – If context creation fails.</p>
 </dd>
 </dl>
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Context.destroy">
-<code class="sig-name descname">destroy</code><a class="headerlink" href="#palace.Context.destroy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroy the context.  The context must not be current
 when this is called.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Context.update">
-<code class="sig-name descname">update</code><a class="headerlink" href="#palace.Context.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the context and all sources belonging to this context.</p>
 </dd></dl>
 
@@ -281,7 +281,7 @@ when this is called.</p>
 
 <dl class="class">
 <dt id="palace.Buffer">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Buffer</code><a class="headerlink" href="#palace.Buffer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Buffer</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em>, <em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer of preloaded PCM samples coming from a <cite>Decoder</cite>.</p>
 <p>Cached buffers must be freed using <cite>destroy</cite> before destroying
 <cite>context</cite>.  Alternatively, this can be used as a context manager
@@ -305,9 +305,9 @@ will return the same buffer.</p></li>
 <dd><p>Buffer’s sample configuration name.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.destroy">
-<code class="sig-name descname">destroy</code><a class="headerlink" href="#palace.Buffer.destroy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Buffer.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Free the buffer’s cache, invalidating all other
 <cite>Buffer</cite> objects with the same name.</p>
 </dd></dl>
@@ -324,9 +324,9 @@ will return the same buffer.</p></li>
 <dd><p>Length of the buffer in sample frames.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.play">
-<code class="sig-name descname">play</code><a class="headerlink" href="#palace.Buffer.play" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">source: Optional[Source] = None</em><span class="sig-paren">)</span> &#x2192; Source<a class="headerlink" href="#palace.Buffer.play" title="Permalink to this definition">¶</a></dt>
 <dd><p>Play <cite>source</cite> using the buffer.  The same buffer
 may be played from multiple sources simultaneously.</p>
 <p>If <cite>source</cite> is <cite>None</cite>, create a new one.</p>
@@ -343,7 +343,7 @@ may be played from multiple sources simultaneously.</p>
 
 <dl class="class">
 <dt id="palace.Source">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sound source for playing audio.</p>
 <p>There is no practical limit to the number of sources one may create.</p>
 <p>When the source is no longer needed, <cite>destroy</cite> must be called,
@@ -375,9 +375,9 @@ direction, so for example an inner angle of 180 means the entire
 front face of the source is in the inner cone.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.destroy">
-<code class="sig-name descname">destroy</code><a class="headerlink" href="#palace.Source.destroy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroy the source, stop playback and release resources.</p>
 </dd></dl>
 
@@ -465,9 +465,9 @@ ALC_EXT_EFX extension.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.pause">
-<code class="sig-name descname">pause</code><a class="headerlink" href="#palace.Source.pause" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pause</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.pause" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause the source if it is playing.</p>
 </dd></dl>
 
@@ -540,9 +540,9 @@ and must be nonnegative.</p>
 <p>This has no effect without the AL_SOFT_source_resampler extension.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.resume">
-<code class="sig-name descname">resume</code><a class="headerlink" href="#palace.Source.resume" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resume</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.resume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resume the source if it is paused.</p>
 </dd></dl>
 
@@ -557,6 +557,11 @@ set room factor to 0.  The reverb engine will, by default,
 apply a more realistic room decay based on the reverb decay
 time and distance.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="palace.Source.spat">
+<code class="sig-name descname">spat</code><span class="sig-paren">(</span><em class="sig-param">self, value: Optional[bool]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.spat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="palace.Source.spatialize">
@@ -577,9 +582,9 @@ with 0 being in front and positive values going left.</p>
 <p>This has no effect without the AL_EXT_STEREO_ANGLES extension.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.stop">
-<code class="sig-name descname">stop</code><a class="headerlink" href="#palace.Source.stop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop playback, releasing the buffer or decoder reference.
 Any pending playback from a future buffer is canceled.</p>
 </dd></dl>
@@ -597,7 +602,7 @@ by the doppler effect.</p>
 
 <dl class="class">
 <dt id="palace.Decoder">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Decoder</code><a class="headerlink" href="#palace.Decoder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Decoder</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em>, <em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Decoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio decoder interface.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -634,9 +639,9 @@ falling-back to 0.  Note that if the length is 0,
 the decoder may not be used to load a <cite>Buffer</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Decoder.play">
-<code class="sig-name descname">play</code><a class="headerlink" href="#palace.Decoder.play" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">chunk_len: int</em>, <em class="sig-param">queue_size: int</em>, <em class="sig-param">source: Optional[Source] = None</em><span class="sig-paren">)</span> &#x2192; Source<a class="headerlink" href="#palace.Decoder.play" title="Permalink to this definition">¶</a></dt>
 <dd><p>Play <cite>source</cite> by asynchronously streaming audio from
 the decoder.  The decoder must NOT have its <cite>read</cite> or <cite>seek</cite>
 called from elsewhere while in use.</p>
