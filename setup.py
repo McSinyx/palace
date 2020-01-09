@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setup(
     name='palace',
-    version='0.0.1',
+    version='0.0.2',
     description='Pythonic Audio Library and Codecs Environment',
     long_description=long_description,
     long_description_content_type='text/markdown',

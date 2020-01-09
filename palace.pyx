@@ -96,7 +96,7 @@ def query_extension(name: str) -> bool:
 
     See Also
     --------
-    Device.query_extension : Query device-specific ALC extension
+    Device.query_extension : Query ALC extension on a device
     """
     return devmgr.query_extension(name)
 
@@ -773,9 +773,12 @@ cdef class Source:
 
     @spatialize.setter
     def spatialize(self, value: Optional[bool]) -> None:
-        if value is None: self.impl.set_3d_spatialize(alure.Spatialize.Auto)
-        if value: self.impl.set_3d_spatialize(alure.Spatialize.On)
-        self.impl.set_3d_spatialize(alure.Spatialize.Off)
+        if value is None:
+            self.impl.set_3d_spatialize(alure.Spatialize.Auto)
+        elif value:
+            self.impl.set_3d_spatialize(alure.Spatialize.On)
+        else:
+            self.impl.set_3d_spatialize(alure.Spatialize.Off)
 
     @property
     def resampler_index(self) -> int:
