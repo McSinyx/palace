@@ -16,12 +16,41 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
-from libc.stdint cimport uint64_t
+from libc.stdint cimport int64_t, uint64_t
 from libcpp cimport bool as boolean, nullptr_t
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
+
+
+# std::chrono wrapper
+cdef extern from  '<ratio>' namespace 'std' nogil:
+    cdef cppclass ratio[Num, Denom=*]:
+        pass
+    cdef cppclass nano:
+        pass
+    cdef cppclass milli:
+        pass
+
+
+cdef extern from '<chrono>' namespace 'std::chrono' nogil:
+    cdef cppclass duration[Rep, Period]:
+        ctypedef Rep rep
+        duration()
+        rep count()
+    cdef cppclass nanoseconds:
+        nanoseconds() except +
+        int64_t count() except +
+    cdef cppclass milliseconds:
+        milliseconds() except +
+        int64_t count() except +
+
+
+cdef extern from '<alure2-aliases.h>' nogil:
+    cdef cppclass Seconds:
+        Seconds() except +
+        double count() except +
 
 
 cdef extern from '<future>' namespace 'std' nogil:
@@ -194,7 +223,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void pause_dsp 'pauseDSP'() except +
         void resume_dsp 'resumeDSP'() except +
 
-        # get_clock_time
+        nanoseconds get_clock_time 'getClockTime'() except +
 
         void close() except +
 
@@ -243,8 +272,8 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         shared_ptr[MessageHandler] set_message_handler 'setMessageHandler'(shared_ptr[MessageHandler]) except +
         shared_ptr[MessageHandler] get_message_handler 'getMessageHandler'() except +
 
-        # set_async_wake_interval
-        # get_async_wake_interval
+        void set_async_wake_interval 'setAsyncWakeInterval'(milliseconds) except +
+        milliseconds get_async_wake_interval 'getAsyncWakeInterval'() except +
 
         shared_ptr[Decoder] create_decoder 'createDecoder'(string) except +
 
@@ -344,7 +373,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void play(shared_future[Buffer]) except +
 
         void stop() except +
-        # fade_out_to_stop
+        void fade_out_to_stop 'fadeOutToStop'(float, milliseconds) except +
         void pause() except +
         void resume() except +
 
@@ -360,10 +389,10 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         unsigned get_priority 'getPriority'() except +
 
         void set_offset 'setOffset'(uint64_t) except +
-        # get_sample_offset_latency
+        pair[uint64_t, nanoseconds] get_sample_offset_latency 'getSampleOffsetLatency'() except +
         uint64_t get_sample_offset 'getSampleOffset'() except +
-        # get_sec_offset_latency
-        # get_sec_offset
+        pair[Seconds, Seconds] get_sec_offset_latency 'getSecOffsetLatency'() except +
+        Seconds get_sec_offset 'getSecOffset'() except +
 
         void set_looping 'setLooping'(boolean) except +
         boolean get_looping 'getLooping'() except +
