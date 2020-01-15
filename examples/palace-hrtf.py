@@ -73,12 +73,11 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
                       f'{decoder.channel_config_name},',
                       f'{decoder.frequency} Hz)')
 
-                invfreq = 1 / decoder.frequency
                 for i in takewhile(lambda i: src.playing,
                                    count(step=PERIOD)):
                     src.stereo_angles = i*omega, i*omega+angle
-                    print(f' {pretty_time(src.offset*invfreq)} /'
-                          f' {pretty_time(decoder.length*invfreq)}',
+                    print(f' {pretty_time(src.offset_seconds)} /'
+                          f' {pretty_time(decoder.length_seconds)}',
                           end='\r', flush=True)
                     sleep(PERIOD)
                     ctx.update()

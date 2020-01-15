@@ -1,5 +1,6 @@
 # Cython declarations of alure
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
+# Copyright (C) 2020  Ngô Ngọc Đức Huy
 #
 # This file is part of palace.
 #
@@ -24,38 +25,31 @@ from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
 
-# std::chrono wrapper
-cdef extern from  '<ratio>' namespace 'std' nogil:
-    cdef cppclass ratio[Num, Denom=*]:
+cdef extern from '<chrono>' namespace 'std::chrono' nogil:
+    cdef cppclass duration[Rep, Period=*]:
+        ctypedef Rep rep
+        duration() except +
+        duration(const rep&) except +   # ugly hack, see cython/cython#3198
+        rep count() except +
+
+    ctypedef duration[int64_t, nano] nanoseconds
+    ctypedef duration[int64_t, milli] milliseconds
+
+
+cdef extern from '<future>' namespace 'std' nogil:
+    cdef cppclass shared_future[R]:
         pass
+
+
+cdef extern from  '<ratio>' namespace 'std' nogil:
     cdef cppclass nano:
         pass
     cdef cppclass milli:
         pass
 
 
-cdef extern from '<chrono>' namespace 'std::chrono' nogil:
-    cdef cppclass duration[Rep, Period]:
-        ctypedef Rep rep
-        duration()
-        rep count()
-    cdef cppclass nanoseconds:
-        nanoseconds() except +
-        int64_t count() except +
-    cdef cppclass milliseconds:
-        milliseconds() except +
-        int64_t count() except +
-
-
-cdef extern from '<alure2-aliases.h>' nogil:
-    cdef cppclass Seconds:
-        Seconds() except +
-        double count() except +
-
-
-cdef extern from '<future>' namespace 'std' nogil:
-    cdef cppclass shared_future[R]:
-        pass
+cdef extern from '<AL/alure2-aliases.h>' namespace 'alure' nogil:
+    ctypedef duration[double] Seconds
 
 
 cdef extern from '<alc.h>' nogil:

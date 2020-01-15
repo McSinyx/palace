@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A simple example showing how to load and play a sound.
+# A simple example showing how to load and play a sound
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 #
 # This file is part of palace.
@@ -50,10 +50,9 @@ def play(files: Iterable[str], device: str) -> None:
                 print(f'Playing {filename} ({buffer.sample_type_name},',
                       f'{buffer.channel_config_name}, {buffer.frequency} Hz)')
 
-                invfreq = 1 / buffer.frequency
                 for i in takewhile(lambda i: src.playing, count()):
-                    print(f' {pretty_time(src.offset*invfreq)} /'
-                          f' {pretty_time(buffer.length*invfreq)}',
+                    print(f' {pretty_time(src.offset_seconds)} /'
+                          f' {pretty_time(buffer.length_seconds)}',
                           end='\r', flush=True)
                     sleep(PERIOD)
                 print()
