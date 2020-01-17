@@ -1,6 +1,7 @@
 # Python object wrappers for alure
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
+# Copyright (C) 2020  Ngô Xuân Minh
 #
 # This file is part of palace.
 #
@@ -27,11 +28,12 @@ device_name_default : Dict[str, str]
     Dictionary of the default device name corresponding to each type.
 """
 
-__all__ = ['ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
+__all__ = ['ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
            'device_name_default', 'device_names',
            'query_extension', 'use_context',
-           'Device', 'Context', 'Buffer', 'Source', 'Decoder']
+           'Device', 'Context', 'Buffer', 'Source', 'SourceGroup', 'Decoder']
 
+
 from types import TracebackType
 from typing import Any, Dict, List, Optional, Tuple, Type
 from warnings import warn
@@ -47,10 +49,12 @@ cimport alure
 Vector3 = Tuple[float, float, float]
 
 # Cast to Python objects
-ALC_TRUE = alure.ALC_TRUE
-ALC_HRTF_SOFT = alure.ALC_HRTF_SOFT
-ALC_HRTF_ID_SOFT = alure.ALC_HRTF_ID_SOFT
+ALC_FALSE: int = alure.ALC_FALSE
+ALC_TRUE: int = alure.ALC_TRUE
+ALC_HRTF_SOFT: int = alure.ALC_HRTF_SOFT
+ALC_HRTF_ID_SOFT: int = alure.ALC_HRTF_ID_SOFT
 
+
 # Since multiple calls of DeviceManager.get_instance() will give
 # the same instance, we can create module-level variable and expose
 # its attributes and methods.  This also prevents the device manager
@@ -114,12 +118,12 @@ def use_context(context: Optional[Context]) -> None:
     else:
         alure.Context.make_current((<Context> context).impl)
 
-
+
 cdef class Device:
     """Audio mix output, which is either a system audio output stream
     or an actual audio port.
 
-    This can be used as a context manager that call `close` upon
+    This can be used as a context manager that calls `close` upon
     completion of the block, even if an error occurs.
 
     Parameters
@@ -170,38 +174,32 @@ cdef class Device:
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, Device):
             return NotImplemented
-        other_device: Device = other
-        return self.impl < other_device.impl
+        return self.impl < (<Device> other).impl
 
     def __le__(self, other: Any) -> bool:
         if not isinstance(other, Device):
             return NotImplemented
-        other_device: Device = other
-        return self.impl <= other_device.impl
+        return self.impl <= (<Device> other).impl
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Device):
             return NotImplemented
-        other_device: Device = other
-        return self.impl == other_device.impl
+        return self.impl == (<Device> other).impl
 
     def __ne__(self, other: Any) -> bool:
         if not isinstance(other, Device):
             return NotImplemented
-        other_device: Device = other
-        return self.impl != other_device.impl
+        return self.impl != (<Device> other).impl
 
     def __gt__(self, other: Any) -> bool:
         if not isinstance(other, Device):
             return NotImplemented
-        other_device: Device = other
-        return self.impl > other_device.impl
+        return self.impl > (<Device> other).impl
 
     def __ge__(self, other: Any) -> bool:
         if not isinstance(other, Device):
             return NotImplemented
-        other_device: Device = other
-        return self.impl >= other_device.impl
+        return self.impl >= (<Device> other).impl
 
     def __bool__(self) -> bool:
         return <boolean> self.impl
@@ -256,7 +254,7 @@ cdef class Device:
         such that the index of a given name is the ID to use with
         ALC_HRTF_ID_SOFT.
 
-        If the ALC_SOFT_HRTF extension is unavailable,
+        If the `ALC_SOFT_HRTF` extension is unavailable,
         this will be an empty list.
         """
         return self.impl.enumerate_hrtf_names()
@@ -265,7 +263,7 @@ cdef class Device:
     def hrtf_enabled(self) -> bool:
         """Whether HRTF is enabled on the device.
 
-        If the ALC_SOFT_HRTF extension is unavailable,
+        If the `ALC_SOFT_HRTF` extension is unavailable,
         this will return False although there could still be
         HRTF applied at a lower hardware level.
         """
@@ -275,7 +273,7 @@ cdef class Device:
     def current_hrtf(self) -> Optional[str]:
         """Name of the HRTF currently being used by this device.
 
-        If HRTF is not currently enabled, this will be None.
+        If HRTF is not currently enabled, this will be `None`.
         """
         name: str = self.impl.get_current_hrtf()
         return name or None
@@ -283,7 +281,7 @@ cdef class Device:
     def reset(self, attrs: Dict[int, int] = {}) -> None:
         """Reset the device, using the specified attributes.
 
-        If the ALC_SOFT_HRTF extension is unavailable,
+        If the `ALC_SOFT_HRTF` extension is unavailable,
         this will be a no-op.
         """
         self.impl.reset(mkattrs(attrs.items()))
@@ -293,13 +291,13 @@ cdef class Device:
         Multiple calls are allowed but it is not reference counted,
         so the device will resume after one resume_dsp call.
 
-        This requires the ALC_SOFT_pause_device extension.
+        This requires the `ALC_SOFT_pause_device` extension.
         """
         self.impl.pause_dsp()
 
     def resume_dsp(self) -> None:
-        """Resume device processing, restarting updates for its contexts.
-        Multiple calls are allowed and will no-op.
+        """Resume device processing, restarting updates for
+        its contexts.  Multiple calls are allowed and will no-op.
         """
         self.impl.resume_dsp()
 
@@ -309,10 +307,11 @@ cdef class Device:
 
         Notes
         -----
-        This starts relative to the device being opened, and does not increment
-        while there are no contexts nor while processing is paused. Currently,
-        this may not exactly match the rate that sources play at. In the future
-        it may utilize an OpenAL extension to retrieve the audio device's real clock.
+        This starts relative to the device being opened, and does not
+        increment while there are no contexts nor while processing
+        is paused. Currently, this may not exactly match the rate
+        that sources play at. In the future it may utilize an OpenAL
+        extension to retrieve the audio device's real clock.
         """
         return self.impl.get_clock_time().count()
 
@@ -322,7 +321,7 @@ cdef class Device:
         """
         self.impl.close()
 
-
+
 cdef class Context:
     """Container maintaining the entire audio environment, its settings
     and components such as sources, buffers and effects.
@@ -377,6 +376,8 @@ cdef class Context:
         use_context(None)
         self.destroy()
 
+    # TODO: comparisons and bool
+
     def destroy(self) -> None:
         """Destroy the context.  The context must not be current
         when this is called.
@@ -387,9 +388,10 @@ cdef class Context:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
 
-
+
 cdef class Listener:
-    """Listener instance of the context, i.e each context will only have one listener.
+    """Listener instance of the context, i.e each context
+    will only have one listener.
 
     Parameters
     ----------
@@ -419,40 +421,42 @@ cdef class Listener:
             pair[alure.Vector3, alure.Vector3](to_vector3(at), to_vector3(up)))
 
     def set_meters_per_unit(self, value: float) -> None:
-        self.impl.set_meters_per_unit(value)    
+        self.impl.set_meters_per_unit(value)
 
     gain = property(fset=set_gain, doc='Master gain for all context output.')
     position = property(fset=set_position, doc='3D position of the listener.')
     velocity = property(
         fset=set_velocity,
         doc=(
-            """3D velocity of the listener, in units per second. As with
-            OpenAL, this does not actually alter the listener's position, and
-            instead just alters the pitch as determined by the doppler effect.
+            """3D velocity of the listener, in units per second.
+            As with OpenAL, this does not actually alter the listener's
+            position, and instead just alters the pitch as determined by
+            the doppler effect.
             """))
     orientation = property(
         fset=set_orientation,
         doc=(
-            """3D orientation of the listener, using position-relative `at`
-            and `up` direction vectors.
+            """3D orientation of the listener, using position-relative
+            `at` and `up` direction vectors.
             """))
     meters_per_unit = property(
         fset=set_meters_per_unit,
         doc=(
-            """Number of meters per unit, used for various effects that rely
-            on the distance in meters including air absorption and initial reverb
-            decay. If this is changed, it's strongly recommended to also set the
-            speed of sound (e.g. context.set_speed_of_sound (343.3 / meters_per_unit) to maintain a
-            realistic 343.3 m/s for sound propagation).
+            """Number of meters per unit used for various effects
+            that rely on the distance in meters including
+            air absorption and initial reverb decay. If this is changed,
+            it's strongly recommended to also set the speed of sound
+            (e.g. `context.speed_of_sound = 343.3 / meters_per_unit`
+            to maintain a realistic 343.3 m/s for sound propagation).
             """))
 
-
+
 cdef class Buffer:
     """Buffer of preloaded PCM samples coming from a `Decoder`.
 
     Cached buffers must be freed using `destroy` before destroying
     `context`.  Alternatively, this can be used as a context manager
-    that call `destroy` upon completion of the block,
+    that calls `destroy` upon completion of the block,
     even if an error occurs.
 
     Parameters
@@ -470,10 +474,11 @@ cdef class Buffer:
     """
     cdef alure.Buffer impl
     cdef Context context
+    cdef readonly str name
 
     def __init__(self, context: Context, name: str) -> None:
         self.impl = context.impl.get_buffer(name)
-        self.context = context
+        self.context, self.name = context, name
 
     def __enter__(self) -> Buffer:
         return self
@@ -498,12 +503,14 @@ cdef class Buffer:
         """Buffer's frequency in hertz."""
         return self.impl.get_frequency()
 
+    # TODO: get channel config (enum class)
     @property
     def channel_config_name(self) -> str:
         """Buffer's sample configuration name."""
         return alure.get_channel_config_name(
             self.impl.get_channel_config())
 
+    # TODO: get sample type (enum class)
     @property
     def sample_type_name(self) -> str:
         """Buffer's sample type name."""
@@ -522,13 +529,59 @@ cdef class Buffer:
         (<Source> source).impl.play(self.impl)
         return source
 
+    @property
+    def loop_points(self) -> Tuple[int, int]:
+        """Loop points for looping sources.  If the current context
+        does not support the `AL_SOFT_loop_points` extension,
+        `start = 0` and `end = length` respectively.
+        Otherwise, `start < end <= length`.
+
+        Parameters
+        ----------
+        start : int
+            Starting point, in sample frames (inclusive).
+        end : int
+            Ending point, in sample frames (exclusive).
+
+        Notes
+        -----
+        The buffer must not be in use when this property is set.
+        """
+        return self.impl.get_loop_points()
+
+    @loop_points.setter
+    def loop_points(self, value: Tuple[int, int]) -> None:
+        start, end = value
+        self.impl.set_loop_points(start, end)
+
+    @property
+    def sources(self) -> List[Source]:
+        """`Source` objects currently playing the buffer."""
+        sources = []
+        for alure_source in self.impl.get_sources():
+            source = Source(None)
+            source.impl = alure_source
+            sources.append(source)
+        return sources
+
+    @property
+    def source_count(self) -> int:
+        """Number of sources currently using the buffer.
+
+        Notes:
+        `Context.update` needs to be called to reliably ensure the count
+        is kept updated for when sources reach their end.  This is
+        equivalent to calling `len(self.sources)`.
+        """
+        return self.impl.get_source_count()
+
     def destroy(self) -> None:
         """Free the buffer's cache, invalidating all other
         `Buffer` objects with the same name.
         """
         self.context.impl.remove_buffer(self.impl)
 
-
+
 cdef class Source:
     """Sound source for playing audio.
 
@@ -542,7 +595,7 @@ cdef class Source:
     ----------
     context : Optional[Context]
         The context from which the source is to be created.
-        If it is None, `__init__` does nothing. 
+        If it is `None`, the object is left uninitialized.
     """
     cdef alure.Source impl
 
@@ -649,7 +702,7 @@ cdef class Source:
     def latency(self) -> int:
         """Source latency in nanoseconds.
 
-        If the AL_SOFT_source_latency extension is unsupported,
+        If the `AL_SOFT_source_latency` extension is unsupported,
         the latency will be 0.
         """
         return self.impl.get_sample_offset_latency().second.count()
@@ -665,7 +718,7 @@ cdef class Source:
     def latency_seconds(self) -> float:
         """Source latency in seconds.
 
-        If the AL_SOFT_source_latency extension is unsupported,
+        If the `AL_SOFT_source_latency` extension is unsupported,
         the latency will be 0.
         """
         return self.impl.get_sec_offset_latency().second.count()
@@ -760,7 +813,7 @@ cdef class Source:
 
         Notes
         -----
-        Unlike the AL_EXT_BFORMAT extension this property
+        Unlike the `AL_EXT_BFORMAT` extension this property
         comes from, this also affects the facing direction.
         """
         cdef pair[alure.Vector3, alure.Vector3] o = self.impl.get_orientation()
@@ -802,7 +855,7 @@ cdef class Source:
         gainhf : float
             Linear gainhf applying extra attenuation to high frequencies
             creating a low-pass effect.  It has no effect without the
-            ALC_EXT_EFX extension.
+            `ALC_EXT_EFX` extension.
         """
         return self.impl.get_outer_cone_gains()
 
@@ -860,7 +913,7 @@ cdef class Source:
         """Radius of the source.  This causes the source to behave
         as if every point within the spherical area emits sound.
 
-        This has no effect without the AL_EXT_SOURCE_RADIUS extension.
+        This has no effect without the `AL_EXT_SOURCE_RADIUS` extension.
         """
         return self.impl.get_radius()
 
@@ -874,7 +927,7 @@ cdef class Source:
         a stereo buffer or stream. The angles go counter-clockwise,
         with 0 being in front and positive values going left.
 
-        This has no effect without the AL_EXT_STEREO_ANGLES extension.
+        This has no effect without the `AL_EXT_STEREO_ANGLES` extension.
         """
         return self.impl.get_stereo_angles()
 
@@ -890,7 +943,8 @@ cdef class Source:
         or `None` (spatialization is enabled based on playing
         a mono sound or not, default).
 
-        This has no effect without the AL_SOFT_source_spatialize extension.
+        This has no effect without
+        the `AL_SOFT_source_spatialize` extension.
         """
         cdef alure.Spatialize value = self.impl.get_3d_spatialize()
         if value == alure.Spatialize.Auto: return None
@@ -908,11 +962,12 @@ cdef class Source:
 
     @property
     def resampler_index(self) -> int:
-        """Index of the resampler to use for this source.  The index is
-        from the resamplers returned by `Context.get_available_resamplers`,
-        and must be nonnegative.
+        """Index of the resampler to use for this source.
+        The index is from the resamplers returned by
+        `Context.get_available_resamplers`, and must be nonnegative.
 
-        This has no effect without the AL_SOFT_source_resampler extension.
+        This has no effect without
+        the `AL_SOFT_source_resampler` extension.
         """
         return self.impl.get_resampler_index()
 
@@ -957,16 +1012,20 @@ cdef class Source:
         """Destroy the source, stop playback and release resources."""
         self.impl.destroy()
 
-
+
 cdef class SourceGroup:
-    """A group of Source references. For instance, setting SourceGroup's gain to 0.5
-    will halve the gain of all source in group"""
+    """A group of `Source` references.  For instance, setting
+    `SourceGroup.gain` to 0.5 will halve the gain of all sources
+    in the group.
+
+    This can be used as a context manager that calls `destroy` upon
+    completion of the block, even if an error occurs.
 
     Parameters
     ----------
     context : Optional[Context]
         The context from which the source group is to be created.
-        If it is None, `__init__` does nothing. 
+        If it is `None`, the object is left uninitialized.
     """
     cdef alure.SourceGroup impl
 
@@ -985,42 +1044,36 @@ cdef class SourceGroup:
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
             return NotImplemented
-        other_source_group: SourceGroup = other
-        return self.impl < other_source_group.impl
+        return self.impl < (<SourceGroup> other).impl
 
     def __le__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
             return NotImplemented
-        other_source_group: SourceGroup = other
-        return self.impl <= other_source_group.impl
+        return self.impl <= (<SourceGroup> other).impl
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
             return NotImplemented
-        other_source_group: SourceGroup = other
-        return self.impl == other_source_group.impl
+        return self.impl == (<SourceGroup> other).impl
 
     def __ne__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
             return NotImplemented
-        other_source_group: SourceGroup = other
-        return self.impl != other_source_group.impl
+        return self.impl != (<SourceGroup> other).impl
 
     def __gt__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
             return NotImplemented
-        other_source_group: SourceGroup = other
-        return self.impl > other_source_group.impl
+        return self.impl > (<SourceGroup> other).impl
 
     def __ge__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
             return NotImplemented
-        other_source_group: SourceGroup = other
-        return self.impl >= other_source_group.impl
+        return self.impl >= (<SourceGroup> other).impl
 
     def __bool__(self) -> bool:
         return <boolean> self.impl
-    
+
     @property
     def parent_group(self) -> SourceGroup:
         """The source group this source group is a child of.
@@ -1038,11 +1091,12 @@ cdef class SourceGroup:
     @parent_group.setter
     def parent_group(self, value: SourceGroup) -> None:
         self.impl.set_parent_group(value.impl)
-    
+
     @property
     def gain(self) -> float:
-        """Source group gain, accumulating with its sources' and
-        sub-groups' gain."""
+        """Source group gain, accumulating with its sources'
+        and sub-groups' gain.
+        """
         return self.impl.get_gain()
 
     @gain.setter
@@ -1051,8 +1105,9 @@ cdef class SourceGroup:
 
     @property
     def pitch(self) -> float:
-        """Source group pitch, accumulates with its sources' and
-        sub-groups' pitch."""
+        """Source group pitch, accumulates with its sources'
+        and sub-groups' pitch.
+        """
         return self.impl.get_pitch()
 
     @pitch.setter
@@ -1096,8 +1151,14 @@ cdef class SourceGroup:
         including sub-groups.
         """
         self.impl.stop_all()
-    
 
+    def destroy(self) -> None:
+        """Destroy the source group, removing all sources from it
+        before being freed.
+        """
+        self.impl.destroy()
+
+
 cdef class Decoder:
     """Audio decoder interface.
 

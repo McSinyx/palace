@@ -1,6 +1,7 @@
 # Cython declarations of alure
 # Copyright (C) 2019, 2020  Nguyễn Gia Phong
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
+# Copyright (C) 2020  Ngô Xuân Minh
 #
 # This file is part of palace.
 #
@@ -24,7 +25,8 @@ from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
-
+
+# C++ standard library
 cdef extern from '<chrono>' namespace 'std::chrono' nogil:
     cdef cppclass duration[Rep, Period=*]:
         ctypedef Rep rep
@@ -41,27 +43,30 @@ cdef extern from '<future>' namespace 'std' nogil:
         pass
 
 
-cdef extern from  '<ratio>' namespace 'std' nogil:
+cdef extern from '<ratio>' namespace 'std' nogil:
     cdef cppclass nano:
         pass
     cdef cppclass milli:
         pass
 
-
-cdef extern from '<AL/alure2-aliases.h>' namespace 'alure' nogil:
-    ctypedef duration[double] Seconds
-
-
-cdef extern from '<alc.h>' nogil:
+
+# OpenAL and Alure auxiliary declarations
+cdef extern from 'alc.h' nogil:
+    cdef int ALC_FALSE
     cdef int ALC_TRUE
 
 
-cdef extern from '<AL/alure2-alext.h>' nogil:
+cdef extern from 'alure2-alext.h' nogil:
     cdef int ALC_HRTF_SOFT
     cdef int ALC_HRTF_ID_SOFT
 
 
-cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
+cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:
+    ctypedef duration[double] Seconds
+
+
+# Alure main module
+cdef extern from 'alure2.h' namespace 'alure' nogil:
     # Type aliases:
     # char*: string
     # ALfloat: float
@@ -83,8 +88,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         pass
     cdef cppclass SourceSend:
         pass
-
-
+
     # Enum classes:
     cdef cppclass SampleType:
         pass
@@ -118,8 +122,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         Off 'alure::Spatialize::Off'
         On 'alure::Spatialize::On'
         Auto 'alure::Spatialize::Auto'
-
-
+
     # Helper classes
     cdef cppclass Vector3:
         Vector3()
@@ -129,8 +132,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
     cdef cppclass Version:
         unsigned get_major 'getMajor'()
         unsigned get_minor 'getMinor'()
-
-
+
     # Opaque class implementations:
     cdef cppclass DeviceManagerImpl:
         pass
@@ -150,14 +152,13 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         pass
     cdef cppclass EffectImpl:
         pass
-
-
+
     # Available class interfaces:
     cdef cppclass DeviceManager:
         @staticmethod
         DeviceManager get_instance 'getInstance'() except +
 
-        DeviceManager()
+        DeviceManager()     # nil
         DeviceManager(const DeviceManager&)
         DeviceManager(DeviceManager&&)
 
@@ -170,8 +171,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
 
         Device open_playback 'openPlayback'() except +
         Device open_playback 'openPlayback'(const string&) except +
-
-
+
     cdef cppclass Device:
         ctypedef DeviceImpl* handle_type
 
@@ -220,8 +220,7 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         nanoseconds get_clock_time 'getClockTime'() except +
 
         void close() except +
-
-
+
     cdef cppclass Context:
         ctypedef ContextImpl* handle_type
 
@@ -300,12 +299,11 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void set_distance_model 'setDistanceModel'(DistanceModel) except +
 
         void update() except +
-
-
+
     cdef cppclass Listener:
         ctypedef ListenerImpl* handle_type
 
-        Listener()
+        Listener()  # nil
         Listener(ListenerImpl*)
         Listener(const Listener&)
         Listener(Listener&&)
@@ -337,12 +335,11 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void set_orientation 'setOrientation'(const float*) except +
 
         void set_meters_per_unit 'setMetersPerUnit'(float) except +
-
-
+
     cdef cppclass Buffer:
         ctypedef BufferImpl* handle_type
 
-        Buffer()
+        Buffer()    # nil
         Buffer(BufferImpl*)
         Buffer(const Buffer&)
         Buffer(Buffer&&)
@@ -366,17 +363,16 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         ChannelConfig get_channel_config 'getChannelConfig'() except +
         SampleType get_sample_type 'getSampleType'() except +
         unsigned get_size 'getSize'() except +
-        string get_name 'getName'() except +
         size_t get_source_count 'getSourceCount'() except +
         vector[Source] get_sources 'getSources'() except +
+        # name is implemented as a read-only attribute in Cython
         pair[unsigned, unsigned] get_loop_points 'getLoopPoints'() except +
         void set_loop_points 'setLoopPoints'(unsigned, unsigned) except +
-
-
+
     cdef cppclass Source:
         ctypedef SourceImpl* handle_type
 
-        Source()
+        Source()    # nil
         Source(SourceImpl*)
         Source(const Source&)
         Source(Source&&)
@@ -509,12 +505,11 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void set_auxiliary_send_filter 'setAuxiliarySendFilter'(AuxiliaryEffectSlot, int, const FilterParams&) except +
 
         void destroy() except +
-
-
+
     cdef cppclass SourceGroup:
         ctypedef SourceImpl* handle_type
 
-        SourceGroup()
+        SourceGroup()   # nil
         SourceGroup(SourceGroupImpl*)
         SourceGroup(const SourceGroup&)
         SourceGroup(SourceGroup&&)
@@ -549,16 +544,13 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         void stop_all 'stopAll'() except +
 
         void destroy() except +
-
-
+
     cdef cppclass AuxiliaryEffectSlot:
         pass
-
-
+
     cdef cppclass Effect:
         pass
-
-
+
     cdef cppclass Decoder:
         int get_frequency 'getFrequency'()
         ChannelConfig get_channel_config 'getChannelConfig'()
@@ -570,15 +562,12 @@ cdef extern from '<AL/alure2.h>' namespace 'alure' nogil:
         pair[uint64_t, uint64_t] get_loop_points 'getLoopPoints'()
 
         int read(void*, int)
-
-
+
     cdef cppclass DecoderFactory:
         pass
-
-
+
     cdef cppclass FileIOFactory:
         pass
-
-
+
     cdef cppclass MessageHandler:
         pass
