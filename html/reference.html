@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Reference &#8212; palace 0.0.2 documentation</title>
+    <title>Reference &#8212; palace 0.0.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -65,7 +65,7 @@
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#palace.Device.query_extension" title="palace.Device.query_extension"><code class="xref py py-func docutils literal notranslate"><span class="pre">Device.query_extension()</span></code></a></dt><dd><p>Query device-specific ALC extension</p>
+<dt><a class="reference internal" href="#palace.Device.query_extension" title="palace.Device.query_extension"><code class="xref py py-func docutils literal notranslate"><span class="pre">Device.query_extension()</span></code></a></dt><dd><p>Query ALC extension on a device</p>
 </dd>
 </dl>
 </div>
@@ -89,7 +89,7 @@
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param">str name: str = ''</em>, <em class="sig-param">fail_safe: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio mix output, which is either a system audio output stream
 or an actual audio port.</p>
-<p>This can be used as a context manager that call <cite>close</cite> upon
+<p>This can be used as a context manager that calls <cite>close</cite> upon
 completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -122,6 +122,18 @@ cannot be opened.</p>
 <dd><p>ALC version supported by this device.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="palace.Device.clock_time">
+<code class="sig-name descname">clock_time</code><a class="headerlink" href="#palace.Device.clock_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current clock time for the device.</p>
+<p class="rubric">Notes</p>
+<p>This starts relative to the device being opened, and does not
+increment while there are no contexts nor while processing
+is paused. Currently, this may not exactly match the rate
+that sources play at. In the future it may utilize an OpenAL
+extension to retrieve the audio device’s real clock.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="palace.Device.close">
 <code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.close" title="Permalink to this definition">¶</a></dt>
@@ -133,7 +145,7 @@ must first be destroyed.</p>
 <dt id="palace.Device.current_hrtf">
 <code class="sig-name descname">current_hrtf</code><a class="headerlink" href="#palace.Device.current_hrtf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the HRTF currently being used by this device.</p>
-<p>If HRTF is not currently enabled, this will be None.</p>
+<p>If HRTF is not currently enabled, this will be <cite>None</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -154,7 +166,7 @@ this will be <cite>(0, 0)</cite>.</p>
 <dt id="palace.Device.hrtf_enabled">
 <code class="sig-name descname">hrtf_enabled</code><a class="headerlink" href="#palace.Device.hrtf_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether HRTF is enabled on the device.</p>
-<p>If the ALC_SOFT_HRTF extension is unavailable,
+<p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will return False although there could still be
 HRTF applied at a lower hardware level.</p>
 </dd></dl>
@@ -165,7 +177,7 @@ HRTF applied at a lower hardware level.</p>
 <dd><p>List of available HRTF names, sorted as OpenAL gives them,
 such that the index of a given name is the ID to use with
 ALC_HRTF_ID_SOFT.</p>
-<p>If the ALC_SOFT_HRTF extension is unavailable,
+<p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will be an empty list.</p>
 </dd></dl>
 
@@ -188,7 +200,7 @@ this will be an empty list.</p>
 <dd><p>Pause device processing, stopping updates for its contexts.
 Multiple calls are allowed but it is not reference counted,
 so the device will resume after one resume_dsp call.</p>
-<p>This requires the ALC_SOFT_pause_device extension.</p>
+<p>This requires the <cite>ALC_SOFT_pause_device</cite> extension.</p>
 </dd></dl>
 
 <dl class="method">
@@ -208,15 +220,15 @@ so the device will resume after one resume_dsp call.</p>
 <dt id="palace.Device.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">attrs: Dict[int</em>, <em class="sig-param">int] = {}</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the device, using the specified attributes.</p>
-<p>If the ALC_SOFT_HRTF extension is unavailable,
+<p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will be a no-op.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="palace.Device.resume_dsp">
 <code class="sig-name descname">resume_dsp</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.resume_dsp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resume device processing, restarting updates for its contexts.
-Multiple calls are allowed and will no-op.</p>
+<dd><p>Resume device processing, restarting updates for
+its contexts.  Multiple calls are allowed and will no-op.</p>
 </dd></dl>
 
 </dd></dl>
@@ -285,7 +297,7 @@ when this is called.</p>
 <dd><p>Buffer of preloaded PCM samples coming from a <cite>Decoder</cite>.</p>
 <p>Cached buffers must be freed using <cite>destroy</cite> before destroying
 <cite>context</cite>.  Alternatively, this can be used as a context manager
-that call <cite>destroy</cite> upon completion of the block,
+that calls <cite>destroy</cite> upon completion of the block,
 even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -324,6 +336,31 @@ will return the same buffer.</p></li>
 <dd><p>Length of the buffer in sample frames.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="palace.Buffer.length_seconds">
+<code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Buffer.length_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of the buffer in seconds.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.Buffer.loop_points">
+<code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.Buffer.loop_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop points for looping sources.  If the current context
+does not support the <cite>AL_SOFT_loop_points</cite> extension,
+<cite>start = 0</cite> and <cite>end = length</cite> respectively.
+Otherwise, <cite>start &lt; end &lt;= length</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>int</em>) – Starting point, in sample frames (inclusive).</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – Ending point, in sample frames (exclusive).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The buffer must not be in use when this property is set.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="palace.Buffer.play">
 <code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">source: Optional[Source] = None</em><span class="sig-paren">)</span> &#x2192; Source<a class="headerlink" href="#palace.Buffer.play" title="Permalink to this definition">¶</a></dt>
@@ -339,11 +376,27 @@ may be played from multiple sources simultaneously.</p>
 <dd><p>Buffer’s sample type name.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="palace.Buffer.source_count">
+<code class="sig-name descname">source_count</code><a class="headerlink" href="#palace.Buffer.source_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of sources currently using the buffer.</p>
+<p>Notes:
+<cite>Context.update</cite> needs to be called to reliably ensure the count
+is kept updated for when sources reach their end.  This is
+equivalent to calling <cite>len(self.sources)</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.Buffer.sources">
+<code class="sig-name descname">sources</code><a class="headerlink" href="#palace.Buffer.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Source</cite> objects currently playing the buffer.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="palace.Source">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sound source for playing audio.</p>
 <p>There is no practical limit to the number of sources one may create.</p>
 <p>When the source is no longer needed, <cite>destroy</cite> must be called,
@@ -351,7 +404,8 @@ unless the context manager is used, which guarantees the source’s
 destructioni upon completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the source is to be created.</p>
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em>) – The context from which the source is to be created.
+If it is <cite>None</cite>, the object is left uninitialized.</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -401,6 +455,28 @@ This effectively scales the source and listener velocities
 for the doppler calculation.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="palace.Source.fade_out_to_stop">
+<code class="sig-name descname">fade_out_to_stop</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">double gain: float</em>, <em class="sig-param">ms: int</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.fade_out_to_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fade the source to <cite>gain</cite> over <cite>ms</cite> milliseconds,
+at which point playback will stop. <cite>gain</cite> is in addition to
+the base gain, and must be greater than 0 and less than 1.
+<cite>ms</cite> must also be positive</p>
+<p>The fading is logarithmic. As a result, the initial drop-off may
+happen faster than expected but the fading is more perceptually
+consistant over the given duration. It will take just as much
+time to go from -6 dB to -12 dB as it will to go from -40 dB
+to -46 dB, for example.</p>
+<p>Pending playback from a future buffer is not immediately
+canceled, but the fade timer starts with this call. If the
+future buffer then becomes ready, it will start mid-fade.
+Pending playback will be canceled if the fade out completes
+before the future buffer becomes ready.</p>
+<p>Fading is updated during calls to <cite>Context.update</cite>,
+which should be called regularly (30 to 50 times per second)
+for the fading to be smooth.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="palace.Source.gain">
 <code class="sig-name descname">gain</code><a class="headerlink" href="#palace.Source.gain" title="Permalink to this definition">¶</a></dt>
@@ -425,6 +501,22 @@ gain adjustements.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="palace.Source.latency">
+<code class="sig-name descname">latency</code><a class="headerlink" href="#palace.Source.latency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source latency in nanoseconds.</p>
+<p>If the <cite>AL_SOFT_source_latency</cite> extension is unsupported,
+the latency will be 0.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.Source.latency_seconds">
+<code class="sig-name descname">latency_seconds</code><a class="headerlink" href="#palace.Source.latency_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source latency in seconds.</p>
+<p>If the <cite>AL_SOFT_source_latency</cite> extension is unsupported,
+the latency will be 0.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="palace.Source.looping">
 <code class="sig-name descname">looping</code><a class="headerlink" href="#palace.Source.looping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the source should loop on the Buffer or Decoder
@@ -439,12 +531,19 @@ this will be the offset based on the decoder’s read position.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="palace.Source.offset_seconds">
+<code class="sig-name descname">offset_seconds</code><a class="headerlink" href="#palace.Source.offset_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source offset in seconds. For streaming sources
+this will be the offset based on the decoder’s read position.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="palace.Source.orientation">
 <code class="sig-name descname">orientation</code><a class="headerlink" href="#palace.Source.orientation" title="Permalink to this definition">¶</a></dt>
 <dd><p>3D orientation, using <cite>at</cite> and <cite>up</cite> vectors, which are
 respectively relative position and direction.</p>
 <p class="rubric">Notes</p>
-<p>Unlike the AL_EXT_BFORMAT extension this property
+<p>Unlike the <cite>AL_EXT_BFORMAT</cite> extension this property
 comes from, this also affects the facing direction.</p>
 </dd></dl>
 
@@ -459,7 +558,7 @@ outside of the source’s outer cone area.</p>
 <li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies.</p></li>
 <li><p><strong>gainhf</strong> (<em>float</em>) – Linear gainhf applying extra attenuation to high frequencies
 creating a low-pass effect.  It has no effect without the
-ALC_EXT_EFX extension.</p></li>
+<cite>ALC_EXT_EFX</cite> extension.</p></li>
 </ul>
 </dd>
 </dl>
@@ -521,7 +620,7 @@ are available and higher priority sources are played.</p>
 <code class="sig-name descname">radius</code><a class="headerlink" href="#palace.Source.radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radius of the source.  This causes the source to behave
 as if every point within the spherical area emits sound.</p>
-<p>This has no effect without the AL_EXT_SOURCE_RADIUS extension.</p>
+<p>This has no effect without the <cite>AL_EXT_SOURCE_RADIUS</cite> extension.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -534,10 +633,11 @@ are relative to the listener.</p>
 <dl class="attribute">
 <dt id="palace.Source.resampler_index">
 <code class="sig-name descname">resampler_index</code><a class="headerlink" href="#palace.Source.resampler_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Index of the resampler to use for this source.  The index is
-from the resamplers returned by <cite>Context.get_available_resamplers</cite>,
-and must be nonnegative.</p>
-<p>This has no effect without the AL_SOFT_source_resampler extension.</p>
+<dd><p>Index of the resampler to use for this source.
+The index is from the resamplers returned by
+<cite>Context.get_available_resamplers</cite>, and must be nonnegative.</p>
+<p>This has no effect without
+the <cite>AL_SOFT_source_resampler</cite> extension.</p>
 </dd></dl>
 
 <dl class="method">
@@ -552,16 +652,12 @@ and must be nonnegative.</p>
 <dd><p>Rolloff factor and room factor for the direct and send paths.</p>
 <p>This is effectively a distance scaling relative to
 the reference distance.</p>
-<p>Note: to disable distance attenuation for send paths,
+<p class="rubric">Notes</p>
+<p>To disable distance attenuation for send paths,
 set room factor to 0.  The reverb engine will, by default,
 apply a more realistic room decay based on the reverb decay
 time and distance.</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="palace.Source.spat">
-<code class="sig-name descname">spat</code><span class="sig-paren">(</span><em class="sig-param">self, value: Optional[bool]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.spat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="palace.Source.spatialize">
@@ -570,7 +666,8 @@ time and distance.</p>
 features), <cite>False</cite> (never has 3D spatialization features),
 or <cite>None</cite> (spatialization is enabled based on playing
 a mono sound or not, default).</p>
-<p>This has no effect without the AL_SOFT_source_spatialize extension.</p>
+<p>This has no effect without
+the <cite>AL_SOFT_source_spatialize</cite> extension.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -579,7 +676,7 @@ a mono sound or not, default).</p>
 <dd><p>Left and right channel angles, in radians, when playing
 a stereo buffer or stream. The angles go counter-clockwise,
 with 0 being in front and positive values going left.</p>
-<p>This has no effect without the AL_EXT_STEREO_ANGLES extension.</p>
+<p>This has no effect without the <cite>AL_EXT_STEREO_ANGLES</cite> extension.</p>
 </dd></dl>
 
 <dl class="method">
@@ -596,6 +693,88 @@ Any pending playback from a future buffer is canceled.</p>
 this does not actually alter the source’s osition,
 and instead just alters the pitch as determined
 by the doppler effect.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="palace.SourceGroup">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SourceGroup</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group of <cite>Source</cite> references.  For instance, setting
+<cite>SourceGroup.gain</cite> to 0.5 will halve the gain of all sources
+in the group.</p>
+<p>This can be used as a context manager that calls <cite>destroy</cite> upon
+completion of the block, even if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em>) – The context from which the source group is to be created.
+If it is <cite>None</cite>, the object is left uninitialized.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="palace.SourceGroup.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the source group, removing all sources from it
+before being freed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.SourceGroup.gain">
+<code class="sig-name descname">gain</code><a class="headerlink" href="#palace.SourceGroup.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source group gain, accumulating with its sources’
+and sub-groups’ gain.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.SourceGroup.parent_group">
+<code class="sig-name descname">parent_group</code><a class="headerlink" href="#palace.SourceGroup.parent_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>The source group this source group is a child of.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeException</strong> – If this group is being added to its sub-group
+    (i.e. it would create a circular sub-group chain).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.SourceGroup.pause_all">
+<code class="sig-name descname">pause_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.pause_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pause all currently-playing sources that are under
+this group, including sub-groups.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.SourceGroup.pitch">
+<code class="sig-name descname">pitch</code><a class="headerlink" href="#palace.SourceGroup.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source group pitch, accumulates with its sources’
+and sub-groups’ pitch.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.SourceGroup.resume_all">
+<code class="sig-name descname">resume_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.resume_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resume all paused sources that are under this group,
+including sub-groups.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.SourceGroup.sources">
+<code class="sig-name descname">sources</code><a class="headerlink" href="#palace.SourceGroup.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of sources currently in the group.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.SourceGroup.stop_all">
+<code class="sig-name descname">stop_all</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.stop_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop all sources that are under this group,
+including sub-groups.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.SourceGroup.sub_groups">
+<code class="sig-name descname">sub_groups</code><a class="headerlink" href="#palace.SourceGroup.sub_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of subgroups currently in the group.</p>
 </dd></dl>
 
 </dd></dl>
@@ -636,6 +815,14 @@ by the doppler effect.</p>
 <code class="sig-name descname">length</code><a class="headerlink" href="#palace.Decoder.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total length of the audio, in sample frames,
 falling-back to 0.  Note that if the length is 0,
+the decoder may not be used to load a <cite>Buffer</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.Decoder.length_seconds">
+<code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Decoder.length_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total length of the audio, in seconds,
+falling-back to 0.0.  Note that if the length is 0.0,
 the decoder may not be used to load a <cite>Buffer</cite>.</p>
 </dd></dl>
 

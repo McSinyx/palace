@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Index &#8212; palace 0.0.2 documentation</title>
+    <title>Index &#8212; palace 0.0.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -84,10 +84,12 @@
         <li><a href="reference.html#palace.Decoder.channel_config_name">(palace.Decoder attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference.html#palace.Device.close">close() (palace.Device method)</a>
+      <li><a href="reference.html#palace.Device.clock_time">clock_time (palace.Device attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Device.close">close() (palace.Device method)</a>
+</li>
       <li><a href="reference.html#palace.Source.cone_angles">cone_angles (palace.Source attribute)</a>
 </li>
       <li><a href="reference.html#palace.Context">Context (class in palace)</a>
@@ -109,11 +111,13 @@
 </li>
         <li><a href="reference.html#palace.Source.destroy">(palace.Source method)</a>
 </li>
-      </ul></li>
-      <li><a href="reference.html#palace.Device">Device (class in palace)</a>
+        <li><a href="reference.html#palace.SourceGroup.destroy">(palace.SourceGroup method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Device">Device (class in palace)</a>
+</li>
       <li><a href="reference.html#palace.Context.device">device (palace.Context attribute)</a>
 </li>
       <li><a href="reference.html#palace.device_name_default">device_name_default (in module palace)</a>
@@ -138,6 +142,8 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Source.fade_out_to_stop">fade_out_to_stop() (palace.Source method)</a>
+</li>
       <li><a href="reference.html#palace.Buffer.frequency">frequency (palace.Buffer attribute)</a>
 
       <ul>
@@ -153,7 +159,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.gain">gain (palace.Source attribute)</a>
+
+      <ul>
+        <li><a href="reference.html#palace.SourceGroup.gain">(palace.SourceGroup attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.gain_auto">gain_auto (palace.Source attribute)</a>
@@ -178,6 +188,10 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Source.latency">latency (palace.Source attribute)</a>
+</li>
+      <li><a href="reference.html#palace.Source.latency_seconds">latency_seconds (palace.Source attribute)</a>
+</li>
       <li><a href="reference.html#palace.Buffer.length">length (palace.Buffer attribute)</a>
 
       <ul>
@@ -186,6 +200,14 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Buffer.length_seconds">length_seconds (palace.Buffer attribute)</a>
+
+      <ul>
+        <li><a href="reference.html#palace.Decoder.length_seconds">(palace.Decoder attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="reference.html#palace.Buffer.loop_points">loop_points (palace.Buffer attribute)</a>
+</li>
       <li><a href="reference.html#palace.Source.looping">looping (palace.Source attribute)</a>
 </li>
   </ul></td>
@@ -212,6 +234,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.offset">offset (palace.Source attribute)</a>
 </li>
+      <li><a href="reference.html#palace.Source.offset_seconds">offset_seconds (palace.Source attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.orientation">orientation (palace.Source attribute)</a>
@@ -226,7 +250,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#module-palace">palace (module)</a>
 </li>
+      <li><a href="reference.html#palace.SourceGroup.parent_group">parent_group (palace.SourceGroup attribute)</a>
+</li>
       <li><a href="reference.html#palace.Source.pause">pause() (palace.Source method)</a>
+</li>
+      <li><a href="reference.html#palace.SourceGroup.pause_all">pause_all() (palace.SourceGroup method)</a>
 </li>
       <li><a href="reference.html#palace.Device.pause_dsp">pause_dsp() (palace.Device method)</a>
 </li>
@@ -234,10 +262,14 @@
 </li>
       <li><a href="reference.html#palace.Source.pending">pending (palace.Source attribute)</a>
 </li>
-      <li><a href="reference.html#palace.Source.pitch">pitch (palace.Source attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Source.pitch">pitch (palace.Source attribute)</a>
+
+      <ul>
+        <li><a href="reference.html#palace.SourceGroup.pitch">(palace.SourceGroup attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference.html#palace.Buffer.play">play() (palace.Buffer method)</a>
 
       <ul>
@@ -276,11 +308,13 @@
 </li>
       <li><a href="reference.html#palace.Source.resampler_index">resampler_index (palace.Source attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Device.reset">reset() (palace.Device method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.resume">resume() (palace.Source method)</a>
+</li>
+      <li><a href="reference.html#palace.SourceGroup.resume_all">resume_all() (palace.SourceGroup method)</a>
 </li>
       <li><a href="reference.html#palace.Device.resume_dsp">resume_dsp() (palace.Device method)</a>
 </li>
@@ -300,15 +334,27 @@
       </ul></li>
       <li><a href="reference.html#palace.Source">Source (class in palace)</a>
 </li>
+      <li><a href="reference.html#palace.Buffer.source_count">source_count (palace.Buffer attribute)</a>
+</li>
+      <li><a href="reference.html#palace.SourceGroup">SourceGroup (class in palace)</a>
+</li>
+      <li><a href="reference.html#palace.Buffer.sources">sources (palace.Buffer attribute)</a>
+
+      <ul>
+        <li><a href="reference.html#palace.SourceGroup.sources">(palace.SourceGroup attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Source.spat">spat() (palace.Source method)</a>
-</li>
       <li><a href="reference.html#palace.Source.spatialize">spatialize (palace.Source attribute)</a>
 </li>
       <li><a href="reference.html#palace.Source.stereo_angles">stereo_angles (palace.Source attribute)</a>
 </li>
       <li><a href="reference.html#palace.Source.stop">stop() (palace.Source method)</a>
+</li>
+      <li><a href="reference.html#palace.SourceGroup.stop_all">stop_all() (palace.SourceGroup method)</a>
+</li>
+      <li><a href="reference.html#palace.SourceGroup.sub_groups">sub_groups (palace.SourceGroup attribute)</a>
 </li>
   </ul></td>
 </tr></table>
