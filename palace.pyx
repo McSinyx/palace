@@ -360,10 +360,12 @@ cdef class Context:
     """
     cdef alure.Context impl
     cdef readonly Device device
+    cdef readonly Listener listener
 
     def __init__(self, device: Device, attrs: Dict[int, int] = {}) -> None:
         self.impl = device.impl.create_context(mkattrs(attrs.items()))
         self.device = device
+        self.listener = Listener(self)
 
     def __enter__(self) -> Context:
         use_context(self)
@@ -384,6 +386,65 @@ cdef class Context:
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
+
+
+cdef class Listener:
+    """Listener instance of the context, i.e each context will only have one listener.
+
+    Parameters
+    ----------
+    context : Context
+        The `context` on which the listener instance is to be created.
+    """
+    cdef alure.Listener impl
+
+    def __init__(self, context: Context) -> None:
+        self.impl = context.impl.get_listener()
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
+
+    def set_gain(self, value: float) -> None:
+        self.impl.set_gain(value)
+
+    def set_position(self, value: Vector3) -> None:
+        self.impl.set_position(to_vector3(value))
+
+    def set_velocity(self, value: Vector3) -> None:
+        self.impl.set_velocity(to_vector3(value))
+
+    def set_orientation(self, value: Tuple[Vector3, Vector3]) -> None:
+        at, up = value
+        self.impl.set_orientation(
+            pair[alure.Vector3, alure.Vector3](to_vector3(at), to_vector3(up)))
+
+    def set_meters_per_unit(self, value: float) -> None:
+        self.impl.set_meters_per_unit(value)    
+
+    gain = property(fset=set_gain, doc='Master gain for all context output.')
+    position = property(fset=set_position, doc='3D position of the listener.')
+    velocity = property(
+        fset=set_velocity,
+        doc=(
+            """3D velocity of the listener, in units per second. As with
+            OpenAL, this does not actually alter the listener's position, and
+            instead just alters the pitch as determined by the doppler effect.
+            """))
+    orientation = property(
+        fset=set_orientation,
+        doc=(
+            """3D orientation of the listener, using position-relative `at`
+            and `up` direction vectors.
+            """))
+    meters_per_unit = property(
+        fset=set_meters_per_unit,
+        doc=(
+            """Number of meters per unit, used for various effects that rely
+            on the distance in meters including air absorption and initial reverb
+            decay. If this is changed, it's strongly recommended to also set the
+            speed of sound (e.g. context.set_speed_of_sound (343.3 / meters_per_unit) to maintain a
+            realistic 343.3 m/s for sound propagation).
+            """))
 
 
 cdef class Buffer:
@@ -479,13 +540,15 @@ cdef class Source:
 
     Parameters
     ----------
-    context : Context
+    context : Optional[Context]
         The context from which the source is to be created.
+        If it is None, `__init__` does nothing. 
     """
     cdef alure.Source impl
 
-    def __init__(self, context: Context) -> None:
-        self.impl = context.impl.create_source()
+    def __init__(self, context: Optional[Context]) -> None:
+        if context is None: return
+        self.impl = (<Context> context).impl.create_source()
 
     def __enter__(self) -> Source:
         return self
@@ -755,7 +818,9 @@ cdef class Source:
         This is effectively a distance scaling relative to
         the reference distance.
 
-        Note: to disable distance attenuation for send paths,
+        Notes
+        -----
+        To disable distance attenuation for send paths,
         set room factor to 0.  The reverb engine will, by default,
         apply a more realistic room decay based on the reverb decay
         time and distance.
@@ -892,6 +957,146 @@ cdef class Source:
         """Destroy the source, stop playback and release resources."""
         self.impl.destroy()
 
+
+cdef class SourceGroup:
+    """A group of Source references. For instance, setting SourceGroup's gain to 0.5
+    will halve the gain of all source in group"""
+
+    Parameters
+    ----------
+    context : Optional[Context]
+        The context from which the source group is to be created.
+        If it is None, `__init__` does nothing. 
+    """
+    cdef alure.SourceGroup impl
+
+    def __init__(self, context: Optional[Context]) -> None:
+        if context is None: return
+        self.impl = (<Context> context).impl.create_source_group()
+
+    def __enter__(self) -> SourceGroup:
+        return self
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]],
+                 exc_val: Optional[BaseException],
+                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+        self.destroy()
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, SourceGroup):
+            return NotImplemented
+        other_source_group: SourceGroup = other
+        return self.impl < other_source_group.impl
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, SourceGroup):
+            return NotImplemented
+        other_source_group: SourceGroup = other
+        return self.impl <= other_source_group.impl
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, SourceGroup):
+            return NotImplemented
+        other_source_group: SourceGroup = other
+        return self.impl == other_source_group.impl
+
+    def __ne__(self, other: Any) -> bool:
+        if not isinstance(other, SourceGroup):
+            return NotImplemented
+        other_source_group: SourceGroup = other
+        return self.impl != other_source_group.impl
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, SourceGroup):
+            return NotImplemented
+        other_source_group: SourceGroup = other
+        return self.impl > other_source_group.impl
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, SourceGroup):
+            return NotImplemented
+        other_source_group: SourceGroup = other
+        return self.impl >= other_source_group.impl
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
+    
+    @property
+    def parent_group(self) -> SourceGroup:
+        """The source group this source group is a child of.
+
+        Raises
+        ------
+        RuntimeException
+            If this group is being added to its sub-group
+            (i.e. it would create a circular sub-group chain).
+        """
+        source_group: SourceGroup = SourceGroup(None)
+        source_group.impl = self.impl.get_parent_group()
+        return source_group
+
+    @parent_group.setter
+    def parent_group(self, value: SourceGroup) -> None:
+        self.impl.set_parent_group(value.impl)
+    
+    @property
+    def gain(self) -> float:
+        """Source group gain, accumulating with its sources' and
+        sub-groups' gain."""
+        return self.impl.get_gain()
+
+    @gain.setter
+    def gain(self, value: float) -> None:
+        self.impl.set_gain(value)
+
+    @property
+    def pitch(self) -> float:
+        """Source group pitch, accumulates with its sources' and
+        sub-groups' pitch."""
+        return self.impl.get_pitch()
+
+    @pitch.setter
+    def pitch(self, value: float) -> None:
+        self.impl.set_pitch(value)
+
+    @property
+    def sources(self) -> List[Source]:
+        """The list of sources currently in the group."""
+        sources = []
+        for alure_source in self.impl.get_sources():
+            source = Source(None)
+            source.impl = alure_source
+            sources.append(source)
+        return sources
+
+    @property
+    def sub_groups(self) -> List[SourceGroup]:
+        """The list of subgroups currently in the group."""
+        source_groups = []
+        for alure_source_group in self.impl.get_sub_groups():
+            source_group = SourceGroup(None)
+            source_group.impl = alure_source_group
+            source_groups.append(source_group)
+        return source_groups
+
+    def pause_all(self) -> None:
+        """Pause all currently-playing sources that are under
+        this group, including sub-groups.
+        """
+        self.impl.pause_all()
+
+    def resume_all(self) -> None:
+        """Resume all paused sources that are under this group,
+        including sub-groups.
+        """
+        self.impl.resume_all()
+
+    def stop_all(self) -> None:
+        """Stop all sources that are under this group,
+        including sub-groups.
+        """
+        self.impl.stop_all()
+    
 
 cdef class Decoder:
     """Audio decoder interface.
