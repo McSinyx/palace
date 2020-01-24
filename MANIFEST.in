@@ -1,1 +1,2 @@
-include LICENSE pyproject.toml alure.pxd palace.pyx
+include alure.pxd palace.pyx CMakeLists.txt
+graft examples
