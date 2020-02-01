@@ -4,20 +4,23 @@ env:
   global:
     - TWINE_USERNAME=__token__
     - CIBW_SKIP="cp27-* cp35-* *-manylinux_i686"
-    - CIBW_BEFORE_BUILD_LINUX='if [ ! -d openal-soft ]; then yum install -y git cmake alsa-lib-devel pulseaudio-libs-devel jack-audio-connection-kit-devel libvorbis-devel opusfile-devel libsndfile-devel && pip install cmake>=3 && git clone https://github.com/kcat/openal-soft && cd openal-soft/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && cmake --build . --parallel `nproc` --target install --config Release && git clone https://github.com/kcat/alure && mkdir alure/build && cd alure/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && cmake --build . --parallel `nproc` --target install --config Release && pip uninstall -y cmake; fi'
+    - CIBW_BEFORE_BUILD_LINUX=scripts/manylinux2014-before-build
     - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
     - CIBW_TEST_REQUIRES=tox
-    - CIBW_TEST_COMMAND="tox -c /project -e py"
+    - CIBW_TEST_COMMAND_LINUX="tox -c /project -e py"
 
 jobs:
   include:
     - services: docker
 
-install:
-  - pip install twine Cython cibuildwheel
+install: pip install twine cibuildwheel
 
-script:
-  - cibuildwheel --output-dir=dist
+script: cibuildwheel --output-dir=dist
 
-after_success:
-  - if [[ $TRAVIS_TAG ]]; then twine upload dist/*.whl; fi
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: twine upload dist/*.whl
+  on:
+    branch: master
+    tags: true
