@@ -1,0 +1,18 @@
+#!/bin/sh
+if [ ! -d openal-soft ]
+then
+  yum install -y git cmake \
+    alsa-lib-devel pulseaudio-libs-devel jack-audio-connection-kit-devel \
+    libvorbis-devel opusfile-devel libsndfile-devel
+  pip install cmake>=3
+  git clone https://github.com/kcat/openal-soft
+  cd openal-soft/build
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+  cmake --build . --parallel `nproc` --target install --config Release
+  git clone https://github.com/kcat/alure
+  mkdir alure/build
+  cd alure/build
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+  cmake --build . --parallel `nproc` --target install --config Release
+  pip uninstall -y cmake
+fi
