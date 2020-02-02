@@ -1,13 +1,16 @@
 language: python
 
+branches:
+  only: master
+
 env:
   global:
     - TWINE_USERNAME=__token__
     - CIBW_SKIP="cp27-* cp35-* *-manylinux_i686"
-    - CIBW_BEFORE_BUILD_LINUX=scripts/manylinux2014-before-build
+    - CIBW_BEFORE_BUILD_LINUX=.travis/cibw-before-build-manylinux2014
     - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
     - CIBW_TEST_REQUIRES=tox
-    - CIBW_TEST_COMMAND_LINUX="tox -c /project -e py"
+    - CIBW_TEST_COMMAND_LINUX="tox -c /project"
 
 jobs:
   include:
@@ -22,5 +25,4 @@ deploy:
   provider: script
   script: twine upload dist/*.whl
   on:
-    branch: master
     tags: true
