@@ -7,7 +7,7 @@ To quote alure's README,
 > and source management for virtually unlimited sound source handles.
 
 ## Features
-In some sense, what palace aimes to be to OpenAL is what [ModernGL]
+In some sense, what palace aimes to be to [OpenAL Soft] is what [ModernGL]
 is to OpenGL (except that all the heavy-lifting are taken are by alure):
 
 * 3D sound rendering
@@ -47,11 +47,27 @@ For further information, Python's `help` is your friend.
 ## License and Credits
 Palace is released under the [GNU LGPL version 3 or later][LGPLv3+].
 
+To ensure that palace can run without any dependencies outside of the [pip]
+toolchain, the wheels are bundled with dynamically linked libraries from
+the build machine, which is similar to static linking:
+
+| Library        | License      |
+| -------------- | ------------ |
+| [Alure][alure] | ZLib         |
+| [OpenAL Soft]  | GNU LGPLv2+  |
+| [Vorbis]       | 3-clause BSD |
+| [Opus]         | 3-clause BSD |
+| [libsndfile]   | GNU LGPL2.1+ |
+
 [alure]: https://github.com/kcat/alure
+[OpenAL Soft]: https://kcat.strangesoft.net/openal.html
 [ModernGL]: https://github.com/moderngl/moderngl
 [Cython]: https://cython.org/
 [pip]: https://pip.pypa.io/en/latest/
-[PyPI]: https://pypi.org/
+[PyPI]: https://pypi.org/project/palace/
 [GH-1]: https://github.com/McSinyx/palace/issues/1
 [CMake]: https://cmake.org/
+[Vorbis]: https://xiph.org/vorbis/
+[Opus]: http://opus-codec.org/
+[libsndfile]: http://www.mega-nerd.com/libsndfile/
 [LGPLv3+]: https://www.gnu.org/licenses/lgpl-3.0.en.html

@@ -1,7 +1,9 @@
 language: python
 
 branches:
-  only: master
+  only:
+    - master
+    - /\d+\.\d+\.\d+(-\S+)?$/
 
 env:
   global:
