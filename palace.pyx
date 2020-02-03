@@ -376,7 +376,38 @@ cdef class Context:
         use_context(None)
         self.destroy()
 
-    # TODO: comparisons and bool
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, Context):
+            return NotImplemented
+        return self.impl < (<Context> other).impl
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, Context):
+            return NotImplemented
+        return self.impl <= (<Context> other).impl
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Context):
+            return NotImplemented
+        return self.impl == (<Context> other).impl
+
+    def __ne__(self, other: Any) -> bool:
+        if not isinstance(other, Context):
+            return NotImplemented
+        return self.impl != (<Context> other).impl
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, Context):
+            return NotImplemented
+        return self.impl > (<Context> other).impl
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, Context):
+            return NotImplemented
+        return self.impl >= (<Context> other).impl
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
 
     def destroy(self) -> None:
         """Destroy the context.  The context must not be current
@@ -425,30 +456,24 @@ cdef class Listener:
 
     gain = property(fset=set_gain, doc='Master gain for all context output.')
     position = property(fset=set_position, doc='3D position of the listener.')
-    velocity = property(
-        fset=set_velocity,
-        doc=(
-            """3D velocity of the listener, in units per second.
-            As with OpenAL, this does not actually alter the listener's
-            position, and instead just alters the pitch as determined by
-            the doppler effect.
-            """))
-    orientation = property(
-        fset=set_orientation,
-        doc=(
-            """3D orientation of the listener, using position-relative
-            `at` and `up` direction vectors.
-            """))
-    meters_per_unit = property(
-        fset=set_meters_per_unit,
-        doc=(
-            """Number of meters per unit used for various effects
-            that rely on the distance in meters including
-            air absorption and initial reverb decay. If this is changed,
-            it's strongly recommended to also set the speed of sound
-            (e.g. `context.speed_of_sound = 343.3 / meters_per_unit`
-            to maintain a realistic 343.3 m/s for sound propagation).
-            """))
+    velocity = property(fset=set_velocity, doc=(
+        """3D velocity of the listener, in units per second.
+        As with OpenAL, this does not actually alter the listener's
+        position, and instead just alters the pitch as determined by
+        the doppler effect.
+        """))
+    orientation = property(fset=set_orientation, doc=(
+        """3D orientation of the listener, using position-relative
+        `at` and `up` direction vectors.
+        """))
+    meters_per_unit = property(fset=set_meters_per_unit, doc=(
+        """Number of meters per unit used for various effects
+        that rely on the distance in meters including
+        air absorption and initial reverb decay. If this is changed,
+        it's strongly recommended to also set the speed of sound
+        (e.g. `context.speed_of_sound = 343.3 / meters_per_unit`
+        to maintain a realistic 343.3 m/s for sound propagation).
+        """))
 
 
 cdef class Buffer:
@@ -673,7 +698,32 @@ cdef class Source:
         """
         return self.impl.is_playing_or_pending()
 
-    # TODO: source group
+    @property
+    def group(self) -> Optional[SourceGroup]:
+        """Parent group of this source.
+
+        The parent group influences all sources that belong to it.
+        A source may only be the child of one `SourceGroup` at a time,
+        although that source group may belong to another source group.
+
+        This is `None` when the source does not belong to any group.
+        On the other hand, setting it to `None` removes the source
+        from its current group.
+
+        See Also
+        --------
+        SourceGroup : A group of `Source` references
+        """
+        source_group = SourceGroup(None)
+        source_group.impl = self.impl.get_group()
+        return source_group or None
+
+    @group.setter
+    def group(self, value: Optional[SourceGroup]) -> None:
+        if value is None:
+            self.impl.set_group(<alure.SourceGroup> nullptr)
+        else:
+            self.impl.set_group((<SourceGroup> value).impl)
 
     @property
     def priority(self) -> int:
