@@ -86,8 +86,10 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
     cdef cppclass FilterParams:
         pass
+
     cdef cppclass SourceSend:
-        pass
+        Source source 'mSource'
+        unsigned send 'mSend'
 
     # Enum classes:
     cdef cppclass SampleType:
@@ -546,7 +548,34 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         void destroy() except +
 
     cdef cppclass AuxiliaryEffectSlot:
-        pass
+        ctypedef AuxiliaryEffectSlotImpl* handle_type
+
+        AuxiliaryEffectSlot()  # nil
+        AuxiliaryEffectSlot(AuxiliaryEffectSlotImpl*)
+        AuxiliaryEffectSlot(const AuxiliaryEffectSlot&)
+        AuxiliaryEffectSlot(AuxiliaryEffectSlot&&)
+
+        AuxiliaryEffectSlot& operator=(const AuxiliaryEffectSlot&)
+        AuxiliaryEffectSlot& operator=(AuxiliaryEffectSlot&&)
+
+        boolean operator==(const AuxiliaryEffectSlot&)
+        boolean operator!=(const AuxiliaryEffectSlot&)
+        boolean operator<=(const AuxiliaryEffectSlot&)
+        boolean operator>=(const AuxiliaryEffectSlot&)
+        boolean operator<(const AuxiliaryEffectSlot&)
+        boolean operator>(const AuxiliaryEffectSlot&)
+
+        boolean operator bool()
+
+        handle_type get_handle 'getHandle'()
+
+        void set_gain 'setGain'(float) except +
+        void set_send_auto 'setSendAuto'(bool) except +
+        void apply_effect 'applyEffect'(Effect) except +
+        void destroy() except +
+
+        vector[SourceSend] get_source_sends 'getSourceSends'() except +
+        size_t get_use_count 'getUseCount'() except +
 
     cdef cppclass Effect:
         pass

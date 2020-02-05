@@ -35,7 +35,7 @@ __all__ = ['ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
 
 
 from types import TracebackType
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Type
 from warnings import warn
 
 from libcpp cimport bool as boolean, nullptr
@@ -1055,12 +1055,20 @@ cdef class Source:
 
     # TODO: set direct filter
     # TODO: set send filter
-    # TODO: set auxiliary send
+
+    def set_auxiliary_send(self, slot: AuxiliaryEffectSlot, send: int) -> None:
+        self.impl.set_auxiliary_send(slot.impl, send)
+
     # TODO: set auxiliary send filter
 
     def destroy(self) -> None:
         """Destroy the source, stop playback and release resources."""
         self.impl.destroy()
+
+    auxiliary_send = property(fset=set_auxiliary_send, doc=(
+        """Connect the effect slot to the given send path.
+        Any filter properties on the send path remain as they were.
+        """))
 
 
 cdef class SourceGroup:
@@ -1207,6 +1215,116 @@ cdef class SourceGroup:
         before being freed.
         """
         self.impl.destroy()
+
+
+cdef class AuxiliaryEffectSlot:
+    """An effect processor.
+
+    It takes the output mix of zero or more sources,
+    applies DSP for the desired effect (as configured
+    by a given `Effect` object), then adds to the output mix.
+
+    This can be used as a context manager that calls `destroy`
+    upon completion of the block, even if an error occurs.
+
+    Parameters
+    ----------
+    context : Context
+        The context from which the auxiliary effect slot is to be created.
+
+    Raises
+    ------
+    RuntimeError
+        If the effect slot can't be created.
+    """
+    cdef alure.AuxiliaryEffectSlot impl
+
+    def __init__(self, context: Context) -> None:
+        self.impl = context.impl.create_auxiliary_effect_slot()
+
+    def __enter__(self) -> AuxiliaryEffectSlot:
+        return self
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]],
+                 exc_val: Optional[BaseException],
+                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+        self.destroy()
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, AuxiliaryEffectSlot):
+            return NotImplemented
+        return self.impl < (<AuxiliaryEffectSlot> other).impl
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, AuxiliaryEffectSlot):
+            return NotImplemented
+        return self.impl <= (<AuxiliaryEffectSlot> other).impl
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, AuxiliaryEffectSlot):
+            return NotImplemented
+        return self.impl == (<AuxiliaryEffectSlot> other).impl
+
+    def __ne__(self, other: Any) -> bool:
+        if not isinstance(other, AuxiliaryEffectSlot):
+            return NotImplemented
+        return self.impl != (<AuxiliaryEffectSlot> other).impl
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, AuxiliaryEffectSlot):
+            return NotImplemented
+        return self.impl > (<AuxiliaryEffectSlot> other).impl
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, AuxiliaryEffectSlot):
+            return NotImplemented
+        return self.impl >= (<AuxiliaryEffectSlot> other).impl
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
+
+    def set_gain(self, value: float) -> None:
+        self.impl.set_gain(value)
+
+    def set_send_auto(self, value: bool) -> None:
+        self.impl.set_send_auto(value)
+
+    # TODO: apply effect
+
+    def destroy(self) -> None:
+        """Destroy the effect slot, returning it to the system.
+        If the effect slot is currently set on a source send,
+        it will be removed first.
+        """
+        return self.impl.destroy()
+
+    @property
+    def source_sends(self) -> Iterator[Tuple[Source, int]]:
+        """Iterator of each `Source` object and its pairing
+        send this effect slot is set on.
+        """
+        for source_send in self.impl.get_source_sends():
+            source = Source(None)
+            send = source_send.send
+            source.impl = source_send.source
+            yield source, send
+
+    @property
+    def use_count(self):
+        """Number of source sends the effect slot
+        is used by.  This is equivalent to calling
+        `len(tuple(self.source_sends))`.
+        """
+        return self.impl.get_use_count()
+
+    gain = property(fset=set_gain, doc=('Gain of the effect slot.'))
+    send_auto = property(fset=set_send_auto, doc=(
+        """If set to `True`, the reverb effect will automatically
+        apply adjustments to the source's send slot gains based
+        on the effect properties.
+
+        Has no effect when using non-reverb effects.  Default is `True`.
+        """))
 
 
 cdef class Decoder:
