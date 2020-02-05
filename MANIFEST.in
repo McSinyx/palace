@@ -1,2 +1,1 @@
-include alure.pxd palace.pyx CMakeLists.txt
-graft examples
+include alure.pxd palace.pyx CMakeLists.txt examples/*.py tests/*.py

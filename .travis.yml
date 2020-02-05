@@ -8,15 +8,19 @@ branches:
 env:
   global:
     - TWINE_USERNAME=__token__
-    - CIBW_SKIP="cp27-* cp35-* *-manylinux_i686"
-    - CIBW_BEFORE_BUILD_LINUX=.travis/cibw-before-build-manylinux2014
     - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
+    - CIBW_BEFORE_BUILD_LINUX=.travis/cibw-before-build-manylinux2014
     - CIBW_TEST_REQUIRES=tox
     - CIBW_TEST_COMMAND_LINUX="tox -c /project"
 
 jobs:
   include:
     - services: docker
+      env: CIBW_BUILD=cp36-manylinux_x86_64
+    - services: docker
+      env: CIBW_BUILD=cp37-manylinux_x86_64
+    - services: docker
+      env: CIBW_BUILD=cp38-manylinux_x86_64
 
 install: pip install twine cibuildwheel
 

@@ -1,4 +1,22 @@
 #!/usr/bin/env python3
+# setup script
+# Copyright (C) 2019, 2020  Nguyễn Gia Phong
+#
+# This file is part of palace.
+#
+# palace is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License,
+# or (at your option) any later version.
+#
+# palace is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with palace.  If not, see <https://www.gnu.org/licenses/>.
+
 import re
 from distutils.dir_util import mkpath
 from distutils.file_util import copy_file
@@ -32,7 +50,8 @@ class BuildAlure2Ext(build_ext):
 
 setup(cmdclass={'build_ext': BuildAlure2Ext},
       ext_modules=cythonize(
-          Extension(name='palace', sources=['palace.pyx'], language='c++'),
-          compiler_directives=dict(
-              binding=False, embedsignature=True, language_level='3str',
-              c_string_type='str', c_string_encoding='utf8')))
+          Extension(name='palace', sources=['palace.pyx'],
+                    language='c++', define_macros=[('CYTHON_TRACE', 1)]),
+          compiler_directives=dict(language_level='3str', c_string_type='str',
+                                   c_string_encoding='utf8', linetrace=True,
+                                   binding=False, embedsignature=True)))
