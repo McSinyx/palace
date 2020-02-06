@@ -309,8 +309,8 @@ cdef class Device:
         -----
         This starts relative to the device being opened, and does not
         increment while there are no contexts nor while processing
-        is paused. Currently, this may not exactly match the rate
-        that sources play at. In the future it may utilize an OpenAL
+        is paused.  Currently, this may not exactly match the rate
+        that sources play at.  In the future it may utilize an OpenAL
         extension to retrieve the audio device's real clock.
         """
         return self.impl.get_clock_time().count()
@@ -467,10 +467,11 @@ cdef class Listener:
         `at` and `up` direction vectors.
         """))
     meters_per_unit = property(fset=set_meters_per_unit, doc=(
-        """Number of meters per unit used for various effects
-        that rely on the distance in meters including
-        air absorption and initial reverb decay. If this is changed,
-        it's strongly recommended to also set the speed of sound
+        """Number of meters per unit.
+
+        This is used for various effects relying on the distance
+        in meters including air absorption and initial reverb decay.
+        If this is changed, so should the speed of sound
         (e.g. `context.speed_of_sound = 343.3 / meters_per_unit`
         to maintain a realistic 343.3 m/s for sound propagation).
         """))
@@ -645,19 +646,19 @@ cdef class Source:
         self.impl.stop()
 
     def fade_out_to_stop(self, gain: float, ms: int) -> None:
-        """Fade the source to `gain` over `ms` milliseconds,
-        at which point playback will stop. `gain` is in addition to
-        the base gain, and must be greater than 0 and less than 1.
-        `ms` must also be positive
+        """Fade the source to `gain` over `ms` milliseconds.
 
-        The fading is logarithmic. As a result, the initial drop-off may
-        happen faster than expected but the fading is more perceptually
-        consistant over the given duration. It will take just as much
-        time to go from -6 dB to -12 dB as it will to go from -40 dB
-        to -46 dB, for example.
+        `gain` is in addition to the base gain and must be within
+        the [0, 1] interval.  `ms` must be positive.
+
+        The fading is logarithmic.  As a result, the initial drop-off
+        may happen faster than expected but the fading is more
+        perceptually consistant over the given duration.  It will take
+        just as much time to go from -6 dB to -12 dB as it will to go
+        from -40 dB to -46 dB, for example.
 
         Pending playback from a future buffer is not immediately
-        canceled, but the fade timer starts with this call. If the
+        canceled, but the fade timer starts with this call.  If the
         future buffer then becomes ready, it will start mid-fade.
         Pending playback will be canceled if the fade out completes
         before the future buffer becomes ready.
@@ -759,7 +760,7 @@ cdef class Source:
 
     @property
     def offset_seconds(self) -> float:
-        """Source offset in seconds. For streaming sources
+        """Source offset in seconds.  For streaming sources
         this will be the offset based on the decoder's read position.
         """
         return self.impl.get_sec_offset().count()
@@ -786,7 +787,13 @@ cdef class Source:
 
     @property
     def pitch(self) -> float:
-        """Linear pitch shift base, default to 1.0."""
+        """Linear pitch shift base, default to 1.0.
+
+        Raises
+        ------
+        ValueError
+            If set to a nonpositive value.
+        """
         return self.impl.get_pitch()
 
     @pitch.setter
@@ -795,7 +802,13 @@ cdef class Source:
 
     @property
     def gain(self) -> float:
-        """Base linear volume gain, default to 1.0."""
+        """Base linear volume gain, default to 1.0.
+
+        Raises
+        ------
+        ValueError
+            If set to a negative value.
+        """
         return self.impl.get_gain()
 
     @gain.setter
@@ -804,10 +817,22 @@ cdef class Source:
 
     @property
     def gain_range(self) -> Tuple[float, float]:
-        """Minimum and maximum gain.  The source's gain is clamped
-        to this range after distance attenuation and cone attenuation
-        are applied to the gain base, although before the filter
-        gain adjustements.
+        """The range which the source's gain is clamped to after
+        distance and cone attenuation are applied to the gain base,
+        although before the filter gain adjustements.
+
+        Parameters
+        ----------
+        mingain : float
+            Minimum gain, default to 0.
+        maxgain : float
+            Maximum gain, default to 1.
+
+        Raises
+        ------
+        ValueError
+            If set to a value where `mingain` is greater than `maxgain`
+            or either of them is outside of the [0, 1] interval.
         """
         return self.impl.get_gain_range()
 
@@ -818,14 +843,28 @@ cdef class Source:
 
     @property
     def distance_range(self) -> Tuple[float, float]:
-        """Reference and maximum distance the source will use for
-        the current distance model. For Clamped distance models,
-        the source's calculated distance is clamped to the specified
-        range before applying distance-related attenuation.
+        """Reference and maximum distance for current distance model.
 
-        For all distance models, the reference distance is the distance
-        at which the source's volume will not have any extra attenuation
-        (an effective gain multiplier of 1).
+        For Clamped distance models, the source's calculated
+        distance is clamped to the specified range before applying
+        distance-related attenuation.
+
+        Parameters
+        ----------
+        refdist : float
+            The distance at which the source's volume will not have
+            any extra attenuation (an effective gain multiplier of 1),
+            default to 0.
+        maxdist : float
+            The maximum distance, default to FLT_MAX, which is the
+            maximum value of a single-precision floating-point variable
+            (2**128 - 2**104).
+
+        Raises
+        ------
+        ValueError
+            If set to a value where `refdist` is greater than `maxdist`
+            or either of them is outside of the [0, FLT_MAX] interval.
         """
         return self.impl.get_distance_range()
 
@@ -879,12 +918,26 @@ cdef class Source:
     def cone_angles(self) -> Tuple[float, float]:
         """Cone inner and outer angles in degrees.
 
-        The inner angle is the area within which the listener will
-        hear the source with no extra attenuation, while the listener
-        being outside of the outer angle will hear the source attenuated
-        according to the outer cone gains. The area follows the facing
-        direction, so for example an inner angle of 180 means the entire
-        front face of the source is in the inner cone.
+        Parameters
+        ----------
+        inner : float
+            The area within which the listener will hear the source
+            without extra attenuation, default to 360.
+        outer : float
+            The area outside of which the listener will hear the source
+            attenuated according to `outer_cone_gains`, default to 360.
+
+        Raises
+        ------
+        ValueError
+            If set to a value where `inner` is greater than `outer`
+            or either of them is outside of the [0, 360] interval.
+
+        Notes
+        -----
+        The areas follow the facing direction, so for example
+        an inner angle of 180 means the entire front face of
+        the source is in the inner cone.
         """
         return self.impl.get_cone_angles()
 
@@ -901,11 +954,17 @@ cdef class Source:
         Parameters
         ----------
         gain : float
-            Linear gain applying to all frequencies.
+            Linear gain applying to all frequencies, default to 1.
         gainhf : float
             Linear gainhf applying extra attenuation to high frequencies
-            creating a low-pass effect.  It has no effect without the
-            `ALC_EXT_EFX` extension.
+            creating a low-pass effect, default to 1.  It has no effect
+            without the `ALC_EXT_EFX` extension.
+
+        Raises
+        ------
+        ValueError
+            If either of the gains is set to a value
+            outside of the [0, 1] interval.
         """
         return self.impl.get_outer_cone_gains()
 
@@ -921,6 +980,11 @@ cdef class Source:
         This is effectively a distance scaling relative to
         the reference distance.
 
+        Raises
+        ------
+        ValueError
+            If either of rolloff factors is set to a negative value.
+
         Notes
         -----
         To disable distance attenuation for send paths,
@@ -928,7 +992,7 @@ cdef class Source:
         apply a more realistic room decay based on the reverb decay
         time and distance.
         """
-        self.impl.get_rolloff_factors()
+        return self.impl.get_rolloff_factors()
 
     @rolloff_factors.setter
     def rolloff_factors(self, value: Tuple[float, float]) -> None:
@@ -938,8 +1002,14 @@ cdef class Source:
     @property
     def doppler_factor(self) -> float:
         """The doppler factor for the doppler effect's pitch shift.
+
         This effectively scales the source and listener velocities
         for the doppler calculation.
+
+        Raises
+        ------
+        ValueError
+            If set to a value outside of the [0, 1] interval.
         """
         return self.impl.get_doppler_factor()
 
@@ -960,10 +1030,14 @@ cdef class Source:
 
     @property
     def radius(self) -> float:
-        """Radius of the source.  This causes the source to behave
-        as if every point within the spherical area emits sound.
+        """Radius of the source, as if it is a sound-emitting sphere.
 
         This has no effect without the `AL_EXT_SOURCE_RADIUS` extension.
+
+        Raises
+        ------
+        ValueError
+            If set to a negative value.
         """
         return self.impl.get_radius()
 
@@ -974,7 +1048,7 @@ cdef class Source:
     @property
     def stereo_angles(self) -> Tuple[float, float]:
         """Left and right channel angles, in radians, when playing
-        a stereo buffer or stream. The angles go counter-clockwise,
+        a stereo buffer or stream.  The angles go counter-clockwise,
         with 0 being in front and positive values going left.
 
         This has no effect without the `AL_EXT_STEREO_ANGLES` extension.
@@ -1013,11 +1087,10 @@ cdef class Source:
     @property
     def resampler_index(self) -> int:
         """Index of the resampler to use for this source.
-        The index is from the resamplers returned by
-        `Context.get_available_resamplers`, and must be nonnegative.
 
-        This has no effect without
-        the `AL_SOFT_source_resampler` extension.
+        The index must be nonnegative, from the resamplers returned
+        by `Context.get_available_resamplers`, and has no effect
+        without the `AL_SOFT_source_resampler` extension.
         """
         return self.impl.get_resampler_index()
 
