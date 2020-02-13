@@ -31,7 +31,8 @@ device_name_default : Dict[str, str]
 __all__ = ['ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
            'device_name_default', 'device_names',
            'query_extension', 'use_context',
-           'Device', 'Context', 'Buffer', 'Source', 'SourceGroup', 'Decoder']
+           'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
+           'AuxiliaryEffectSlot', 'Decoder', 'MessageHandler']
 
 
 from types import TracebackType
@@ -40,9 +41,12 @@ from warnings import warn
 
 from libcpp cimport bool as boolean, nullptr
 from libcpp.memory cimport shared_ptr
+from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
+from std cimport milliseconds
+from bases cimport BaseMessageHandler
 cimport alure
 
 # Type aliases
@@ -128,8 +132,9 @@ cdef class Device:
 
     Parameters
     ----------
-    name : str, optional
-        The name of the playback device.
+    name : Optional[str], optional
+        The name of the playback device.  If it is `None`,
+        the object is left uninitialized.
     fail_safe : bool, optional
         On failure, fallback to the default device if this is `True`,
         otherwise `RuntimeError` is raised.  Default to `False`.
@@ -152,7 +157,9 @@ cdef class Device:
     """
     cdef alure.Device impl
 
-    def __init__(self, name: str = '', fail_safe: bool = False) -> None:
+    def __init__(self, name: Optional[str] = '',
+                 fail_safe: bool = False) -> None:
+        if name is None: return
         try:
             self.impl = devmgr.open_playback(name)
         except RuntimeError as exc:
@@ -229,7 +236,7 @@ cdef class Device:
     def efx_version(self) -> Tuple[int, int]:
         """EFX version supported by this device.
 
-        If the ALC_EXT_EFX extension is unsupported,
+        If the `ALC_EXT_EFX` extension is unsupported,
         this will be `(0, 0)`.
         """
         cdef alure.Version version = self.impl.get_efx_version()
@@ -244,7 +251,7 @@ cdef class Device:
     def max_auxiliary_sends(self) -> int:
         """Maximum number of auxiliary source sends.
 
-        If ALC_EXT_EFX is unsupported, this will be 0.
+        If `ALC_EXT_EFX` is unsupported, this will be 0.
         """
         return self.impl.get_max_auxiliary_sends()
 
@@ -252,7 +259,7 @@ cdef class Device:
     def hrtf_names(self) -> List[str]:
         """List of available HRTF names, sorted as OpenAL gives them,
         such that the index of a given name is the ID to use with
-        ALC_HRTF_ID_SOFT.
+        `ALC_HRTF_ID_SOFT`.
 
         If the `ALC_SOFT_HRTF` extension is unavailable,
         this will be an empty list.
@@ -351,6 +358,10 @@ cdef class Context:
     ----------
     device : Device
         The device this context was created from.
+    listener : Listener
+        The listener instance of this context.
+    message_handler : MessageHandler
+        Handler of some certain events.
 
     Raises
     ------
@@ -360,11 +371,15 @@ cdef class Context:
     cdef alure.Context impl
     cdef readonly Device device
     cdef readonly Listener listener
+    cdef public MessageHandler message_handler
 
     def __init__(self, device: Device, attrs: Dict[int, int] = {}) -> None:
         self.impl = device.impl.create_context(mkattrs(attrs.items()))
         self.device = device
         self.listener = Listener(self)
+        self.message_handler = MessageHandler()
+        self.impl.set_message_handler(
+            shared_ptr[alure.MessageHandler](new CppMessageHandler(self)))
 
     def __enter__(self) -> Context:
         use_context(self)
@@ -492,6 +507,11 @@ cdef class Buffer:
     name : str
         Audio file or resource name.  Multiple calls with the same name
         will return the same buffer.
+
+    Attributes
+    ----------
+    name : str
+        Audio file or resource name.
 
     Raises
     ------
@@ -667,7 +687,7 @@ cdef class Source:
         which should be called regularly (30 to 50 times per second)
         for the fading to be smooth.
         """
-        self.impl.fade_out_to_stop(gain, alure.milliseconds(ms))
+        self.impl.fade_out_to_stop(gain, milliseconds(ms))
 
     def pause(self) -> None:
         """Pause the source if it is playing."""
@@ -1482,3 +1502,114 @@ cdef class Decoder:
         if source is None: source = Source(self.context)
         (<Source> source).impl.play(self.pimpl, chunk_len, queue_size)
         return source
+
+
+cdef class MessageHandler:
+    """Message handler interface.
+
+    Applications may derive from this and set an instance on a context
+    to receive messages.  The base methods are no-ops, so subclasses
+    only need to implement methods for relevant messages.
+    """
+    def device_disconnected(self, device: Device) -> None:
+        """Handle disconnected device messages.
+
+        This is called when the given device has been disconnected and
+        is no longer usable for output.  As per the `ALC_EXT_disconnect`
+        specification, disconnected devices remain valid, however all
+        playing sources are automatically stopped, any sources that are
+        attempted to play will immediately stop, and new contexts may
+        not be created on the device.
+
+        Notes
+        -----
+        Connection status is checked during `Context.update` calls, so
+        method must be called regularly to be notified when a device is
+        disconnected.  This method may not be called if the device lacks
+        support for the `ALC_EXT_disconnect` extension.
+        """
+
+    def source_stopped(self, source: Source) -> None:
+        """Handle end-of-buffer/stream messages.
+
+        This is called when the given source reaches the end of buffer
+        or stream, which is detected upon a call to `Context.update`.
+        """
+
+    def source_force_stopped(self, source: Source) -> None:
+        """Handle forcefully stopped sources.
+
+        This is called when the given source was forced to stop,
+        because of one of the following reasons:
+
+        * There were no more mixing sources and a higher-priority source
+          preempted it.
+        * `source` is part of a `SourceGroup` (or sub-group thereof)
+          that had its `SourceGroup.stop_all` method called.
+        * `source` was playing a buffer that's getting removed.
+        """
+
+    def buffer_loading(self, name: str, channel_config: str, sample_type: str,
+                       sample_rate: int, data: List[int]) -> None:
+        """Handle messages from Buffer initialization.
+
+        This is called when a new buffer is about to be created
+        and loaded. which may be called asynchronously for buffers
+        being loaded asynchronously.
+
+        Parameters
+        ----------
+        name : str
+            Resource name passed to `Buffer`.
+        channel_config : str
+            Channel configuration of the given audio data.
+        sample_type : str
+            Sample type of the given audio data.
+        sample_rate : int
+            Sample rate of the given audio data.
+        data : List[int]
+            The audio data that is about to be fed to the OpenAL buffer.
+        """
+
+    def resource_not_found(self, name: str) -> str:
+        """Return the fallback resource for the one of the given name.
+
+        This is called when `name` is not found, allowing substitution
+        of a different resource until the returned string either points
+        to a valid resource or is empty (default).
+
+        For buffers being cached, the original name will still be used
+        for the cache entry so one does not have to keep track of
+        substituted resource names.
+        """
+        return ''
+
+
+cdef cppclass CppMessageHandler(BaseMessageHandler):
+    Context context
+
+    CppMessageHandler(Context ctx):
+        this.context = ctx  # Will this be garbage collected?
+
+    void device_disconnected(alure.Device alure_device):
+        cdef Device device = Device(None)
+        device.impl = alure_device
+        context.message_handler.device_disconnected(device)
+
+    void source_stopped(alure.Source alure_source):
+        cdef Source source = Source(None)
+        source.impl = alure_source
+        context.message_handler.source_stopped(source)
+
+    void source_force_stopped(alure.Source alure_source):
+        cdef Source source = Source(None)
+        source.impl = alure_source
+        context.message_handler.source_force_stopped(source)
+
+    void buffer_loading(string name, string channel_config, string sample_type,
+                        unsigned sample_rate, vector[signed char] data):
+        context.message_handler.buffer_loading(name, channel_config,
+                                               sample_type, sample_rate, data)
+
+    string resource_not_found(string name):
+        return context.message_handler.resource_not_found(name)

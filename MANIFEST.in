@@ -1,1 +1,1 @@
-include alure.pxd palace.pyx CMakeLists.txt examples/*.py tests/*.py
+include src/*.pxd src/*.pyx src/*.h tests/*.py examples/*.py CMakeLists.txt

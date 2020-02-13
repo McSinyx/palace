@@ -25,31 +25,9 @@ from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
-
-# C++ standard library
-cdef extern from '<chrono>' namespace 'std::chrono' nogil:
-    cdef cppclass duration[Rep, Period=*]:
-        ctypedef Rep rep
-        duration() except +
-        duration(const rep&) except +   # ugly hack, see cython/cython#3198
-        rep count() except +
-
-    ctypedef duration[int64_t, nano] nanoseconds
-    ctypedef duration[int64_t, milli] milliseconds
+from std cimport duration, nanoseconds, milliseconds, shared_future
 
 
-cdef extern from '<future>' namespace 'std' nogil:
-    cdef cppclass shared_future[R]:
-        pass
-
-
-cdef extern from '<ratio>' namespace 'std' nogil:
-    cdef cppclass nano:
-        pass
-    cdef cppclass milli:
-        pass
-
-
 # OpenAL and Alure auxiliary declarations
 cdef extern from 'alc.h' nogil:
     cdef int ALC_FALSE
