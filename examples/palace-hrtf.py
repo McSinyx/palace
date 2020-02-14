@@ -69,9 +69,8 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
                     stderr.write(f'Failed to open file: {filename}\n')
                     continue
                 decoder.play(12000, 4, src)
-                print(f'Playing {filename} ({decoder.sample_type_name},',
-                      f'{decoder.channel_config_name},',
-                      f'{decoder.frequency} Hz)')
+                print(f'Playing {filename} ({decoder.sample_type},',
+                      f'{decoder.channel_config}, {decoder.frequency} Hz)')
 
                 for i in takewhile(lambda i: src.playing,
                                    count(step=PERIOD)):

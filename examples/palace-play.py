@@ -47,8 +47,8 @@ def play(files: Iterable[str], device: str) -> None:
                 stderr.write(f'Failed to open file: {filename}\n')
                 continue
             with buffer, buffer.play() as src:
-                print(f'Playing {filename} ({buffer.sample_type_name},',
-                      f'{buffer.channel_config_name}, {buffer.frequency} Hz)')
+                print(f'Playing {filename} ({buffer.sample_type},',
+                      f'{buffer.channel_config}, {buffer.frequency} Hz)')
 
                 for i in takewhile(lambda i: src.playing, count()):
                     print(f' {pretty_time(src.offset_seconds)} /'

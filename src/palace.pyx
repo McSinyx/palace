@@ -26,28 +26,31 @@ device_names : Dict[str, List[str]]
     Dictionary of available device names corresponding to each type.
 device_name_default : Dict[str, str]
     Dictionary of the default device name corresponding to each type.
+sample_types : FrozenSet[str]
+    Set of sample types.
+channel_configs : FrozenSet[str]
+    Set of channel configurations.
 """
 
-__all__ = ['ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
-           'device_name_default', 'device_names',
-           'query_extension', 'use_context',
-           'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
-           'AuxiliaryEffectSlot', 'Decoder', 'MessageHandler']
+__all__ = [
+    'ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
+    'device_name_default', 'device_names', 'sample_types', 'channel_configs',
+    'query_extension', 'use_context',
+    'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
+    'AuxiliaryEffectSlot', 'Decoder', 'MessageHandler']
 
-
 from types import TracebackType
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Type
+from typing import Any, Dict, FrozenSet, Iterator, List, Optional, Tuple, Type
 from warnings import warn
 
-from libcpp cimport bool as boolean, nullptr
+from libcpp cimport bool as boolean, nullptr    # noqa
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
 from std cimport milliseconds
-from bases cimport BaseMessageHandler
-cimport alure
+cimport alure   # noqa
 
 # Type aliases
 Vector3 = Tuple[float, float, float]
@@ -74,30 +77,12 @@ device_name_default: Dict[str, str] = dict(
     full=devmgr.default_device_name(alure.DefaultDeviceType.Full),
     capture=devmgr.default_device_name(alure.DefaultDeviceType.Capture))
 
-
-cdef vector[alure.AttributePair] mkattrs(vector[pair[int, int]] attrs):
-    """Convert attribute pairs from Python object to alure format."""
-    cdef vector[alure.AttributePair] attributes
-    cdef alure.AttributePair pair
-    for attribute, value in attrs:
-        pair.attribute = attribute
-        pair.value = value
-        attributes.push_back(pair)  # insert a copy
-    pair.attribute = pair.value = 0
-    attributes.push_back(pair)  # insert a copy
-    return attributes
-
-
-cdef vector[float] from_vector3(alure.Vector3 v):
-    """Convert alure::Vector3 to std::vector of 3 floats."""
-    cdef vector[float] result
-    for i in range(3): result.push_back(v[i])
-    return result
-
-
-cdef alure.Vector3 to_vector3(vector[float] v):
-    """Convert std::vector of 3 floats to alure::Vector3."""
-    return alure.Vector3(v[0], v[1], v[2])
+sample_types: FrozenSet[str] = frozenset({
+    'Unsigned 8-bit', 'Signed 16-bit', '32-bit float', 'Mulaw'})
+channel_configs: FrozenSet[str] = frozenset({
+    'Mono', 'Stereo', 'Rear', 'Quadrophonic',
+    '5.1 Surround', '6.1 Surround', '7.1 Surround',
+    'B-Format 2D', 'B-Format 3D'})
 
 
 def query_extension(name: str) -> bool:
@@ -430,6 +415,18 @@ cdef class Context:
         """
         self.impl.destroy()
 
+    def is_supported(self, channel_config: str, sample_type: str) -> bool:
+        """Return if the channel configuration and sample type
+        are supported by the context.
+
+        See Also
+        --------
+        sample_types : Set of sample types
+        channel_configs : Set of channel configurations
+        """
+        return self.impl.is_supported(get_channel_config(channel_config),
+                                      get_sample_type(sample_type))
+
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
@@ -549,17 +546,15 @@ cdef class Buffer:
         """Buffer's frequency in hertz."""
         return self.impl.get_frequency()
 
-    # TODO: get channel config (enum class)
     @property
-    def channel_config_name(self) -> str:
-        """Buffer's sample configuration name."""
+    def channel_config(self) -> str:
+        """Buffer's sample configuration."""
         return alure.get_channel_config_name(
             self.impl.get_channel_config())
 
-    # TODO: get sample type (enum class)
     @property
-    def sample_type_name(self) -> str:
-        """Buffer's sample type name."""
+    def sample_type(self) -> str:
+        """Buffer's sample type."""
         return alure.get_sample_type_name(
             self.impl.get_sample_type())
 
@@ -1450,14 +1445,14 @@ cdef class Decoder:
         return self.pimpl.get()[0].get_frequency()
 
     @property
-    def channel_config_name(self) -> str:
-        """Name of the channel configuration of the audio being decoded."""
+    def channel_config(self) -> str:
+        """Channel configuration of the audio being decoded."""
         return alure.get_channel_config_name(
             self.pimpl.get()[0].get_channel_config())
 
     @property
-    def sample_type_name(self) -> str:
-        """Name of the sample type of the audio being decoded."""
+    def sample_type(self) -> str:
+        """Sample type of the audio being decoded."""
         return alure.get_sample_type_name(
             self.pimpl.get()[0].get_sample_type())
 
@@ -1510,6 +1505,8 @@ cdef class MessageHandler:
     Applications may derive from this and set an instance on a context
     to receive messages.  The base methods are no-ops, so subclasses
     only need to implement methods for relevant messages.
+
+    Methods of MessageHandler must not raise any exception.
     """
     def device_disconnected(self, device: Device) -> None:
         """Handle disconnected device messages.
@@ -1585,7 +1582,7 @@ cdef class MessageHandler:
         return ''
 
 
-cdef cppclass CppMessageHandler(BaseMessageHandler):
+cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
     Context context
 
     CppMessageHandler(Context ctx):
@@ -1613,3 +1610,65 @@ cdef cppclass CppMessageHandler(BaseMessageHandler):
 
     string resource_not_found(string name):
         return context.message_handler.resource_not_found(name)
+
+
+# Helper cdef functions
+cdef vector[alure.AttributePair] mkattrs(vector[pair[int, int]] attrs):
+    """Convert attribute pairs from Python object to alure format."""
+    cdef vector[alure.AttributePair] attributes
+    cdef alure.AttributePair pair
+    for attribute, value in attrs:
+        pair.attribute = attribute
+        pair.value = value
+        attributes.push_back(pair)  # insert a copy
+    pair.attribute = pair.value = 0
+    attributes.push_back(pair)  # insert a copy
+    return attributes
+
+
+cdef vector[float] from_vector3(alure.Vector3 v):
+    """Convert alure::Vector3 to std::vector of 3 floats."""
+    cdef vector[float] result
+    for i in range(3): result.push_back(v[i])
+    return result
+
+
+cdef alure.Vector3 to_vector3(vector[float] v):
+    """Convert std::vector of 3 floats to alure::Vector3."""
+    return alure.Vector3(v[0], v[1], v[2])
+
+
+cdef alure.SampleType get_sample_type(str name) except +:
+    """Return the specified sample type enumeration."""
+    if name == 'Unsigned 8-bit':
+        return alure.SampleType.UInt8
+    elif name == 'Signed 16-bit':
+        return alure.SampleType.Int16
+    elif name == '32-bit float':
+        return alure.SampleType.Float32
+    elif name == 'Mulaw':
+        return alure.SampleType.Mulaw
+    raise ValueError(f'Invalid sample type name: {name}')
+
+
+cdef alure.ChannelConfig get_channel_config(str name) except +:
+    """Return the specified channel configuration enumeration."""
+    if name == 'Mono':
+        return alure.ChannelConfig.Mono
+    elif name == 'Stereo':
+        return alure.ChannelConfig.Stereo
+    elif name == 'Rear':
+        return alure.ChannelConfig.Rear
+    elif name == 'Quadrophonic':
+        return alure.ChannelConfig.Quad
+    elif name == '5.1 Surround':
+        return alure.ChannelConfig.X51
+    elif name == '6.1 Surround':
+        return alure.ChannelConfig.X61
+    elif name == '7.1 Surround':
+        return alure.ChannelConfig.X71
+    elif name == 'B-Format 2D':
+        return alure.ChannelConfig.BFormat2D
+    elif name == 'B-Format 3D':
+        return alure.ChannelConfig.BFormat3D
+    raise ValueError(f'Invalid channel configuration name: {name}')

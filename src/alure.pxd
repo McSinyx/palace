@@ -47,6 +47,7 @@ cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:
 cdef extern from 'alure2.h' namespace 'alure' nogil:
     # Type aliases:
     # char*: string
+    # ALbyte: signed char
     # ALfloat: float
     # ALsizei: int
     # ALuint: unsigned
@@ -70,13 +71,25 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         unsigned send 'mSend'
 
     # Enum classes:
-    cdef cppclass SampleType:
-        pass
+    cdef enum SampleType:
+        UInt8   'alure::SampleType::UInt8'      # Unsigned 8-bit
+        Int16   'alure::SampleType::Int16'      # Signed 16-bit
+        Float32 'alure::SampleType::Float32'    # 32-bit float
+        Mulaw   'alure::SampleType::Mulaw'      # Mulaw
+
+    cdef enum ChannelConfig:
+        Mono        'alure::ChannelConfig::Mono'        # Mono
+        Stereo      'alure::ChannelConfig::Stereo'      # Stereo
+        Rear        'alure::ChannelConfig::Rear'        # Rear
+        Quad        'alure::ChannelConfig::Quad'        # Quadrophonic
+        X51         'alure::ChannelConfig::X51'         # 5.1 Surround
+        X61         'alure::ChannelConfig::X61'         # 6.1 Surround
+        X71         'alure::ChannelConfig::X71'         # 7.1 Surround
+        BFormat2D   'alure::ChannelConfig::BFormat2D'   # B-Format 2D
+        BFormat3D   'alure::ChannelConfig::BFormat3D'   # B-Format 3D
+
     # The following relies on C++ implicit conversion from char* to string.
     cdef const string get_sample_type_name 'GetSampleTypeName'(SampleType) except +
-
-    cdef cppclass ChannelConfig:
-        pass
     cdef const string get_channel_config_name 'GetChannelConfigName'(ChannelConfig) except +
     cdef unsigned frames_to_bytes 'FramesToBytes'(unsigned, ChannelConfig, SampleType) except +
     cdef unsigned bytes_to_frames 'BytesToFrames'(unsigned, ChannelConfig, SampleType)
@@ -235,15 +248,12 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
         void destroy() except +
 
-        Device get_device 'getDevice'() except +
-
         void start_batch 'startBatch'() except +
         void end_batch 'endBatch'() except +
 
         Listener get_listener 'getListener'() except +
 
         shared_ptr[MessageHandler] set_message_handler 'setMessageHandler'(shared_ptr[MessageHandler]) except +
-        shared_ptr[MessageHandler] get_message_handler 'getMessageHandler'() except +
 
         void set_async_wake_interval 'setAsyncWakeInterval'(milliseconds) except +
         milliseconds get_async_wake_interval 'getAsyncWakeInterval'() except +
@@ -577,4 +587,10 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         pass
 
     cdef cppclass MessageHandler:
+        pass
+
+
+# GIL is needed for operations with Python objects.
+cdef extern from 'bases.h' namespace 'palace':
+    cdef cppclass BaseMessageHandler(MessageHandler):
         pass
