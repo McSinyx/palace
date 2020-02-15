@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Index &#8212; palace 0.0.8 documentation</title>
+    <title>Index &#8212; palace 0.0.9 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -43,6 +43,7 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -60,9 +61,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.air_absorption_factor">air_absorption_factor (palace.Source attribute)</a>
 </li>
+      <li><a href="reference.html#palace.Device.alc_version">alc_version (palace.Device attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Device.alc_version">alc_version (palace.Device attribute)</a>
+      <li><a href="reference.html#palace.Source.auxiliary_send">auxiliary_send() (palace.Source property)</a>
+</li>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot">AuxiliaryEffectSlot (class in palace)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -73,17 +78,23 @@
       <li><a href="reference.html#palace.Buffer">Buffer (class in palace)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.MessageHandler.buffer_loading">buffer_loading() (palace.MessageHandler method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Buffer.channel_config_name">channel_config_name (palace.Buffer attribute)</a>
+      <li><a href="reference.html#palace.Buffer.channel_config">channel_config (palace.Buffer attribute)</a>
 
       <ul>
-        <li><a href="reference.html#palace.Decoder.channel_config_name">(palace.Decoder attribute)</a>
+        <li><a href="reference.html#palace.Decoder.channel_config">(palace.Decoder attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference.html#palace.channel_configs">channel_configs (in module palace)</a>
+</li>
       <li><a href="reference.html#palace.Device.clock_time">clock_time (palace.Device attribute)</a>
 </li>
   </ul></td>
@@ -104,9 +115,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Decoder">Decoder (class in palace)</a>
 </li>
-      <li><a href="reference.html#palace.Buffer.destroy">destroy() (palace.Buffer method)</a>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.destroy">destroy() (palace.AuxiliaryEffectSlot method)</a>
 
       <ul>
+        <li><a href="reference.html#palace.Buffer.destroy">(palace.Buffer method)</a>
+</li>
         <li><a href="reference.html#palace.Context.destroy">(palace.Context method)</a>
 </li>
         <li><a href="reference.html#palace.Source.destroy">(palace.Source method)</a>
@@ -119,6 +132,8 @@
       <li><a href="reference.html#palace.Device">Device (class in palace)</a>
 </li>
       <li><a href="reference.html#palace.Context.device">device (palace.Context attribute)</a>
+</li>
+      <li><a href="reference.html#palace.MessageHandler.device_disconnected">device_disconnected() (palace.MessageHandler method)</a>
 </li>
       <li><a href="reference.html#palace.device_name_default">device_name_default (in module palace)</a>
 </li>
@@ -164,6 +179,8 @@
         <li><a href="reference.html#palace.SourceGroup.gain">(palace.SourceGroup attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.gain">gain() (palace.AuxiliaryEffectSlot property)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.gain_auto">gain_auto (palace.Source attribute)</a>
@@ -183,6 +200,14 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Device.hrtf_names">hrtf_names (palace.Device attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Context.is_supported">is_supported() (palace.Context method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -208,6 +233,8 @@
         <li><a href="reference.html#palace.Decoder.length_seconds">(palace.Decoder attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference.html#palace.Context.listener">listener (palace.Context attribute)</a>
+</li>
       <li><a href="reference.html#palace.Buffer.loop_points">loop_points (palace.Buffer attribute)</a>
 </li>
       <li><a href="reference.html#palace.Source.looping">looping (palace.Source attribute)</a>
@@ -221,13 +248,23 @@
       <li><a href="reference.html#palace.Device.max_auxiliary_sends">max_auxiliary_sends (palace.Device attribute)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Context.message_handler">message_handler (palace.Context attribute)</a>, <a href="reference.html#palace.Context.message_handler">[1]</a>
+</li>
+      <li><a href="reference.html#palace.MessageHandler">MessageHandler (class in palace)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Device.name">name (palace.Device attribute)</a>
+      <li><a href="reference.html#palace.Buffer.name">name (palace.Buffer attribute)</a>
+
+      <ul>
+        <li><a href="reference.html#palace.Device.name">(palace.Device attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -314,6 +351,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.MessageHandler.resource_not_found">resource_not_found() (palace.MessageHandler method)</a>
+</li>
       <li><a href="reference.html#palace.Source.resume">resume() (palace.Source method)</a>
 </li>
       <li><a href="reference.html#palace.SourceGroup.resume_all">resume_all() (palace.SourceGroup method)</a>
@@ -328,15 +367,33 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Buffer.sample_type_name">sample_type_name (palace.Buffer attribute)</a>
+      <li><a href="reference.html#palace.Buffer.sample_type">sample_type (palace.Buffer attribute)</a>
 
       <ul>
-        <li><a href="reference.html#palace.Decoder.sample_type_name">(palace.Decoder attribute)</a>
+        <li><a href="reference.html#palace.Decoder.sample_type">(palace.Decoder attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference.html#palace.sample_types">sample_types (in module palace)</a>
+</li>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.send_auto">send_auto() (palace.AuxiliaryEffectSlot property)</a>
+</li>
+      <li><a href="reference.html#palace.Source.set_auxiliary_send">set_auxiliary_send() (palace.Source method)</a>
+</li>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.set_gain">set_gain() (palace.AuxiliaryEffectSlot method)</a>
+</li>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.set_send_auto">set_send_auto() (palace.AuxiliaryEffectSlot method)</a>
+</li>
       <li><a href="reference.html#palace.Source">Source (class in palace)</a>
 </li>
       <li><a href="reference.html#palace.Buffer.source_count">source_count (palace.Buffer attribute)</a>
+</li>
+      <li><a href="reference.html#palace.MessageHandler.source_force_stopped">source_force_stopped() (palace.MessageHandler method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.source_sends">source_sends (palace.AuxiliaryEffectSlot attribute)</a>
+</li>
+      <li><a href="reference.html#palace.MessageHandler.source_stopped">source_stopped() (palace.MessageHandler method)</a>
 </li>
       <li><a href="reference.html#palace.SourceGroup">SourceGroup (class in palace)</a>
 </li>
@@ -346,8 +403,6 @@
         <li><a href="reference.html#palace.SourceGroup.sources">(palace.SourceGroup attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Source.spatialize">spatialize (palace.Source attribute)</a>
 </li>
       <li><a href="reference.html#palace.Source.stereo_angles">stereo_angles (palace.Source attribute)</a>
@@ -369,6 +424,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.use_context">use_context() (in module palace)</a>
+</li>
+      <li><a href="reference.html#palace.AuxiliaryEffectSlot.use_count">use_count (palace.AuxiliaryEffectSlot attribute)</a>
 </li>
   </ul></td>
 </tr></table>
