@@ -52,8 +52,9 @@ from libcpp.vector cimport vector
 from std cimport milliseconds
 cimport alure   # noqa
 
-# Type aliases
+# Aliases
 Vector3 = Tuple[float, float, float]
+setter = lambda fset: property(fset=fset, doc=fset.__doc__)     # noqa
 
 # Cast to Python objects
 ALC_FALSE: int = alure.ALC_FALSE
@@ -242,9 +243,10 @@ cdef class Device:
 
     @property
     def hrtf_names(self) -> List[str]:
-        """List of available HRTF names, sorted as OpenAL gives them,
-        such that the index of a given name is the ID to use with
-        `ALC_HRTF_ID_SOFT`.
+        """List of available HRTF names.
+
+        The order is retained from OpenAL, such that the index of
+        a given name is the ID to use with `ALC_HRTF_ID_SOFT`.
 
         If the `ALC_SOFT_HRTF` extension is unavailable,
         this will be an empty list.
@@ -279,17 +281,19 @@ cdef class Device:
         self.impl.reset(mkattrs(attrs.items()))
 
     def pause_dsp(self) -> None:
-        """Pause device processing, stopping updates for its contexts.
+        """Pause device processing and stop contexts' updates.
+
         Multiple calls are allowed but it is not reference counted,
-        so the device will resume after one resume_dsp call.
+        so the device will resume after one `resume_dsp` call.
 
         This requires the `ALC_SOFT_pause_device` extension.
         """
         self.impl.pause_dsp()
 
     def resume_dsp(self) -> None:
-        """Resume device processing, restarting updates for
-        its contexts.  Multiple calls are allowed and will no-op.
+        """Resume device processing and restart contexts' updates.
+
+        Multiple calls are allowed and will no-op.
         """
         self.impl.resume_dsp()
 
@@ -308,8 +312,9 @@ cdef class Device:
         return self.impl.get_clock_time().count()
 
     def close(self) -> None:
-        """Close and free the device.  All previously-created contexts
-        must first be destroyed.
+        """Close and free the device.
+
+        All previously-created contexts must first be destroyed.
         """
         self.impl.close()
 
@@ -410,8 +415,9 @@ cdef class Context:
         return <boolean> self.impl
 
     def destroy(self) -> None:
-        """Destroy the context.  The context must not be current
-        when this is called.
+        """Destroy the context.
+
+        The context must not be current when this is called.
         """
         self.impl.destroy()
 
@@ -449,36 +455,43 @@ cdef class Listener:
     def __bool__(self) -> bool:
         return <boolean> self.impl
 
-    def set_gain(self, value: float) -> None:
+    @setter
+    def gain(self, value: float) -> None:
+        """Master gain for all context output."""
         self.impl.set_gain(value)
 
-    def set_position(self, value: Vector3) -> None:
+    @setter
+    def position(self, value: Vector3) -> None:
+        """3D position of the listener."""
         self.impl.set_position(to_vector3(value))
 
-    def set_velocity(self, value: Vector3) -> None:
+    @setter
+    def velocity(self, value: Vector3) -> None:
+        """3D velocity of the listener, in units per second.
+
+        As with OpenAL, this does not actually alter the listener's
+        position, and instead just alters the pitch as determined by
+        the doppler effect.
+        """
         self.impl.set_velocity(to_vector3(value))
 
-    def set_orientation(self, value: Tuple[Vector3, Vector3]) -> None:
+    @setter
+    def orientation(self, value: Tuple[Vector3, Vector3]) -> None:
+        """3D orientation of the listener.
+
+        Parameters
+        ----------
+        at : Tuple[float, float, float]
+            Relative position.
+        up : Tuple[float, float, float]
+            Relative direction.
+        """
         at, up = value
         self.impl.set_orientation(
             pair[alure.Vector3, alure.Vector3](to_vector3(at), to_vector3(up)))
 
-    def set_meters_per_unit(self, value: float) -> None:
-        self.impl.set_meters_per_unit(value)
-
-    gain = property(fset=set_gain, doc='Master gain for all context output.')
-    position = property(fset=set_position, doc='3D position of the listener.')
-    velocity = property(fset=set_velocity, doc=(
-        """3D velocity of the listener, in units per second.
-        As with OpenAL, this does not actually alter the listener's
-        position, and instead just alters the pitch as determined by
-        the doppler effect.
-        """))
-    orientation = property(fset=set_orientation, doc=(
-        """3D orientation of the listener, using position-relative
-        `at` and `up` direction vectors.
-        """))
-    meters_per_unit = property(fset=set_meters_per_unit, doc=(
+    @setter
+    def meters_per_unit(self, value: float) -> None:
         """Number of meters per unit.
 
         This is used for various effects relying on the distance
@@ -486,7 +499,8 @@ cdef class Listener:
         If this is changed, so should the speed of sound
         (e.g. `context.speed_of_sound = 343.3 / meters_per_unit`
         to maintain a realistic 343.3 m/s for sound propagation).
-        """))
+        """
+        self.impl.set_meters_per_unit(value)
 
 
 cdef class Buffer:
@@ -559,8 +573,9 @@ cdef class Buffer:
             self.impl.get_sample_type())
 
     def play(self, source: Optional[Source] = None) -> Source:
-        """Play `source` using the buffer.  The same buffer
-        may be played from multiple sources simultaneously.
+        """Play `source` using the buffer.
+
+        One buffer may be played from multiple sources simultaneously.
 
         If `source` is `None`, create a new one.
 
@@ -572,9 +587,10 @@ cdef class Buffer:
 
     @property
     def loop_points(self) -> Tuple[int, int]:
-        """Loop points for looping sources.  If the current context
-        does not support the `AL_SOFT_loop_points` extension,
-        `start = 0` and `end = length` respectively.
+        """Loop points for looping sources.
+
+        If the `AL_SOFT_loop_points` extension is not supported by the
+        current context, `start = 0` and `end = length` respectively.
         Otherwise, `start < end <= length`.
 
         Parameters
@@ -617,8 +633,9 @@ cdef class Buffer:
         return self.impl.get_source_count()
 
     def destroy(self) -> None:
-        """Free the buffer's cache, invalidating all other
-        `Buffer` objects with the same name.
+        """Free the buffer's cache
+
+        This invalidates all other `Buffer` objects with the same name.
         """
         self.context.impl.remove_buffer(self.impl)
 
@@ -656,6 +673,7 @@ cdef class Source:
 
     def stop(self) -> None:
         """Stop playback, releasing the buffer or decoder reference.
+
         Any pending playback from a future buffer is canceled.
         """
         self.impl.stop()
@@ -743,9 +761,11 @@ cdef class Source:
 
     @property
     def priority(self) -> int:
-        """Playback priority (natural number).  The lowest priority
-        sources will be forcefully stopped when no more mixing sources
-        are available and higher priority sources are played.
+        """Playback priority (natural number).
+
+        The lowest priority sources will be forcefully stopped
+        when no more mixing sources are available and higher priority
+        sources are played.
         """
         return self.impl.get_priority()
 
@@ -775,8 +795,10 @@ cdef class Source:
 
     @property
     def offset_seconds(self) -> float:
-        """Source offset in seconds.  For streaming sources
-        this will be the offset based on the decoder's read position.
+        """Source offset in seconds.
+
+        For streaming sources this will be the offset based on
+        the decoder's read position.
         """
         return self.impl.get_sec_offset().count()
 
@@ -899,9 +921,10 @@ cdef class Source:
 
     @property
     def velocity(self) -> Vector3:
-        """3D velocity in units per second.  As with OpenAL,
-        this does not actually alter the source's osition,
-        and instead just alters the pitch as determined
+        """3D velocity in units per second.
+
+        As with OpenAL, this does not actually alter the source's
+        position, and instead just alters the pitch as determined
         by the doppler effect.
         """
         return from_vector3(self.impl.get_velocity())
@@ -912,8 +935,14 @@ cdef class Source:
 
     @property
     def orientation(self) -> Tuple[Vector3, Vector3]:
-        """3D orientation, using `at` and `up` vectors, which are
-        respectively relative position and direction.
+        """3D orientation of the source.
+
+        Parameters
+        ----------
+        at : Tuple[float, float, float]
+            Relative position.
+        up : Tuple[float, float, float]
+            Relative direction.
 
         Notes
         -----
@@ -1144,7 +1173,12 @@ cdef class Source:
     # TODO: set direct filter
     # TODO: set send filter
 
-    def set_auxiliary_send(self, slot: AuxiliaryEffectSlot, send: int) -> None:
+    @setter
+    def auxiliary_send(self, slot: AuxiliaryEffectSlot, send: int) -> None:
+        """Connect the effect slot to the given send path.
+
+        Any filter properties on the send path remain as they were.
+        """
         self.impl.set_auxiliary_send(slot.impl, send)
 
     # TODO: set auxiliary send filter
@@ -1153,16 +1187,12 @@ cdef class Source:
         """Destroy the source, stop playback and release resources."""
         self.impl.destroy()
 
-    auxiliary_send = property(fset=set_auxiliary_send, doc=(
-        """Connect the effect slot to the given send path.
-        Any filter properties on the send path remain as they were.
-        """))
-
 
 cdef class SourceGroup:
-    """A group of `Source` references.  For instance, setting
-    `SourceGroup.gain` to 0.5 will halve the gain of all sources
-    in the group.
+    """A group of `Source` references.
+
+    For instance, setting `SourceGroup.gain` to 0.5 will halve the gain
+    of all sources in the group.
 
     This can be used as a context manager that calls `destroy` upon
     completion of the block, even if an error occurs.
@@ -1240,8 +1270,9 @@ cdef class SourceGroup:
 
     @property
     def gain(self) -> float:
-        """Source group gain, accumulating with its sources'
-        and sub-groups' gain.
+        """Source group gain.
+
+        This accumulates with its sources' and sub-groups' gain.
         """
         return self.impl.get_gain()
 
@@ -1251,8 +1282,9 @@ cdef class SourceGroup:
 
     @property
     def pitch(self) -> float:
-        """Source group pitch, accumulates with its sources'
-        and sub-groups' pitch.
+        """Source group pitch.
+
+        This accumulates with its sources' and sub-groups' pitch.
         """
         return self.impl.get_pitch()
 
@@ -1371,10 +1403,19 @@ cdef class AuxiliaryEffectSlot:
     def __bool__(self) -> bool:
         return <boolean> self.impl
 
-    def set_gain(self, value: float) -> None:
+    @setter
+    def gain(self, value: float) -> None:
+        """Gain of the effect slot."""
         self.impl.set_gain(value)
 
-    def set_send_auto(self, value: bool) -> None:
+    @setter
+    def send_auto(self, value: bool) -> None:
+        """If set to `True`, the reverb effect will automatically
+        apply adjustments to the source's send slot gains based
+        on the effect properties.
+
+        Has no effect when using non-reverb effects.  Default is `True`.
+        """
         self.impl.set_send_auto(value)
 
     # TODO: apply effect
@@ -1404,15 +1445,6 @@ cdef class AuxiliaryEffectSlot:
         `len(tuple(self.source_sends))`.
         """
         return self.impl.get_use_count()
-
-    gain = property(fset=set_gain, doc=('Gain of the effect slot.'))
-    send_auto = property(fset=set_send_auto, doc=(
-        """If set to `True`, the reverb effect will automatically
-        apply adjustments to the source's send slot gains based
-        on the effect properties.
-
-        Has no effect when using non-reverb effects.  Default is `True`.
-        """))
 
 
 cdef class Decoder:
