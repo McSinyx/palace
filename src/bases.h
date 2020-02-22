@@ -21,14 +21,59 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "alure2.h"
 
+// Due to the lack of support for noexcept keyword in Cython, base classes
+// created to work around the looser throw specifier error in C++.
 namespace palace {
 
-// Due to the lack of support for noexcept keyword in Cython, this is
-// created to work around the looser throw specifier error in C++.
+class BaseDecoder : public alure::Decoder {
+public:
+  virtual unsigned get_frequency_() const = 0;
+  inline ALuint
+  getFrequency() const noexcept override
+  {
+    return get_frequency_();
+  }
+
+  virtual alure::ChannelConfig get_channel_config_() const = 0;
+  inline alure::ChannelConfig
+  getChannelConfig() const noexcept override
+  {
+    return get_channel_config_();
+  }
+
+  virtual alure::SampleType get_sample_type_() const = 0;
+  inline alure::SampleType
+  getSampleType() const noexcept override
+  {
+    return get_sample_type_();
+  }
+
+  virtual uint64_t get_length_() const = 0;
+  inline uint64_t getLength() const noexcept override { return get_length_(); }
+
+  virtual bool seek_ (uint64_t pos) = 0;
+  inline bool seek (uint64_t pos) noexcept override { return seek_ (pos); }
+
+  virtual std::pair<uint64_t,uint64_t> get_loop_points_() const = 0;
+  inline std::pair<uint64_t,uint64_t>
+  getLoopPoints() const noexcept override
+  {
+    return get_loop_points_();
+  }
+
+  virtual unsigned read_ (void* ptr, unsigned count) = 0;
+  inline ALuint
+  read (ALvoid* ptr, ALuint count) noexcept override
+  {
+    return read_ (ptr, count);
+  }
+};
+
 class BaseMessageHandler : public alure::MessageHandler {
 public:
   virtual void device_disconnected (alure::Device device) = 0;

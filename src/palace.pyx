@@ -35,25 +35,30 @@ channel_configs : FrozenSet[str]
 __all__ = [
     'ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
     'device_name_default', 'device_names', 'sample_types', 'channel_configs',
-    'query_extension', 'use_context',
+    'sample_size', 'sample_length', 'query_extension', 'use_context',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
-    'AuxiliaryEffectSlot', 'Decoder', 'MessageHandler']
+    'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'MessageHandler']
 
+from abc import abstractmethod, ABCMeta
 from types import TracebackType
 from typing import Any, Dict, FrozenSet, Iterator, List, Optional, Tuple, Type
 from warnings import warn
 
-from libcpp cimport bool as boolean, nullptr    # noqa
+from libc.stdint cimport uint64_t   # noqa
+from libc.string cimport memcpy
+from libcpp cimport bool as boolean, nullptr
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
+from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
 
 from std cimport milliseconds
 cimport alure   # noqa
 
 # Aliases
 Vector3 = Tuple[float, float, float]
+getter = property   # bypass Cython property hijack
 setter = lambda fset: property(fset=fset, doc=fset.__doc__)     # noqa
 
 # Cast to Python objects
@@ -84,6 +89,24 @@ channel_configs: FrozenSet[str] = frozenset({
     'Mono', 'Stereo', 'Rear', 'Quadrophonic',
     '5.1 Surround', '6.1 Surround', '7.1 Surround',
     'B-Format 2D', 'B-Format 3D'})
+
+
+def sample_size(length: int, channel_config: str, sample_type: str) -> int:
+    """Return the size of the given number of sample frames.
+
+    Raises
+    ------
+    RuntimeError
+        If the byte size result too large.
+    """
+    return alure.frames_to_bytes(
+        length, to_channel_config(channel_config), to_sample_type(sample_type))
+
+
+def sample_length(size: int, channel_config: str, sample_type: str) -> int:
+    """Return the number of frames stored in the given byte size."""
+    return alure.bytes_to_frames(
+        size, to_channel_config(channel_config), to_sample_type(sample_type))
 
 
 def query_extension(name: str) -> bool:
@@ -430,8 +453,8 @@ cdef class Context:
         sample_types : Set of sample types
         channel_configs : Set of channel configurations
         """
-        return self.impl.is_supported(get_channel_config(channel_config),
-                                      get_sample_type(sample_type))
+        return self.impl.is_supported(to_channel_config(channel_config),
+                                      to_sample_type(sample_type))
 
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
@@ -575,11 +598,10 @@ cdef class Buffer:
     def play(self, source: Optional[Source] = None) -> Source:
         """Play `source` using the buffer.
 
+        Return the source used for playing.  If `None` is given,
+        create a new one.
+
         One buffer may be played from multiple sources simultaneously.
-
-        If `source` is `None`, create a new one.
-
-        Return the source used for playing.
         """
         if source is None: source = Source(self.context)
         (<Source> source).impl.play(self.impl)
@@ -1350,7 +1372,7 @@ cdef class AuxiliaryEffectSlot:
     Parameters
     ----------
     context : Context
-        The context from which the auxiliary effect slot is to be created.
+        The context to create the auxiliary effect slot.
 
     Raises
     ------
@@ -1531,6 +1553,122 @@ cdef class Decoder:
         return source
 
 
+# Decoder interface
+cdef class _BaseDecoder(Decoder):
+    """Cython bridge for BaseDecoder.
+
+    This class is NOT meant to be instantiated.
+    """
+    def __cinit__(self, *args, **kwargs) -> None:
+        self.pimpl = shared_ptr[alure.Decoder](new CppDecoder(self))
+
+    def __init__(self, *args, **kwargs) -> None:
+        raise TypeError("Can't instantiate class _BaseDecoder")
+
+
+class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
+    """Audio decoder interface.
+
+    Applications may derive from this, implement necessary methods,
+    and use it in places the API wants a `BaseDecoder` object.
+
+    Exceptions raised from `BaseDecoder` instances are ignored.
+    """
+    @abstractmethod
+    def __init__(self, *args, **kwargs) -> None: pass
+
+    @getter
+    @abstractmethod
+    def frequency(self) -> int:
+        """Sample frequency, in hertz, of the audio being decoded."""
+
+    @getter
+    @abstractmethod
+    def channel_config(self) -> str:
+        """Channel configuration of the audio being decoded."""
+
+    @getter
+    @abstractmethod
+    def sample_type(self) -> str:
+        """Sample type of the audio being decoded."""
+
+    @getter
+    @abstractmethod
+    def length(self) -> int:
+        """Length of audio in sample frames, falling-back to 0.
+
+        Notes
+        -----
+        Zero-length decoders may not be used to load a `Buffer`.
+        """
+
+    @abstractmethod
+    def seek(self, pos: int) -> bool:
+        """Seek to pos, specified in sample frames.
+
+        Return if the seek was successful.
+        """
+
+    @getter
+    @abstractmethod
+    def loop_points(self) -> Tuple[int, int]:
+        """Loop points in sample frames.
+
+        Parameters
+        ----------
+        start : int
+            Inclusive starting loop point.
+        end : int
+            Exclusive starting loop point.
+
+        Notes
+        -----
+        If `start >= end`, all available samples are included
+        in the loop.
+        """
+
+    @abstractmethod
+    def read(self, count: int) -> bytes:
+        """Decode and return `count` sample frames.
+
+        If less than the requested count samples is returned,
+        the end of the audio has been reached.
+        """
+
+
+cdef cppclass CppDecoder(alure.BaseDecoder):
+    Decoder pyo
+
+    CppDecoder(Decoder decoder):
+        this.pyo = decoder
+
+    unsigned get_frequency_() const:
+        return pyo.frequency
+
+    alure.ChannelConfig get_channel_config_() const:
+        return to_channel_config(pyo.channel_config)
+
+    alure.SampleType get_sample_type_() const:
+        return to_sample_type(pyo.sample_type)
+
+    uint64_t get_length_() const:
+        return pyo.length
+
+    boolean seek_(uint64_t pos):
+        return pyo.seek(pos)
+
+    pair[uint64_t, uint64_t] get_loop_points_() const:
+        return pyo.loop_points
+
+    # FIXME: dead-global-interpreter-lock
+    # Without GIL Context.update causes segfault.
+    unsigned read_(void* ptr, unsigned count) with gil:
+        cdef string samples = pyo.read(count)
+        memcpy(ptr, samples.c_str(), samples.size())
+        return alure.bytes_to_frames(
+            samples.size(), get_channel_config_(), get_sample_type_())
+
+
 cdef class MessageHandler:
     """Message handler interface.
 
@@ -1538,7 +1676,7 @@ cdef class MessageHandler:
     to receive messages.  The base methods are no-ops, so subclasses
     only need to implement methods for relevant messages.
 
-    Methods of MessageHandler must not raise any exception.
+    Exceptions raised from `MessageHandler` instances are ignored.
     """
     def device_disconnected(self, device: Device) -> None:
         """Handle disconnected device messages.
@@ -1670,7 +1808,7 @@ cdef alure.Vector3 to_vector3(vector[float] v):
     return alure.Vector3(v[0], v[1], v[2])
 
 
-cdef alure.SampleType get_sample_type(str name) except +:
+cdef alure.SampleType to_sample_type(str name) except +:
     """Return the specified sample type enumeration."""
     if name == 'Unsigned 8-bit':
         return alure.SampleType.UInt8
@@ -1683,7 +1821,7 @@ cdef alure.SampleType get_sample_type(str name) except +:
     raise ValueError(f'Invalid sample type name: {name}')
 
 
-cdef alure.ChannelConfig get_channel_config(str name) except +:
+cdef alure.ChannelConfig to_channel_config(str name) except +:
     """Return the specified channel configuration enumeration."""
     if name == 'Mono':
         return alure.ChannelConfig.Mono

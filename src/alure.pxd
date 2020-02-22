@@ -592,5 +592,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
 # GIL is needed for operations with Python objects.
 cdef extern from 'bases.h' namespace 'palace':
+    cdef cppclass BaseDecoder(Decoder):
+        pass
     cdef cppclass BaseMessageHandler(MessageHandler):
         pass
