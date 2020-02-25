@@ -27,7 +27,9 @@ from typing import Iterable
 from palace import (ALC_TRUE, ALC_HRTF_SOFT, ALC_HRTF_ID_SOFT,
                     Device, Context, Source, Decoder)
 
-PERIOD = 0.025
+CHUNK_LEN: int = 12000
+QUEUE_SIZE: int = 4
+PERIOD: float = 0.025
 
 
 def pretty_time(seconds: float) -> str:
@@ -37,7 +39,7 @@ def pretty_time(seconds: float) -> str:
     return time.strftime('%H:%M:%S')
 
 
-def hrtf(files: Iterable[str], device: str, hrtf_name: str,
+def play(files: Iterable[str], device: str, hrtf_name: str,
          omega: float, angle: float) -> None:
     """HRTF render files with stereo source (angle radians apart)
     rotating around in omega rad/s using ALC_SOFT_HRTF extension.
@@ -68,7 +70,7 @@ def hrtf(files: Iterable[str], device: str, hrtf_name: str,
                 except RuntimeError:
                     stderr.write(f'Failed to open file: {filename}\n')
                     continue
-                decoder.play(12000, 4, src)
+                decoder.play(src, CHUNK_LEN, QUEUE_SIZE)
                 print(f'Playing {filename} ({decoder.sample_type},',
                       f'{decoder.channel_config}, {decoder.frequency} Hz)')
 
@@ -93,4 +95,4 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--angle', type=float, default=1.0,
                         help='relative angle between left and right sources')
     args = parser.parse_args()
-    hrtf(args.files, args.device, args.hrtf_name, args.omega, args.angle)
+    play(args.files, args.device, args.hrtf_name, args.omega, args.angle)

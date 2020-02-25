@@ -1470,7 +1470,7 @@ cdef class AuxiliaryEffectSlot:
 
 
 cdef class Decoder:
-    """Audio decoder interface.
+    """Generic audio decoder.
 
     Parameters
     ----------
@@ -1482,16 +1482,17 @@ cdef class Decoder:
     See Also
     --------
     Buffer : Preloaded PCM samples coming from a `Decoder`
+
+    Notes
+    -----
+    Due to implementation details, while this creates decoder objects
+    from filenames using contexts, it is the superclass of the ABC
+    (abstract base class) `BaseDecoder`.
     """
     cdef shared_ptr[alure.Decoder] pimpl
-    cdef Context context
 
     def __init__(self, context: Context, name: str) -> None:
-        """Create a `Decoder` instance for the given audio file
-        or resource name.
-        """
         self.pimpl = context.impl.create_decoder(name)
-        self.context = context
 
     @property
     def frequency(self) -> int:
@@ -1512,30 +1513,80 @@ cdef class Decoder:
 
     @property
     def length(self) -> int:
-        """Total length of the audio, in sample frames,
-        falling-back to 0.  Note that if the length is 0,
-        the decoder may not be used to load a `Buffer`.
+        """Length of audio in sample frames, falling-back to 0.
+
+        Notes
+        -----
+        Zero-length decoders may not be used to load a `Buffer`.
         """
         return self.pimpl.get()[0].get_length()
 
     @property
     def length_seconds(self) -> float:
-        """Total length of the audio, in seconds,
-        falling-back to 0.0.  Note that if the length is 0.0,
-        the decoder may not be used to load a `Buffer`.
+        """Length of audio in seconds, falling-back to 0.0.
+
+        Notes
+        -----
+        Zero-length decoders may not be used to load a `Buffer`.
         """
         return self.length / self.frequency
 
-    def play(self, chunk_len: int, queue_size: int,
-             source: Optional[Source] = None) -> Source:
-        """Play `source` by asynchronously streaming audio from
-        the decoder.  The decoder must NOT have its `read` or `seek`
-        called from elsewhere while in use.
+    def seek(self, pos: int) -> bool:
+        """Seek to pos, specified in sample frames.
 
-        Return the source used for playing.
+        Return if the seek was successful.
+        """
+        return self.pimpl.get()[0].seek(pos)
+
+    @property
+    def loop_points(self) -> Tuple[int, int]:
+        """Loop points in sample frames.
 
         Parameters
         ----------
+        start : int
+            Inclusive starting loop point.
+        end : int
+            Exclusive starting loop point.
+
+        Notes
+        -----
+        If `start >= end`, all available samples are included
+        in the loop.
+        """
+        return self.pimpl.get()[0].get_loop_points()
+
+    def read(self, count: int) -> bytes:
+        """Decode and return `count` sample frames.
+
+        If less than the requested count samples is returned,
+        the end of the audio has been reached.
+
+        See Also
+        --------
+        sample_length : length of samples of given size
+        """
+        cdef void* ptr = PyMem_RawMalloc(alure.frames_to_bytes(
+            count, self.pimpl.get()[0].get_channel_config(),
+            self.pimpl.get()[0].get_sample_type()))
+        if ptr == NULL: raise RuntimeError('Unable to allocate memory')
+        count = self.pimpl.get()[0].read(ptr, count)
+        cdef string samples = string(<const char*> ptr, alure.frames_to_bytes(
+            count, self.pimpl.get()[0].get_channel_config(),
+            self.pimpl.get()[0].get_sample_type()))
+        PyMem_RawFree(ptr)
+        return samples
+
+    def play(self, source: Source, chunk_len: int, queue_size: int) -> None:
+        """Stream audio asynchronously from the decoder.
+
+        The decoder must NOT have its `read` or `seek` called
+        from elsewhere while in use.
+
+        Parameters
+        ----------
+        source : Source
+            The source object to play audio.
         chunk_len : int
             The number of sample frames to read for each chunk update.
             Smaller values will require more frequent updates and
@@ -1544,13 +1595,8 @@ cdef class Decoder:
             The number of chunks to keep queued during playback.
             Smaller values use less memory while larger values
             improve protection against underruns.
-        source : Source, optional
-            The source object to play audio.  If this is `None`,
-            a new one will be created.
         """
-        if source is None: source = Source(self.context)
-        (<Source> source).impl.play(self.pimpl, chunk_len, queue_size)
-        return source
+        source.impl.play(self.pimpl, chunk_len, queue_size)
 
 
 # Decoder interface
