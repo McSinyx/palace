@@ -248,6 +248,8 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
         void destroy() except +
 
+        Device get_device 'getDevice'() except +
+
         void start_batch 'startBatch'() except +
         void end_batch 'endBatch'() except +
 

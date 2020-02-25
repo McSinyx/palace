@@ -35,7 +35,8 @@ channel_configs : FrozenSet[str]
 __all__ = [
     'ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
     'device_name_default', 'device_names', 'sample_types', 'channel_configs',
-    'sample_size', 'sample_length', 'query_extension', 'use_context',
+    'sample_size', 'sample_length',
+    'query_extension', 'current_context', 'use_context',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'MessageHandler']
 
@@ -117,6 +118,18 @@ def query_extension(name: str) -> bool:
     Device.query_extension : Query ALC extension on a device
     """
     return devmgr.query_extension(name)
+
+
+def current_context() -> Optional[Context]:
+    """Return the context that is currently used."""
+    cdef Context current = Context.__new__(Context)
+    current.impl = alure.Context.get_current()
+    if not current:
+        return None
+    current.device = Device.__new__(Device)
+    current.device.impl = current.impl.get_device()
+    current.listener = Listener(current)
+    return current
 
 
 def use_context(context: Optional[Context]) -> None:
@@ -353,11 +366,12 @@ cdef class Context:
 
     is equivalent to ::
 
+        previous = current_context()
         use_context(context)
         try:
             ...
         finally:
-            use_context(None)
+            use_context(previous)
             context.destroy()
 
     Parameters
@@ -382,6 +396,7 @@ cdef class Context:
         If context creation fails.
     """
     cdef alure.Context impl
+    cdef alure.Context previous
     cdef readonly Device device
     cdef readonly Listener listener
     cdef public MessageHandler message_handler
@@ -395,13 +410,14 @@ cdef class Context:
             shared_ptr[alure.MessageHandler](new CppMessageHandler(self)))
 
     def __enter__(self) -> Context:
+        self.previous = alure.Context.get_current()
         use_context(self)
         return self
 
     def __exit__(self, exc_type: Optional[Type[BaseException]],
                  exc_val: Optional[BaseException],
                  exc_tb: Optional[TracebackType]) -> Optional[bool]:
-        use_context(None)
+        alure.Context.make_current(self.previous)
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
