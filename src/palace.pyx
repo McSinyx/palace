@@ -154,9 +154,8 @@ cdef class Device:
 
     Parameters
     ----------
-    name : Optional[str], optional
-        The name of the playback device.  If it is `None`,
-        the object is left uninitialized.
+    name : str, optional
+        The name of the playback device.
     fail_safe : bool, optional
         On failure, fallback to the default device if this is `True`,
         otherwise `RuntimeError` is raised.  Default to `False`.
@@ -179,9 +178,7 @@ cdef class Device:
     """
     cdef alure.Device impl
 
-    def __init__(self, name: Optional[str] = '',
-                 fail_safe: bool = False) -> None:
-        if name is None: return
+    def __init__(self, name: str = '', fail_safe: bool = False) -> None:
         try:
             self.impl = devmgr.open_playback(name)
         except RuntimeError as exc:
@@ -653,8 +650,9 @@ cdef class Buffer:
     def sources(self) -> List[Source]:
         """`Source` objects currently playing the buffer."""
         sources = []
+        cdef Source source
         for alure_source in self.impl.get_sources():
-            source = Source(None)
+            source = Source.__new__(Source)
             source.impl = alure_source
             sources.append(source)
         return sources
@@ -689,15 +687,13 @@ cdef class Source:
 
     Parameters
     ----------
-    context : Optional[Context]
+    context : Context
         The context from which the source is to be created.
-        If it is `None`, the object is left uninitialized.
     """
     cdef alure.Source impl
 
-    def __init__(self, context: Optional[Context]) -> None:
-        if context is None: return
-        self.impl = (<Context> context).impl.create_source()
+    def __init__(self, context: Context) -> None:
+        self.impl = context.impl.create_source()
 
     def __enter__(self) -> Source:
         return self
@@ -786,7 +782,7 @@ cdef class Source:
         --------
         SourceGroup : A group of `Source` references
         """
-        source_group = SourceGroup(None)
+        cdef SourceGroup source_group = SourceGroup.__new__(SourceGroup)
         source_group.impl = self.impl.get_group()
         return source_group or None
 
@@ -1237,15 +1233,13 @@ cdef class SourceGroup:
 
     Parameters
     ----------
-    context : Optional[Context]
+    context : Context
         The context from which the source group is to be created.
-        If it is `None`, the object is left uninitialized.
     """
     cdef alure.SourceGroup impl
 
-    def __init__(self, context: Optional[Context]) -> None:
-        if context is None: return
-        self.impl = (<Context> context).impl.create_source_group()
+    def __init__(self, context: Context) -> None:
+        self.impl = context.impl.create_source_group()
 
     def __enter__(self) -> SourceGroup:
         return self
@@ -1298,7 +1292,7 @@ cdef class SourceGroup:
             If this group is being added to its sub-group
             (i.e. it would create a circular sub-group chain).
         """
-        source_group: SourceGroup = SourceGroup(None)
+        source_group: SourceGroup = SourceGroup.__new__(SourceGroup)
         source_group.impl = self.impl.get_parent_group()
         return source_group
 
@@ -1333,9 +1327,10 @@ cdef class SourceGroup:
     @property
     def sources(self) -> List[Source]:
         """The list of sources currently in the group."""
+        cdef Source source
         sources = []
         for alure_source in self.impl.get_sources():
-            source = Source(None)
+            source = Source.__new__(Source)
             source.impl = alure_source
             sources.append(source)
         return sources
@@ -1343,9 +1338,10 @@ cdef class SourceGroup:
     @property
     def sub_groups(self) -> List[SourceGroup]:
         """The list of subgroups currently in the group."""
+        cdef SourceGroup source_group
         source_groups = []
         for alure_source_group in self.impl.get_sub_groups():
-            source_group = SourceGroup(None)
+            source_group = SourceGroup.__new__(SourceGroup)
             source_group.impl = alure_source_group
             source_groups.append(source_group)
         return source_groups
@@ -1470,8 +1466,9 @@ cdef class AuxiliaryEffectSlot:
         """Iterator of each `Source` object and its pairing
         send this effect slot is set on.
         """
+        cdef Source source
         for source_send in self.impl.get_source_sends():
-            source = Source(None)
+            source = Source.__new__(Source)
             send = source_send.send
             source.impl = source_send.source
             yield source, send
@@ -1821,17 +1818,17 @@ cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
         this.context = ctx  # Will this be garbage collected?
 
     void device_disconnected(alure.Device alure_device):
-        cdef Device device = Device(None)
+        cdef Device device = Device.__new__(Device)
         device.impl = alure_device
         context.message_handler.device_disconnected(device)
 
     void source_stopped(alure.Source alure_source):
-        cdef Source source = Source(None)
+        cdef Source source = Source.__new__(Source)
         source.impl = alure_source
         context.message_handler.source_stopped(source)
 
     void source_force_stopped(alure.Source alure_source):
-        cdef Source source = Source(None)
+        cdef Source source = Source.__new__(Source)
         source.impl = alure_source
         context.message_handler.source_force_stopped(source)
 
