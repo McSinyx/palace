@@ -18,11 +18,11 @@
 # -- Project information -----------------------------------------------------
 
 project = 'palace'
-copyright = '2019, 2020  Nguyễn Gia Phong & contributors'
-author = 'Nguyễn Gia Phong & contributors'
+copyright = '2019, 2020  Nguyễn Gia Phong et al'
+author = 'Nguyễn Gia Phong et al.'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.10'
+release = '0.0.11'
 
 
 # -- General configuration ---------------------------------------------------

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Reference &#8212; palace 0.0.10 documentation</title>
+    <title>Reference &#8212; palace 0.0.11 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -131,7 +131,7 @@
 
 <dl class="class">
 <dt id="palace.Device">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param">name: Optional[str] = ''</em>, <em class="sig-param">fail_safe: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param">str name: str = ''</em>, <em class="sig-param">fail_safe: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio mix output, which is either a system audio output stream
 or an actual audio port.</p>
 <p>This can be used as a context manager that calls <cite>close</cite> upon
@@ -139,8 +139,7 @@ completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The name of the playback device.  If it is <cite>None</cite>,
-the object is left uninitialized.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the playback device.</p></li>
 <li><p><strong>fail_safe</strong> (<em>bool</em><em>, </em><em>optional</em>) – On failure, fallback to the default device if this is <cite>True</cite>,
 otherwise <cite>RuntimeError</cite> is raised.  Default to <cite>False</cite>.</p></li>
 </ul>
@@ -505,7 +504,7 @@ equivalent to calling <cite>len(self.sources)</cite>.</p>
 
 <dl class="class">
 <dt id="palace.Source">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sound source for playing audio.</p>
 <p>There is no practical limit to the number of sources one may create.</p>
 <p>When the source is no longer needed, <cite>destroy</cite> must be called,
@@ -513,8 +512,7 @@ unless the context manager is used, which guarantees the source’s
 destructioni upon completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em>) – The context from which the source is to be created.
-If it is <cite>None</cite>, the object is left uninitialized.</p>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the source is to be created.</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -905,7 +903,7 @@ by the doppler effect.</p>
 
 <dl class="class">
 <dt id="palace.SourceGroup">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SourceGroup</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SourceGroup</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup" title="Permalink to this definition">¶</a></dt>
 <dd><p>A group of <cite>Source</cite> references.</p>
 <p>For instance, setting <cite>SourceGroup.gain</cite> to 0.5 will halve the gain
 of all sources in the group.</p>
@@ -913,8 +911,7 @@ of all sources in the group.</p>
 completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em>) – The context from which the source group is to be created.
-If it is <cite>None</cite>, the object is left uninitialized.</p>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the source group is to be created.</p>
 </dd>
 </dl>
 <dl class="method">
@@ -1367,7 +1364,7 @@ or stream, which is detected upon a call to <cite>Context.update</cite>.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, 2020  Nguyễn Gia Phong & contributors.
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
