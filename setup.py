@@ -21,12 +21,20 @@ import re
 from distutils.dir_util import mkpath
 from distutils.file_util import copy_file
 from operator import methodcaller
+from os import environ
 from os.path import dirname, join
 from subprocess import DEVNULL, PIPE, run
 
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+
+try:
+    CYTHON_TRACE = int(environ['CYTHON_TRACE'])
+except KeyError:
+    CYTHON_TRACE = 0
+except ValueError:
+    CYTHON_TRACE = 0
 
 
 class BuildAlure2Ext(build_ext):
@@ -51,7 +59,8 @@ class BuildAlure2Ext(build_ext):
 setup(cmdclass={'build_ext': BuildAlure2Ext},
       ext_modules=cythonize(
           Extension(name='palace', sources=[join('src', 'palace.pyx')],
-                    language='c++', define_macros=[('CYTHON_TRACE', 1)]),
+                    define_macros=[('CYTHON_TRACE', CYTHON_TRACE)],
+                    extra_compile_args=["-std=c++11"], language='c++'),
           compiler_directives=dict(language_level='3str', c_string_type='str',
                                    c_string_encoding='utf8', linetrace=True,
                                    binding=False, embedsignature=True)))

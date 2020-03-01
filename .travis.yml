@@ -3,26 +3,50 @@ language: python
 branches:
   only:
     - master
-    - /\d+\.\d+\.\d+(-\S+)?$/
+    - /\d+\.\d+\.\d+$/
 
 env:
   global:
     - TWINE_USERNAME=__token__
+    - MACOSX_DEPLOYMENT_TARGET=10.9
     - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
-    - CIBW_BEFORE_BUILD_LINUX=.travis/cibw-before-build-manylinux2014
+    - CIBW_BEFORE_BUILD_LINUX=.ci/before-build-manylinux2014
+    - CIBW_BEFORE_BUILD_MACOS=.ci/before-build-macos
     - CIBW_TEST_REQUIRES=tox
+    - CIBW_TEST_COMMAND_MACOS="tox -c /Users/travis/build/McSinyx/palace"
     - CIBW_TEST_COMMAND_LINUX="tox -c /project"
+
+addons:
+  homebrew:
+    packages:
+      - openal-soft
+      - libvorbis
+      - opusfile
+      - libsndfile
+    update: true
+
+install: pip install twine cibuildwheel
+
+git:
+  depth: 1
 
 jobs:
   include:
+    - os: osx
+      language: shell
+      env: CIBW_BUILD=cp36-macosx*
+    - os: osx
+      language: shell
+      env: CIBW_BUILD=cp37-macosx*
+    - os: osx
+      language: shell
+      env: CIBW_BUILD=cp38-macosx*
     - services: docker
       env: CIBW_BUILD=cp36-manylinux_x86_64
     - services: docker
       env: CIBW_BUILD=cp37-manylinux_x86_64
     - services: docker
       env: CIBW_BUILD=cp38-manylinux_x86_64
-
-install: pip install twine cibuildwheel
 
 script: cibuildwheel --output-dir=dist
 

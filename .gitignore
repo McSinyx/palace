@@ -131,7 +131,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# IDE & editors
+# PyCharm
 .idea/
-# Emacs backup files patterns
+
+# Emacs
 \#*\#
+.\#*
+*~
