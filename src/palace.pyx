@@ -144,6 +144,10 @@ def use_context(context: Optional[Context]) -> None:
     else:
         alure.Context.make_current((<Context> context).impl)
 
+
+# TODO: current_context_thread
+# TODO: use_context_thread
+
 
 cdef class Device:
     """Audio mix output, which is either a system audio output stream
@@ -457,6 +461,10 @@ cdef class Context:
         """
         self.impl.destroy()
 
+    # TODO: start and end batch
+    # TODO: async wake interval
+    # TODO: document that methods below require context to be current
+
     def is_supported(self, channel_config: str, sample_type: str) -> bool:
         """Return if the channel configuration and sample type
         are supported by the context.
@@ -468,6 +476,13 @@ cdef class Context:
         """
         return self.impl.is_supported(to_channel_config(channel_config),
                                       to_sample_type(sample_type))
+
+    # TODO: available resamplers
+    # TODO: default resampler index
+    # TODO: async buffers
+    # TODO: doppler factor
+    # TODO: speed of sound
+    # TODO: distance model
 
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
@@ -554,6 +569,9 @@ cdef class Buffer:
     name : str
         Audio file or resource name.  Multiple calls with the same name
         will return the same buffer.
+    existed : bool, optional
+        Whether to require the resource must be cached before,
+        default to `False`.
 
     Attributes
     ----------
@@ -563,14 +581,21 @@ cdef class Buffer:
     Raises
     ------
     RuntimeError
-        If the buffer can't be loaded.
+        If the buffer can neither be loaded
+        nor be found when `existed` is set.
     """
     cdef alure.Buffer impl
     cdef Context context
     cdef readonly str name
 
-    def __init__(self, context: Context, name: str) -> None:
-        self.impl = context.impl.get_buffer(name)
+    def __init__(self, context: Context, name: str,
+                 existed: bool = False) -> None:
+        if existed:
+            self.impl = context.impl.find_buffer(name)
+            if not self:
+                raise RuntimeError(f'{name} does not exist in the cache')
+        else:
+            self.impl = context.impl.get_buffer(name)
         self.context, self.name = context, name
 
     def __enter__(self) -> Buffer:
@@ -580,6 +605,63 @@ cdef class Buffer:
                  exc_val: Optional[BaseException],
                  exc_tb: Optional[TracebackType]) -> Optional[bool]:
         self.destroy()
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, Buffer):
+            return NotImplemented
+        return self.impl < (<Buffer> other).impl
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, Buffer):
+            return NotImplemented
+        return self.impl <= (<Buffer> other).impl
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Buffer):
+            return NotImplemented
+        return self.impl == (<Buffer> other).impl
+
+    def __ne__(self, other: Any) -> bool:
+        if not isinstance(other, Buffer):
+            return NotImplemented
+        return self.impl != (<Buffer> other).impl
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, Buffer):
+            return NotImplemented
+        return self.impl > (<Buffer> other).impl
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, Buffer):
+            return NotImplemented
+        return self.impl >= (<Buffer> other).impl
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
+
+    @staticmethod
+    def from_decoder(decoder: Decoder, context: Context, name: str) -> Buffer:
+        """Return a buffer created by reading the given decoder.
+
+        Parameters
+        ----------
+        decoder : Decoder
+            The decoder from which the buffer is to be cached.
+        context : Context
+            The context from which the buffer is to be created.
+        name : str
+            The name to give to the buffer.  It may alias an audio file,
+            but it must not currently exist in the buffer cache.
+
+        Raises
+        ------
+        RuntimeError
+            If the buffer cannot be created.
+        """
+        buffer: Buffer = Buffer.__new__(Buffer)
+        buffer.impl = context.impl.create_buffer_from(name, decoder.pimpl)
+        buffer.context, buffer.name = context, name
+        return buffer
 
     @property
     def length(self) -> int:
@@ -607,6 +689,18 @@ cdef class Buffer:
         """Buffer's sample type."""
         return alure.get_sample_type_name(
             self.impl.get_sample_type())
+
+    @property
+    def size(self) -> int:
+        """Storage size used by the buffer, in bytes.
+
+        Notes
+        -----
+        The size in bytes may not be what you expect from the length,
+        as it may take more space internally than the `channel_config`
+        and `sample_type` suggest.
+        """
+        return self.impl.get_size()
 
     def play(self, source: Optional[Source] = None) -> Source:
         """Play `source` using the buffer.
@@ -782,7 +876,7 @@ cdef class Source:
         --------
         SourceGroup : A group of `Source` references
         """
-        cdef SourceGroup source_group = SourceGroup.__new__(SourceGroup)
+        source_group: SourceGroup = SourceGroup.__new__(SourceGroup)
         source_group.impl = self.impl.get_group()
         return source_group or None
 
