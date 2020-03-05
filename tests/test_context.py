@@ -1,5 +1,6 @@
 # Source pytest module
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
+# Copyright (C) 2020  Nguyễn Gia Phong
 #
 # This file is part of palace.
 #
@@ -45,4 +46,5 @@ def test_message_handler(device):
     message_handler_test = type('MessageHandlerTest', (MessageHandler,), {})()
     context.message_handler = message_handler_test
     assert context.message_handler is message_handler_test
-    context.destroy()
+    with context:
+        assert current_context().message_handler is context.message_handler

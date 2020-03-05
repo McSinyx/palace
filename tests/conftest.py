@@ -21,9 +21,7 @@ for convenient testing.
 """
 
 from pytest import fixture
-from palace import Device, Context, Source, SourceGroup
-
-__all__ = ['device', 'context', 'source', 'source_group']
+from palace import Device, Context
 
 
 @fixture(scope='session')
@@ -38,15 +36,3 @@ def context(device):
     (default context).
     """
     with Context(device) as ctx: yield ctx
-
-
-@fixture(scope='session')
-def source(context):
-    """Provide a source creared from the default context."""
-    with Source(context) as src: yield src
-
-
-@fixture(scope='session')
-def source_group(context):
-    """Provide a source group creared from the default context."""
-    with SourceGroup(context) as group: yield group
