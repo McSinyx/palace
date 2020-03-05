@@ -48,11 +48,12 @@ from warnings import warn
 from libc.stdint cimport uint64_t   # noqa
 from libc.string cimport memcpy
 from libcpp cimport bool as boolean, nullptr
-from libcpp.memory cimport shared_ptr
+from libcpp.memory cimport shared_ptr, static_pointer_cast
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
+from cpython.ref cimport Py_INCREF, Py_DECREF
 
 from std cimport milliseconds
 cimport alure   # noqa
@@ -388,8 +389,6 @@ cdef class Context:
         The device this context was created from.
     listener : Listener
         The listener instance of this context.
-    message_handler : MessageHandler
-        Handler of some certain events.
 
     Raises
     ------
@@ -400,15 +399,13 @@ cdef class Context:
     cdef alure.Context previous
     cdef readonly Device device
     cdef readonly Listener listener
-    cdef public MessageHandler message_handler
 
     def __init__(self, device: Device, attrs: Dict[int, int] = {}) -> None:
         self.impl = device.impl.create_context(mkattrs(attrs.items()))
         self.device = device
         self.listener = Listener(self)
-        self.message_handler = MessageHandler()
-        self.impl.set_message_handler(
-            shared_ptr[alure.MessageHandler](new CppMessageHandler(self)))
+        self.impl.set_message_handler(shared_ptr[alure.MessageHandler](
+            new CppMessageHandler(MessageHandler())))
 
     def __enter__(self) -> Context:
         self.previous = alure.Context.get_current()
@@ -462,6 +459,18 @@ cdef class Context:
         self.impl.destroy()
 
     # TODO: start and end batch
+
+    @property
+    def message_handler(self) -> MessageHandler:
+        """Handler of some certain events."""
+        return static_pointer_cast[CppMessageHandler, alure.MessageHandler](
+            self.impl.get_message_handler()).get()[0].pyo
+
+    @message_handler.setter
+    def message_handler(self, message_handler: MessageHandler) -> None:
+        static_pointer_cast[CppMessageHandler, alure.MessageHandler](
+            self.impl.get_message_handler()).get()[0].pyo = message_handler
+
     # TODO: async wake interval
     # TODO: document that methods below require context to be current
 
@@ -1792,8 +1801,12 @@ class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
 cdef cppclass CppDecoder(alure.BaseDecoder):
     Decoder pyo
 
-    CppDecoder(Decoder decoder):
+    __init__(Decoder decoder):
         this.pyo = decoder
+        Py_INCREF(this.pyo)
+
+    __dealloc__():
+        Py_DECREF(this.pyo)
 
     unsigned get_frequency_() const:
         return pyo.frequency
@@ -1906,33 +1919,37 @@ cdef class MessageHandler:
 
 
 cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
-    Context context
+    MessageHandler pyo
 
-    CppMessageHandler(Context ctx):
-        this.context = ctx  # Will this be garbage collected?
+    __init__(MessageHandler message_handler):
+        this.pyo = message_handler
+        Py_INCREF(this.pyo)
+
+    __dealloc__():
+        Py_DECREF(this.pyo)
 
     void device_disconnected(alure.Device alure_device):
         cdef Device device = Device.__new__(Device)
         device.impl = alure_device
-        context.message_handler.device_disconnected(device)
+        pyo.device_disconnected(device)
 
     void source_stopped(alure.Source alure_source):
         cdef Source source = Source.__new__(Source)
         source.impl = alure_source
-        context.message_handler.source_stopped(source)
+        pyo.source_stopped(source)
 
     void source_force_stopped(alure.Source alure_source):
         cdef Source source = Source.__new__(Source)
         source.impl = alure_source
-        context.message_handler.source_force_stopped(source)
+        pyo.source_force_stopped(source)
 
     void buffer_loading(string name, string channel_config, string sample_type,
                         unsigned sample_rate, vector[signed char] data):
-        context.message_handler.buffer_loading(name, channel_config,
-                                               sample_type, sample_rate, data)
+        pyo.buffer_loading(name, channel_config, sample_type,
+                           sample_rate, data)
 
     string resource_not_found(string name):
-        return context.message_handler.resource_not_found(name)
+        return pyo.resource_not_found(name)
 
 
 # Helper cdef functions

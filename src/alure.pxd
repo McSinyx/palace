@@ -256,6 +256,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         Listener get_listener 'getListener'() except +
 
         shared_ptr[MessageHandler] set_message_handler 'setMessageHandler'(shared_ptr[MessageHandler]) except +
+        shared_ptr[MessageHandler] get_message_handler 'getMessageHandler'() except +
 
         void set_async_wake_interval 'setAsyncWakeInterval'(milliseconds) except +
         milliseconds get_async_wake_interval 'getAsyncWakeInterval'() except +
