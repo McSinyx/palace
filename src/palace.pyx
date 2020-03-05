@@ -121,10 +121,19 @@ def query_extension(name: str) -> bool:
     return devmgr.query_extension(name)
 
 
-def current_context() -> Optional[Context]:
-    """Return the context that is currently used."""
+def current_context(thread: bool = False) -> Optional[Context]:
+    """Return the context that is currently used.
+
+    If `thread` is set to `True`, return the thread-specific context
+    used for OpenAL operations.  This requires the non-device-specific
+    as well as the context's device `ALC_EXT_thread_local_context`
+    extension to be available.
+    """
     cdef Context current = Context.__new__(Context)
-    current.impl = alure.Context.get_current()
+    if thread:
+        current.impl = alure.Context.get_thread_current()
+    else:
+        current.impl = alure.Context.get_current()
     if not current:
         return None
     current.device = Device.__new__(Device)
@@ -133,21 +142,26 @@ def current_context() -> Optional[Context]:
     return current
 
 
-def use_context(context: Optional[Context]) -> None:
+def use_context(context: Optional[Context], thread: bool = False) -> None:
     """Make the specified context current for OpenAL operations.
+
+    If `thread` is set to `True`, make the context current
+    for OpenAL operations on the calling thread only.
+    This requires the non-device-specific as well as the context's
+    device `ALC_EXT_thread_local_context extension to be available.
 
     See Also
     --------
     Context : Audio environment container
     """
-    if context is None:
-        alure.Context.make_current(<alure.Context> nullptr)
+    cdef alure.Context alure_context = <alure.Context> nullptr
+    if context is not None:
+        alure_context = (<Context> context).impl
+
+    if thread:
+        alure.Context.make_thread_current(alure_context)
     else:
-        alure.Context.make_current((<Context> context).impl)
-
-
-# TODO: current_context_thread
-# TODO: use_context_thread
+        alure.Context.make_current(alure_context)
 
 
 cdef class Device:
@@ -458,7 +472,13 @@ cdef class Context:
         """
         self.impl.destroy()
 
-    # TODO: start and end batch
+    def start_batch(self) -> None:
+        """Suspend the context to start batching."""
+        self.impl.start_batch()
+
+    def end_batch(self) -> None:
+        """Continue processing the context and end batching."""
+        self.impl.end_batch()
 
     @property
     def message_handler(self) -> MessageHandler:
@@ -471,7 +491,15 @@ cdef class Context:
         static_pointer_cast[CppMessageHandler, alure.MessageHandler](
             self.impl.get_message_handler()).get()[0].pyo = message_handler
 
-    # TODO: async wake interval
+    @property
+    def async_wake_interval(self) -> int:
+        """Current interval used for waking up the background thread."""
+        return self.impl.get_async_wake_interval().count()
+
+    @async_wake_interval.setter
+    def async_wake_interval(self, value: int) -> None:
+        self.impl.set_async_wake_interval(milliseconds(value))
+
     # TODO: document that methods below require context to be current
 
     def is_supported(self, channel_config: str, sample_type: str) -> bool:
@@ -486,11 +514,52 @@ cdef class Context:
         return self.impl.is_supported(to_channel_config(channel_config),
                                       to_sample_type(sample_type))
 
-    # TODO: available resamplers
-    # TODO: default resampler index
+    @property
+    def available_resamplers(self) -> List[str]:
+        """The list of resamplers supported by the context.
+
+        If the `AL_SOFT_source_resampler` extension is unsupported
+        this will be an empty list, otherwise there would be
+        at least one entry.
+        """
+        cdef alure.ArrayView[string] resamplers
+        resamplers = self.impl.get_available_resamplers()
+        return [resampler for resampler in resamplers]
+
+    @property
+    def default_resampler_index(self) -> int:
+        """The context's default resampler index.
+
+        If the `AL_SOFT_source_resampler` extension is unsupported
+        the resampler list will be empty and this will return 0.
+
+        If you try to access the resampler list with this index
+        without extension, undefined behavior will occur
+        (accessing an out of bounds array index).
+        """
+        return self.impl.get_default_resampler_index()
+
     # TODO: async buffers
-    # TODO: doppler factor
-    # TODO: speed of sound
+
+    @setter
+    def doppler_factor(self, value: float) -> None:
+        """Factor to apply to all source's doppler calculations."""
+        self.impl.set_doppler_factor(value)
+
+    @setter
+    def speed_of_sound(self, value: float) -> None:
+        """The speed of sound propagation in units per second.
+
+        It is used to calculate the doppler effect along with other
+        distance-related time effects.
+
+        The default is 343.3 units per second (a realistic speed
+        assuming 1 meter per unit). If this is adjusted for a
+        different unit scale, `Listener.meters_per_unit` should
+        also be adjusted.
+        """
+        self.impl.set_speed_of_sound(value)
+
     # TODO: distance model
 
     def update(self) -> None:
