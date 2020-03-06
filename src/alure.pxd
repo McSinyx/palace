@@ -20,6 +20,7 @@
 
 from libc.stdint cimport int64_t, uint64_t
 from libcpp cimport bool as boolean, nullptr_t
+from libcpp.algorithm cimport copy
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
@@ -109,7 +110,13 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         Full 'alure::PlaybackName::Full'
 
     cdef cppclass DistanceModel:
-        pass
+        InverseClamped 'alure::DistanceModel::InverseClamped'
+        LinearClamped 'alure::DistanceModel::LinearClamped'
+        ExponentClamped 'alure::DistanceModel::ExponentClamped'
+        Inverse 'alure::DistanceModel::Inverse'
+        Linear 'alure::DistanceModel::Linear'
+        Exponent 'alure::DistanceModel::Exponent'
+        No 'alure::DistanceModel::None'
 
     cdef enum Spatialize:
         Off 'alure::Spatialize::Off'
