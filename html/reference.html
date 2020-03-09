@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Reference &#8212; palace 0.0.11 documentation</title>
+    <title>Reference &#8212; palace 0.0.12 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -36,6 +36,70 @@
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-palace"></span><p>Pythonic Audio Library and Codecs Environment</p>
+<dl class="attribute">
+<dt id="palace.CHANNEL_CONFIG">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">CHANNEL_CONFIG</code><a class="headerlink" href="#palace.CHANNEL_CONFIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the channel configuration
+(either <cite>MONO</cite>, <cite>STEREO</cite>, <cite>QUAD</cite>, <cite>X51</cite>, <cite>X61</cite> or <cite>X71</cite>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.SAMPLE_TYPE">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SAMPLE_TYPE</code><a class="headerlink" href="#palace.SAMPLE_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the sample type
+(either <cite>[UNSIGNED_]{BYTE,SHORT,INT}</cite> or <cite>FLOAT</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.FREQUENCY">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FREQUENCY</code><a class="headerlink" href="#palace.FREQUENCY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the frequency in hertz.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.MONO_SOURCES">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MONO_SOURCES</code><a class="headerlink" href="#palace.MONO_SOURCES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the number of mono (3D) sources.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.STEREO_SOURCES">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">STEREO_SOURCES</code><a class="headerlink" href="#palace.STEREO_SOURCES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the number of stereo sources.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.MAX_AUXILIARY_SENDS">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MAX_AUXILIARY_SENDS</code><a class="headerlink" href="#palace.MAX_AUXILIARY_SENDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the maximum number of
+auxiliary source sends.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.HRTF">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">HRTF</code><a class="headerlink" href="#palace.HRTF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify whether to enable HRTF
+(either <cite>FALSE</cite>, <cite>TRUE</cite> or <cite>DONT_CARE</cite>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.HRTF_ID">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">HRTF_ID</code><a class="headerlink" href="#palace.HRTF_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the HRTF to be used.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.OUTPUT_LIMITER">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">OUTPUT_LIMITER</code><a class="headerlink" href="#palace.OUTPUT_LIMITER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify whether to use a gain limiter
+(either <cite>FALSE</cite>, <cite>TRUE</cite> or <cite>DONT_CARE</cite>).</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="palace.device_names">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">device_names</code><a class="headerlink" href="#palace.device_names" title="Permalink to this definition">¶</a></dt>
@@ -328,17 +392,6 @@ and components such as sources, buffers and effects.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="palace.Context.message_handler">
-<code class="sig-name descname">message_handler</code><a class="headerlink" href="#palace.Context.message_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handler of some certain events.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#palace.MessageHandler" title="palace.MessageHandler">MessageHandler</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><strong>RuntimeError</strong> – If context creation fails.</p>
@@ -368,14 +421,9 @@ are supported by the context.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="sig-name descname">message_handler</code></dt>
-<dd><p>palace.MessageHandler</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>message_handler</p>
-</dd>
-</dl>
+<dt id="palace.Context.message_handler">
+<code class="sig-name descname">message_handler</code><a class="headerlink" href="#palace.Context.message_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of some certain events.</p>
 </dd></dl>
 
 <dl class="method">
@@ -388,7 +436,7 @@ are supported by the context.</p>
 
 <dl class="class">
 <dt id="palace.Buffer">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Buffer</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em>, <em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Buffer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Buffer</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em>, <em class="sig-param">str name: str</em>, <em class="sig-param">existed: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer of preloaded PCM samples coming from a <cite>Decoder</cite>.</p>
 <p>Cached buffers must be freed using <cite>destroy</cite> before destroying
 <cite>context</cite>.  Alternatively, this can be used as a context manager
@@ -400,6 +448,8 @@ even if an error occurs.</p>
 <li><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the buffer is to be created and cached.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.  Multiple calls with the same name
 will return the same buffer.</p></li>
+<li><p><strong>existed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to require the resource must be cached before,
+default to <cite>False</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -416,7 +466,8 @@ will return the same buffer.</p></li>
 
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>RuntimeError</strong> – If the buffer can’t be loaded.</p>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If the buffer can neither be loaded
+    nor be found when <cite>existed</cite> is set.</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -436,6 +487,25 @@ will return the same buffer.</p></li>
 <dt id="palace.Buffer.frequency">
 <code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Buffer.frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer’s frequency in hertz.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Buffer.from_decoder">
+<em class="property">static </em><code class="sig-name descname">from_decoder</code><span class="sig-paren">(</span><em class="sig-param">Decoder decoder: Decoder</em>, <em class="sig-param">Context context: Context</em>, <em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; Buffer<a class="headerlink" href="#palace.Buffer.from_decoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a buffer created by reading the given decoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decoder</strong> (<a class="reference internal" href="#palace.Decoder" title="palace.Decoder"><em>Decoder</em></a>) – The decoder from which the buffer is to be cached.</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the buffer is to be created.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name to give to the buffer.  It may alias an audio file,
+but it must not currently exist in the buffer cache.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the buffer cannot be created.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -482,6 +552,16 @@ create a new one.</p>
 <dt id="palace.Buffer.sample_type">
 <code class="sig-name descname">sample_type</code><a class="headerlink" href="#palace.Buffer.sample_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer’s sample type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.Buffer.size">
+<code class="sig-name descname">size</code><a class="headerlink" href="#palace.Buffer.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Storage size used by the buffer, in bytes.</p>
+<p class="rubric">Notes</p>
+<p>The size in bytes may not be what you expect from the length,
+as it may take more space internally than the <cite>channel_config</cite>
+and <cite>sample_type</cite> suggest.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1368,7 +1448,7 @@ or stream, which is detected upon a call to <cite>Context.update</cite>.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
