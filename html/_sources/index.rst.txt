@@ -10,6 +10,7 @@ Welcome to palace's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   installation
    reference
 
 
