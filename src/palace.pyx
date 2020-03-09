@@ -22,6 +22,29 @@
 
 Attributes
 ----------
+CHANNEL_CONFIG
+    Context creation key to specify the channel configuration
+    (either `MONO`, `STEREO`, `QUAD`, `X51`, `X61` or `X71`).
+SAMPLE_TYPE : int
+    Context creation key to specify the sample type
+    (either `[UNSIGNED_]{BYTE,SHORT,INT}` or `FLOAT`).
+FREQUENCY
+    Context creation key to specify the frequency in hertz.
+MONO_SOURCES
+    Context creation key to specify the number of mono (3D) sources.
+STEREO_SOURCES
+    Context creation key to specify the number of stereo sources.
+MAX_AUXILIARY_SENDS
+    Context creation key to specify the maximum number of
+    auxiliary source sends.
+HRTF
+    Context creation key to specify whether to enable HRTF
+    (either `FALSE`, `TRUE` or `DONT_CARE`).
+HRTF_ID
+    Context creation key to specify the HRTF to be used.
+OUTPUT_LIMITER
+    Context creation key to specify whether to use a gain limiter
+    (either `FALSE`, `TRUE` or `DONT_CARE`).
 device_names : Dict[str, List[str]]
     Dictionary of available device names corresponding to each type.
 device_name_default : Dict[str, str]
@@ -33,7 +56,11 @@ channel_configs : FrozenSet[str]
 """
 
 __all__ = [
-    'ALC_FALSE', 'ALC_TRUE', 'ALC_HRTF_SOFT', 'ALC_HRTF_ID_SOFT',
+    'FALSE', 'TRUE', 'DONT_CARE', 'FREQUENCY', 'MONO_SOURCES',
+    'STEREO_SOURCES', 'MAX_AUXILIARY_SENDS', 'OUTPUT_LIMITER',
+    'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
+    'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
+    'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
     'device_name_default', 'device_names', 'sample_types', 'channel_configs',
     'sample_size', 'sample_length',
     'query_extension', 'current_context', 'use_context',
@@ -64,10 +91,35 @@ getter = property   # bypass Cython property hijack
 setter = lambda fset: property(fset=fset, doc=fset.__doc__)     # noqa
 
 # Cast to Python objects
-ALC_FALSE: int = alure.ALC_FALSE
-ALC_TRUE: int = alure.ALC_TRUE
-ALC_HRTF_SOFT: int = alure.ALC_HRTF_SOFT
-ALC_HRTF_ID_SOFT: int = alure.ALC_HRTF_ID_SOFT
+FALSE: int = alure.ALC_FALSE
+TRUE: int = alure.ALC_TRUE
+DONT_CARE: int = alure.ALC_DONT_CARE_SOFT
+
+FREQUENCY: int = alure.ALC_FREQUENCY
+MONO_SOURCES: int = alure.ALC_MONO_SOURCES
+STEREO_SOURCES: int = alure.ALC_STEREO_SOURCES
+MAX_AUXILIARY_SENDS: int = alure.ALC_MAX_AUXILIARY_SENDS
+OUTPUT_LIMITER: int = alure.ALC_OUTPUT_LIMITER_SOFT
+
+CHANNEL_CONFIG: int = alure.ALC_FORMAT_CHANNELS_SOFT
+MONO: int = alure.ALC_MONO_SOFT
+STEREO: int = alure.ALC_STEREO_SOFT
+QUAD: int = alure.ALC_QUAD_SOFT
+X51: int = alure.ALC_5POINT1_SOFT
+X61: int = alure.ALC_6POINT1_SOFT
+X71: int = alure.ALC_7POINT1_SOFT
+
+SAMPLE_TYPE: int = alure.ALC_FORMAT_TYPE_SOFT
+BYTE: int = alure.ALC_BYTE_SOFT
+UNSIGNED_BYTE: int = alure.ALC_UNSIGNED_BYTE_SOFT
+SHORT: int = alure.ALC_SHORT_SOFT
+UNSIGNED_SHORT: int = alure.ALC_UNSIGNED_SHORT_SOFT
+INT: int = alure.ALC_INT_SOFT
+UNSIGNED_INT: int = alure.ALC_UNSIGNED_INT_SOFT
+FLOAT: int = alure.ALC_FLOAT_SOFT
+
+HRTF: int = alure.ALC_HRTF_SOFT
+HRTF_ID: int = alure.ALC_HRTF_ID_SOFT
 
 
 # Since multiple calls of DeviceManager.get_instance() will give

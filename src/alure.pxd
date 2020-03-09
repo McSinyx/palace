@@ -33,10 +33,39 @@ cdef extern from 'alc.h' nogil:
     cdef int ALC_FALSE
     cdef int ALC_TRUE
 
+    cdef int ALC_FREQUENCY
+
+    cdef int ALC_MONO_SOURCES
+    cdef int ALC_STEREO_SOURCES
+
+
+cdef extern from 'efx.h' nogil:
+    cdef int ALC_MAX_AUXILIARY_SENDS
+
 
 cdef extern from 'alure2-alext.h' nogil:
+    cdef int ALC_FORMAT_CHANNELS_SOFT
+    cdef int ALC_MONO_SOFT
+    cdef int ALC_STEREO_SOFT
+    cdef int ALC_QUAD_SOFT
+    cdef int ALC_5POINT1_SOFT
+    cdef int ALC_6POINT1_SOFT
+    cdef int ALC_7POINT1_SOFT
+
+    cdef int ALC_FORMAT_TYPE_SOFT
+    cdef int ALC_BYTE_SOFT
+    cdef int ALC_UNSIGNED_BYTE_SOFT
+    cdef int ALC_SHORT_SOFT
+    cdef int ALC_UNSIGNED_SHORT_SOFT
+    cdef int ALC_INT_SOFT
+    cdef int ALC_UNSIGNED_INT_SOFT
+    cdef int ALC_FLOAT_SOFT
+
     cdef int ALC_HRTF_SOFT
+    cdef int ALC_DONT_CARE_SOFT
     cdef int ALC_HRTF_ID_SOFT
+
+    cdef int ALC_OUTPUT_LIMITER_SOFT
 
 
 cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:

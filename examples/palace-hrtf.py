@@ -24,8 +24,7 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from palace import (ALC_TRUE, ALC_HRTF_SOFT, ALC_HRTF_ID_SOFT,
-                    Device, Context, Source, Decoder)
+from palace import TRUE, HRTF, HRTF_ID, Device, Context, Source, Decoder
 
 CHUNK_LEN: int = 12000
 QUEUE_SIZE: int = 4
@@ -52,10 +51,10 @@ def play(files: Iterable[str], device: str, hrtf_name: str,
             for name in hrtf_names: print(f'    {name}')
         else:
             print('No HRTF found!')
-        attrs = {ALC_HRTF_SOFT: ALC_TRUE}
+        attrs = {HRTF: TRUE}
         if hrtf_name is not None:
             try:
-                attrs[ALC_HRTF_ID_SOFT] = hrtf_names.index(hrtf_name)
+                attrs[HRTF_ID] = hrtf_names.index(hrtf_name)
             except ValueError:
                 stderr.write(f'HRTF "{hrtf_name}" not found\n')
 
