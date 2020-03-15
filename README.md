@@ -33,7 +33,7 @@ GitHub issue [#1][GH-1].
 
 ### From source
 Aside from the build dependencies listed in `pyproject.toml`, one will
-additionally need compatible Python headers, [alure], a C++11 compiler,
+additionally need compatible Python headers, [alure], a C++14 compiler,
 [CMake] 2.6+ (and probably `git` for fetching the source).
 Palace can then be compiled and installed by running
 ```sh

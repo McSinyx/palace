@@ -20,12 +20,12 @@
 
 from libc.stdint cimport int64_t, uint64_t
 from libcpp cimport bool as boolean, nullptr_t
-from libcpp.memory cimport shared_ptr
+from libcpp.memory cimport shared_ptr, unique_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
-from std cimport duration, nanoseconds, milliseconds, shared_future
+from std cimport duration, nanoseconds, milliseconds, shared_future, streambuf
 
 
 # OpenAL and Alure auxiliary declarations
@@ -611,20 +611,27 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         pair[uint64_t, uint64_t] get_loop_points 'getLoopPoints'()
 
         int read(void*, int)
-
+
     cdef cppclass DecoderFactory:
         pass
-
+
     cdef cppclass FileIOFactory:
-        pass
-
+        @staticmethod
+        unique_ptr[FileIOFactory] set(unique_ptr[FileIOFactory])
+        @staticmethod
+        FileIOFactory& get()
+
     cdef cppclass MessageHandler:
         pass
 
 
 # GIL is needed for operations with Python objects.
 cdef extern from 'bases.h' namespace 'palace':
+    cdef cppclass BaseStreamBuf(streambuf):
+        pass
     cdef cppclass BaseDecoder(Decoder):
+        pass
+    cdef cppclass BaseFileIOFactory(FileIOFactory):
         pass
     cdef cppclass BaseMessageHandler(MessageHandler):
         pass

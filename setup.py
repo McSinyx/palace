@@ -60,7 +60,7 @@ setup(cmdclass={'build_ext': BuildAlure2Ext},
       ext_modules=cythonize(
           Extension(name='palace', sources=[join('src', 'palace.pyx')],
                     define_macros=[('CYTHON_TRACE', CYTHON_TRACE)],
-                    extra_compile_args=["-std=c++11"], language='c++'),
+                    extra_compile_args=["-std=c++14"], language='c++'),
           compiler_directives=dict(language_level='3str', c_string_type='str',
                                    c_string_encoding='utf8', linetrace=True,
                                    binding=False, embedsignature=True)))

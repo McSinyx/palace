@@ -31,6 +31,11 @@ cdef extern from '<chrono>' namespace 'std::chrono' nogil:
     ctypedef duration[int64_t, milli] milliseconds
 
 
+cdef extern from '<iostream>' namespace 'std' nogil:
+    cdef cppclass istream:
+        istream(streambuf*)
+
+
 cdef extern from '<future>' namespace 'std' nogil:
     cdef cppclass shared_future[R]:
         pass
@@ -41,3 +46,17 @@ cdef extern from '<ratio>' namespace 'std' nogil:
         pass
     cdef cppclass milli:
         pass
+
+
+cdef extern from '<streambuf>' namespace 'std' nogil:
+    cdef cppclass streambuf:
+        pass
+
+
+cdef extern from '<type_traits>' namespace 'std' nogil:
+    cdef cppclass remove_reference[T]:
+        pass
+
+
+cdef extern from '<utility>' namespace 'std' nogil:
+    cdef T move[T](T)
