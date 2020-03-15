@@ -62,27 +62,31 @@ __all__ = [
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
     'device_name_default', 'device_names', 'sample_types', 'channel_configs',
-    'sample_size', 'sample_length',
-    'query_extension', 'current_context', 'use_context',
+    'sample_size', 'sample_length', 'query_extension',
+    'current_context', 'use_context', 'current_fileio', 'use_fileio',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
+from io import DEFAULT_BUFFER_SIZE
 from types import TracebackType
-from typing import Any, Dict, FrozenSet, Iterator, List, Optional, Tuple, Type
+from typing import (Any, Callable, Iterator, Optional, Type,
+                    Dict, FrozenSet, List, Tuple)
 from warnings import warn
 
 from libc.stdint cimport uint64_t   # noqa
+from libc.stdio cimport EOF
 from libc.string cimport memcpy
 from libcpp cimport bool as boolean, nullptr
-from libcpp.memory cimport shared_ptr, static_pointer_cast
+from libcpp.memory cimport (make_unique, unique_ptr,    # noqa
+                            shared_ptr, static_pointer_cast)
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
 from cpython.ref cimport Py_INCREF, Py_DECREF
 
-from std cimport milliseconds
+from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
 
 # Aliases
@@ -144,6 +148,8 @@ channel_configs: FrozenSet[str] = frozenset({
     '5.1 Surround', '6.1 Surround', '7.1 Surround',
     'B-Format 2D', 'B-Format 3D'})
 
+cdef object fileio_factory = None
+
 
 def sample_size(length: int, channel_config: str, sample_type: str) -> int:
     """Return the size of the given number of sample frames.
@@ -200,6 +206,32 @@ def use_context(context: Optional[Context]) -> None:
 
 # TODO: current_context_thread
 # TODO: use_context_thread
+
+
+def current_fileio() -> Optional[Callable[[str], object]]:
+    """Return the file I/O factory currently in used by audio decoders.
+
+    If the default is being used, return `None`.
+    """
+    return fileio_factory
+
+
+def use_fileio(factory: Optional[Callable[[str], object]],
+               buffer_size: int = DEFAULT_BUFFER_SIZE) -> None:
+    """Set the file I/O factory instance to be used by audio decoders.
+
+    The file object returned from `factory` must have methods
+    `read`, `seek`, and `close`.
+
+    If `factory=None` is provided, revert to the default.
+    """
+    global fileio_factory
+    fileio_factory = factory
+    if fileio_factory is None:
+        alure.FileIOFactory.set(unique_ptr[alure.FileIOFactory]())
+    else:
+        alure.FileIOFactory.set(unique_ptr[alure.FileIOFactory](
+            new CppFileIOFactory(fileio_factory, buffer_size)))
 
 
 cdef class Device:
@@ -1855,10 +1887,10 @@ cdef cppclass CppDecoder(alure.BaseDecoder):
 
     __init__(Decoder decoder):
         this.pyo = decoder
-        Py_INCREF(this.pyo)
+        Py_INCREF(pyo)
 
     __dealloc__():
-        Py_DECREF(this.pyo)
+        Py_DECREF(pyo)
 
     unsigned get_frequency_() const:
         return pyo.frequency
@@ -1885,6 +1917,49 @@ cdef cppclass CppDecoder(alure.BaseDecoder):
         memcpy(ptr, samples.c_str(), samples.size())
         return alure.bytes_to_frames(
             samples.size(), get_channel_config_(), get_sample_type_())
+
+
+cdef cppclass CppStreamBuf(alure.BaseStreamBuf):
+    size_t buffer_size
+    object pyo
+    string buffer
+
+    __init__(object fileio, size_t bufsize):
+        this.buffer_size = bufsize
+        this.pyo = fileio
+        Py_INCREF(pyo)
+
+    __dealloc__():
+        pyo.close()
+        Py_DECREF(pyo)
+
+    size_t seek(long long target, int whence):
+        cdef size_t result = pyo.seek(target, whence)
+        underflow()
+        return result
+
+    int underflow():
+        this.buffer = pyo.read(buffer_size)
+        cdef char* p = <char*> buffer.c_str()
+        cdef size_t n = buffer.size()
+        setg(p, p, p+n)
+        return p[0] if n else EOF
+
+
+cdef cppclass CppFileIOFactory(alure.BaseFileIOFactory):
+    size_t buffer_size
+    object pyo
+
+    __init__(object factory, size_t bufsize):
+        this.buffer_size = bufsize
+        this.pyo = factory
+        Py_INCREF(pyo)
+
+    __dealloc__():
+        Py_DECREF(pyo)
+
+    unique_ptr[istream] open_file(const string& name):
+        return make_unique[istream](new CppStreamBuf(pyo(name), buffer_size))
 
 
 cdef class MessageHandler:
@@ -1975,10 +2050,10 @@ cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
 
     __init__(MessageHandler message_handler):
         this.pyo = message_handler
-        Py_INCREF(this.pyo)
+        Py_INCREF(pyo)
 
     __dealloc__():
-        Py_DECREF(this.pyo)
+        Py_DECREF(pyo)
 
     void device_disconnected(alure.Device alure_device):
         cdef Device device = Device.__new__(Device)

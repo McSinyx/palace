@@ -50,7 +50,7 @@ cdef extern from '<ratio>' namespace 'std' nogil:
 
 cdef extern from '<streambuf>' namespace 'std' nogil:
     cdef cppclass streambuf:
-        pass
+        void setg(char*, char*, char*)
 
 
 cdef extern from '<type_traits>' namespace 'std' nogil:
