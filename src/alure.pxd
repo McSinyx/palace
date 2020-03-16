@@ -20,7 +20,6 @@
 
 from libc.stdint cimport int64_t, uint64_t
 from libcpp cimport bool as boolean, nullptr_t
-from libcpp.algorithm cimport copy
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
@@ -42,6 +41,12 @@ cdef extern from 'alure2-alext.h' nogil:
 
 cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:
     ctypedef duration[double] Seconds
+
+
+cdef extern from 'alure2-typeviews.h' namespace 'alure' nogil:
+    cdef cppclass ArrayView[T]:
+        const T* begin() except +
+        const T* end() except +
 
 
 # Alure main module
@@ -109,7 +114,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         Basic 'alure::PlaybackName::Basic'
         Full 'alure::PlaybackName::Full'
 
-    cdef cppclass DistanceModel:
+    cdef enum DistanceModel:
         InverseClamped 'alure::DistanceModel::InverseClamped'
         LinearClamped 'alure::DistanceModel::LinearClamped'
         ExponentClamped 'alure::DistanceModel::ExponentClamped'
@@ -272,7 +277,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
         boolean is_supported 'isSupported'(ChannelConfig, SampleType) except +
 
-        vector[string] get_available_resamplers 'getAvailableResamplers'() except +
+        ArrayView[string] get_available_resamplers 'getAvailableResamplers'() except +
         int get_default_resampler_index 'getDefaultResamplerIndex'() except +
 
         Buffer get_buffer 'getBuffer'(string) except +
