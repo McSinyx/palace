@@ -22,57 +22,72 @@
 
 Attributes
 ----------
-CHANNEL_CONFIG
+Vector3 : Type
+    Tuple of three floats.
+CHANNEL_CONFIG : int
     Context creation key to specify the channel configuration
     (either `MONO`, `STEREO`, `QUAD`, `X51`, `X61` or `X71`).
 SAMPLE_TYPE : int
     Context creation key to specify the sample type
     (either `[UNSIGNED_]{BYTE,SHORT,INT}` or `FLOAT`).
-FREQUENCY
+FREQUENCY : int
     Context creation key to specify the frequency in hertz.
-MONO_SOURCES
+MONO_SOURCES : int
     Context creation key to specify the number of mono (3D) sources.
-STEREO_SOURCES
+STEREO_SOURCES : int
     Context creation key to specify the number of stereo sources.
-MAX_AUXILIARY_SENDS
+MAX_AUXILIARY_SENDS : int
     Context creation key to specify the maximum number of
     auxiliary source sends.
-HRTF
+HRTF : int
     Context creation key to specify whether to enable HRTF
     (either `FALSE`, `TRUE` or `DONT_CARE`).
-HRTF_ID
+HRTF_ID : int
     Context creation key to specify the HRTF to be used.
-OUTPUT_LIMITER
+OUTPUT_LIMITER : int
     Context creation key to specify whether to use a gain limiter
     (either `FALSE`, `TRUE` or `DONT_CARE`).
+sample_types : Tuple[str, ...]
+    Names of available sample types.
+channel_configs : Tuple[str, ...]
+    Names of available channel configurations.
 device_names : Dict[str, List[str]]
     Dictionary of available device names corresponding to each type.
 device_name_default : Dict[str, str]
     Dictionary of the default device name corresponding to each type.
-sample_types : FrozenSet[str]
-    Set of sample types.
-channel_configs : FrozenSet[str]
-    Set of channel configurations.
+decoder_factories : DecoderNamespace
+    Simple object for storing decoder factories.
+
+    User-registered factories are tried one after another
+    if `RuntimeError` is raised, in lexicographical order.
+    Internal decoder factories are always used after registered ones.
 """
 
 __all__ = [
-    'FALSE', 'TRUE', 'DONT_CARE', 'FREQUENCY', 'MONO_SOURCES',
-    'STEREO_SOURCES', 'MAX_AUXILIARY_SENDS', 'OUTPUT_LIMITER',
+    'Vector3', 'FALSE', 'TRUE', 'DONT_CARE', 'FREQUENCY',
+    'MONO_SOURCES', 'STEREO_SOURCES', 'MAX_AUXILIARY_SENDS', 'OUTPUT_LIMITER',
     'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
-    'device_name_default', 'device_names', 'sample_types', 'channel_configs',
-    'sample_size', 'sample_length', 'query_extension',
+    'sample_types', 'channel_configs', 'device_name_default', 'device_names',
+    'decoder_factories', 'sample_size', 'sample_length', 'query_extension',
     'current_context', 'use_context', 'current_fileio', 'use_fileio',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
-    'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'MessageHandler']
+    'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'FileIO',
+    'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
 from io import DEFAULT_BUFFER_SIZE
+from operator import itemgetter
 from types import TracebackType
 from typing import (Any, Callable, Iterator, Optional, Type,
                     Dict, FrozenSet, List, Tuple)
 from warnings import warn
+
+try:    # Python 3.8+
+    from typing import Protocol
+except ImportError:
+    from abc import ABC as Protocol
 
 from libc.stdint cimport uint64_t   # noqa
 from libc.stdio cimport EOF
@@ -90,9 +105,9 @@ from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
 
 # Aliases
-Vector3 = Tuple[float, float, float]
 getter = property   # bypass Cython property hijack
 setter = lambda fset: property(fset=fset, doc=fset.__doc__)     # noqa
+Vector3: Type = Tuple[float, float, float]
 
 # Cast to Python objects
 FALSE: int = alure.ALC_FALSE
@@ -126,6 +141,13 @@ HRTF: int = alure.ALC_HRTF_SOFT
 HRTF_ID: int = alure.ALC_HRTF_ID_SOFT
 
 
+sample_types: Tuple[str, ...] = (
+    'Unsigned 8-bit', 'Signed 16-bit', '32-bit float', 'Mulaw')
+channel_configs: Tuple[str, ...] = (
+    'Mono', 'Stereo', 'Rear', 'Quadrophonic',
+    '5.1 Surround', '6.1 Surround', '7.1 Surround',
+    'B-Format 2D', 'B-Format 3D')
+
 # Since multiple calls of DeviceManager.get_instance() will give
 # the same instance, we can create module-level variable and expose
 # its attributes and methods.  This also prevents the device manager
@@ -141,14 +163,8 @@ device_name_default: Dict[str, str] = dict(
     full=devmgr.default_device_name(alure.DefaultDeviceType.Full),
     capture=devmgr.default_device_name(alure.DefaultDeviceType.Capture))
 
-sample_types: FrozenSet[str] = frozenset({
-    'Unsigned 8-bit', 'Signed 16-bit', '32-bit float', 'Mulaw'})
-channel_configs: FrozenSet[str] = frozenset({
-    'Mono', 'Stereo', 'Rear', 'Quadrophonic',
-    '5.1 Surround', '6.1 Surround', '7.1 Surround',
-    'B-Format 2D', 'B-Format 3D'})
-
-cdef object fileio_factory = None
+decoder_factories: DecoderNamespace = DecoderNamespace()
+cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
 
 
 def sample_size(length: int, channel_config: str, sample_type: str) -> int:
@@ -208,7 +224,8 @@ def use_context(context: Optional[Context]) -> None:
 # TODO: use_context_thread
 
 
-def current_fileio() -> Optional[Callable[[str], object]]:
+# Somehow forward reference of FileIO does not work in tox.
+def current_fileio() -> Optional[Callable[[str], FileIO]]:
     """Return the file I/O factory currently in used by audio decoders.
 
     If the default is being used, return `None`.
@@ -216,12 +233,9 @@ def current_fileio() -> Optional[Callable[[str], object]]:
     return fileio_factory
 
 
-def use_fileio(factory: Optional[Callable[[str], object]],
+def use_fileio(factory: Optional[Callable[[str], FileIO]],
                buffer_size: int = DEFAULT_BUFFER_SIZE) -> None:
     """Set the file I/O factory instance to be used by audio decoders.
-
-    The file object returned from `factory` must have methods
-    `read`, `seek`, and `close`.
 
     If `factory=None` is provided, revert to the default.
     """
@@ -688,7 +702,8 @@ cdef class Buffer:
             if not self:
                 raise RuntimeError(f'{name} does not exist in the cache')
         else:
-            self.impl = context.impl.get_buffer(name)
+            decoder: Decoder = Decoder.smart(context, name)
+            self.impl = context.impl.create_buffer_from(name, decoder.pimpl)
         self.context, self.name = context, name
 
     def __enter__(self) -> Buffer:
@@ -1679,6 +1694,11 @@ cdef class Decoder:
     name : str
         Audio file or resource name.
 
+    Raises
+    ------
+    RuntimeError
+        If decoder creation fails.
+
     See Also
     --------
     Buffer : Preloaded PCM samples coming from a `Decoder`
@@ -1687,12 +1707,41 @@ cdef class Decoder:
     -----
     Due to implementation details, while this creates decoder objects
     from filenames using contexts, it is the superclass of the ABC
-    (abstract base class) `BaseDecoder`.
+    (abstract base class) `BaseDecoder`.  Because of this, `Decoder`
+    may only initialize an internal one.  To use registered factories,
+    please call the `smart` static method instead.
     """
     cdef shared_ptr[alure.Decoder] pimpl
 
     def __init__(self, context: Context, name: str) -> None:
         self.pimpl = context.impl.create_decoder(name)
+
+    @staticmethod
+    def smart(context: Context, name: str) -> Decoder:
+        """Return the decoder created from the given resource name.
+
+        This first tries user-registered decoder factories in
+        lexicographical order, then fallback to the internal ones.
+        """
+        def find_resource(name, subst):
+            if not name: raise RuntimeError('Failed to open file')
+            try:
+                if fileio_factory is None:
+                    return open(name, 'rb')
+                else:
+                    return fileio_factory(name)
+            except FileNotFoundError:
+                return find_resource(subst(name), subst)
+
+        resource = find_resource(
+            name, context.message_handler.resource_not_found)
+        for decoder_factory in decoder_factories:
+            resource.seek(0)
+            try:
+                return decoder_factory(resource)
+            except RuntimeError:
+                continue
+        return Decoder(context, name)
 
     @property
     def frequency(self) -> int:
@@ -1918,10 +1967,61 @@ cdef cppclass CppDecoder(alure.BaseDecoder):
         return alure.bytes_to_frames(
             samples.size(), get_channel_config_(), get_sample_type_())
 
+
+cdef class DecoderNamespace:
+    """Simple object for storing decoder factories."""
+    cdef dict __dict__
+
+    def __repr__(self) -> str:
+        decoders: str = ', '.join(
+            f'{k}={v}' for k, v in sorted(vars(self).items()))
+        return f'DecoderNamespace({decoders})'
+
+    def __iter__(self) -> Iterator[Callable[[FileIO], BaseDecoder]]:
+        return map(itemgetter(1), sorted(vars(self).items()))
+
 
+class FileIO(Protocol):
+    """File I/O protocol.
+
+    This static duck type defines methods required to be used by
+    palace decoders.  Despite its name, a `FileIO` is not necessarily
+    created from a file, but any seekable finite input stream.
+
+    Many classes defined in the standard library module `io`
+    are compatible with this protocol.
+
+    Notes
+    -----
+    Since PEP 544 is only implemented in Python 3.8+, type checking
+    for this on earlier Python version might not work as expected.
+    """
+    @abstractmethod
+    def read(self, size: int) -> bytes:
+        """Read at most size bytes, returned as bytes."""
+
+    @abstractmethod
+    def seek(self, offset: int, whence: int = 0) -> int:
+        """Move to new file position and return the file position.
+
+        Parameters
+        ----------
+        offset : int
+            A byte count.
+        whence : int, optional
+            Either 0 (default, move relative to start of file),
+            1 (move relative to current position)
+            or 2 (move relative to end of file).
+        """
+
+    @abstractmethod
+    def close(self) -> None:
+        """Close the file."""
+
+
 cdef cppclass CppStreamBuf(alure.BaseStreamBuf):
     size_t buffer_size
-    object pyo
+    object pyo  # type: FileIO
     string buffer
 
     __init__(object fileio, size_t bufsize):
@@ -1933,8 +2033,8 @@ cdef cppclass CppStreamBuf(alure.BaseStreamBuf):
         pyo.close()
         Py_DECREF(pyo)
 
-    size_t seek(long long target, int whence):
-        cdef size_t result = pyo.seek(target, whence)
+    size_t seek(long long offset, int whence):
+        cdef size_t result = pyo.seek(offset, whence)
         underflow()
         return result
 
@@ -1948,7 +2048,7 @@ cdef cppclass CppStreamBuf(alure.BaseStreamBuf):
 
 cdef cppclass CppFileIOFactory(alure.BaseFileIOFactory):
     size_t buffer_size
-    object pyo
+    object pyo  # type: Callable[[str], FileIO]
 
     __init__(object factory, size_t bufsize):
         this.buffer_size = bufsize

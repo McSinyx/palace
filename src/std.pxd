@@ -51,12 +51,3 @@ cdef extern from '<ratio>' namespace 'std' nogil:
 cdef extern from '<streambuf>' namespace 'std' nogil:
     cdef cppclass streambuf:
         void setg(char*, char*, char*)
-
-
-cdef extern from '<type_traits>' namespace 'std' nogil:
-    cdef cppclass remove_reference[T]:
-        pass
-
-
-cdef extern from '<utility>' namespace 'std' nogil:
-    cdef T move[T](T)

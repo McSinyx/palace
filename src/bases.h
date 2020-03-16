@@ -36,7 +36,7 @@ namespace palace
   class BaseStreamBuf : public std::streambuf
   {
   protected:
-    virtual size_t seek (long long target, int whence = 0) = 0;
+    virtual size_t seek (long long offset, int whence = 0) = 0;
 
     inline pos_type
     seekoff (off_type off, std::ios_base::seekdir way,
