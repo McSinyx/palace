@@ -123,17 +123,17 @@ namespace palace
   class BaseMessageHandler : public alure::MessageHandler
   {
   public:
-    virtual void device_disconnected (alure::Device device) = 0;
+    virtual void device_disconnected (alure::Device& device) = 0;
     inline void
     deviceDisconnected (alure::Device device) noexcept override
     { device_disconnected (device); }
 
-    virtual void source_stopped (alure::Source source) = 0;
+    virtual void source_stopped (alure::Source& source) = 0;
     inline void
     sourceStopped (alure::Source source) noexcept override
     { source_stopped (source); }
 
-    virtual void source_force_stopped (alure::Source source) = 0;
+    virtual void source_force_stopped (alure::Source& source) = 0;
     inline void
     sourceForceStopped (alure::Source source) noexcept override
     { source_force_stopped (source); }

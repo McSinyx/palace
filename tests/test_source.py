@@ -34,6 +34,7 @@ def test_group(context):
         assert source.group is None
         source.group = source_group
         assert source.group == source_group
+        assert source in source_group.sources
         source.group = None
         assert source.group is None
 

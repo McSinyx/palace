@@ -297,9 +297,6 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         vector[string] get_available_resamplers 'getAvailableResamplers'() except +
         int get_default_resampler_index 'getDefaultResamplerIndex'() except +
 
-        Buffer get_buffer 'getBuffer'(string) except +
-        shared_future[Buffer] get_buffer_async 'getBufferAsync'(string) except +
-
         void precache_buffers_async 'precacheBuffersAsync'(vector[string]) except +
 
         Buffer create_buffer_from 'createBufferFrom'(string, shared_ptr[Decoder]) except +

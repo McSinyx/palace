@@ -224,7 +224,6 @@ def use_context(context: Optional[Context]) -> None:
 # TODO: use_context_thread
 
 
-# Somehow forward reference of FileIO does not work in tox.
 def current_fileio() -> Optional[Callable[[str], FileIO]]:
     """Return the file I/O factory currently in used by audio decoders.
 
@@ -295,9 +294,7 @@ cdef class Device:
     def __enter__(self) -> Device:
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_val: Optional[BaseException],
-                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+    def __exit__(self, *exc) -> Optional[bool]:
         self.close()
 
     def __lt__(self, other: Any) -> bool:
@@ -510,9 +507,7 @@ cdef class Context:
         use_context(self)
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_val: Optional[BaseException],
-                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+    def __exit__(self, *exc) -> Optional[bool]:
         alure.Context.make_current(self.previous)
         self.destroy()
 
@@ -709,9 +704,7 @@ cdef class Buffer:
     def __enter__(self) -> Buffer:
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_val: Optional[BaseException],
-                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+    def __exit__(self, *exc) -> Optional[bool]:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
@@ -852,9 +845,8 @@ cdef class Buffer:
     def sources(self) -> List[Source]:
         """`Source` objects currently playing the buffer."""
         sources = []
-        cdef Source source
         for alure_source in self.impl.get_sources():
-            source = Source.__new__(Source)
+            source: Source = Source.__new__(Source)
             source.impl = alure_source
             sources.append(source)
         return sources
@@ -900,10 +892,41 @@ cdef class Source:
     def __enter__(self) -> Source:
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_val: Optional[BaseException],
-                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+    def __exit__(self, *exc) -> Optional[bool]:
         self.destroy()
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, Source):
+            return NotImplemented
+        return self.impl < (<Source> other).impl
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, Source):
+            return NotImplemented
+        return self.impl <= (<Source> other).impl
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Source):
+            return NotImplemented
+        return self.impl == (<Source> other).impl
+
+    def __ne__(self, other: Any) -> bool:
+        if not isinstance(other, Source):
+            return NotImplemented
+        return self.impl != (<Source> other).impl
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, Source):
+            return NotImplemented
+        return self.impl > (<Source> other).impl
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, Source):
+            return NotImplemented
+        return self.impl >= (<Source> other).impl
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
 
     # TODO: play from future buffer
 
@@ -1446,9 +1469,7 @@ cdef class SourceGroup:
     def __enter__(self) -> SourceGroup:
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_val: Optional[BaseException],
-                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+    def __exit__(self, *exc) -> Optional[bool]:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
@@ -1528,22 +1549,20 @@ cdef class SourceGroup:
 
     @property
     def sources(self) -> List[Source]:
-        """The list of sources currently in the group."""
-        cdef Source source
+        """Sources under this group."""
         sources = []
         for alure_source in self.impl.get_sources():
-            source = Source.__new__(Source)
+            source: Source = Source.__new__(Source)
             source.impl = alure_source
             sources.append(source)
         return sources
 
     @property
     def sub_groups(self) -> List[SourceGroup]:
-        """The list of subgroups currently in the group."""
-        cdef SourceGroup source_group
+        """Source groups under this group."""
         source_groups = []
         for alure_source_group in self.impl.get_sub_groups():
-            source_group = SourceGroup.__new__(SourceGroup)
+            source_group: SourceGroup = SourceGroup.__new__(SourceGroup)
             source_group.impl = alure_source_group
             source_groups.append(source_group)
         return source_groups
@@ -1601,9 +1620,7 @@ cdef class AuxiliaryEffectSlot:
     def __enter__(self) -> AuxiliaryEffectSlot:
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_val: Optional[BaseException],
-                 exc_tb: Optional[TracebackType]) -> Optional[bool]:
+    def __exit__(self, *exc) -> Optional[bool]:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
@@ -1664,16 +1681,17 @@ cdef class AuxiliaryEffectSlot:
         return self.impl.destroy()
 
     @property
-    def source_sends(self) -> Iterator[Tuple[Source, int]]:
-        """Iterator of each `Source` object and its pairing
+    def source_sends(self) -> List[Tuple[Source, int]]:
+        """List of each `Source` object and its pairing
         send this effect slot is set on.
         """
-        cdef Source source
+        source_sends = []
         for source_send in self.impl.get_source_sends():
-            source = Source.__new__(Source)
+            source: Source = Source.__new__(Source)
             send = source_send.send
             source.impl = source_send.source
-            yield source, send
+            source_sends.append((source, send))
+        return source_sends
 
     @property
     def use_count(self):
@@ -2155,17 +2173,17 @@ cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
     __dealloc__():
         Py_DECREF(pyo)
 
-    void device_disconnected(alure.Device alure_device):
+    void device_disconnected(alure.Device& alure_device):
         cdef Device device = Device.__new__(Device)
         device.impl = alure_device
         pyo.device_disconnected(device)
 
-    void source_stopped(alure.Source alure_source):
+    void source_stopped(alure.Source& alure_source):
         cdef Source source = Source.__new__(Source)
         source.impl = alure_source
         pyo.source_stopped(source)
 
-    void source_force_stopped(alure.Source alure_source):
+    void source_force_stopped(alure.Source& alure_source):
         cdef Source source = Source.__new__(Source)
         source.impl = alure_source
         pyo.source_force_stopped(source)
