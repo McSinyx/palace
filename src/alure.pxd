@@ -71,6 +71,12 @@ cdef extern from 'alure2-alext.h' nogil:
 cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:
     ctypedef duration[double] Seconds
 
+
+cdef extern from 'alure2-typeviews.h' namespace 'alure' nogil:
+    cdef cppclass ArrayView[T]:
+        const T* begin() except +
+        const T* end() except +
+
 
 # Alure main module
 cdef extern from 'alure2.h' namespace 'alure' nogil:
@@ -137,8 +143,14 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         Basic 'alure::PlaybackName::Basic'
         Full 'alure::PlaybackName::Full'
 
-    cdef cppclass DistanceModel:
-        pass
+    cdef enum DistanceModel:
+        InverseClamped 'alure::DistanceModel::InverseClamped'
+        LinearClamped 'alure::DistanceModel::LinearClamped'
+        ExponentClamped 'alure::DistanceModel::ExponentClamped'
+        Inverse 'alure::DistanceModel::Inverse'
+        Linear 'alure::DistanceModel::Linear'
+        Exponent 'alure::DistanceModel::Exponent'
+        No 'alure::DistanceModel::None'
 
     cdef enum Spatialize:
         Off 'alure::Spatialize::Off'
@@ -294,7 +306,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
         boolean is_supported 'isSupported'(ChannelConfig, SampleType) except +
 
-        vector[string] get_available_resamplers 'getAvailableResamplers'() except +
+        ArrayView[string] get_available_resamplers 'getAvailableResamplers'() except +
         int get_default_resampler_index 'getDefaultResamplerIndex'() except +
 
         void precache_buffers_async 'precacheBuffersAsync'(vector[string]) except +
