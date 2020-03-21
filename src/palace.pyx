@@ -51,10 +51,9 @@ sample_types : Tuple[str, ...]
     Names of available sample types.
 channel_configs : Tuple[str, ...]
     Names of available channel configurations.
-device_names : Dict[str, List[str]]
-    Dictionary of available device names corresponding to each type.
-device_name_default : Dict[str, str]
-    Dictionary of the default device name corresponding to each type.
+device_names : DeviceNames
+    Read-only namespace of device names by category (basic, full and
+    capture), as tuples of strings whose first item being the default.
 decoder_factories : DecoderNamespace
     Simple object for storing decoder factories.
 
@@ -69,8 +68,8 @@ __all__ = [
     'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
-    'sample_types', 'channel_configs', 'device_name_default', 'device_names',
-    'decoder_factories', 'sample_size', 'sample_length', 'query_extension',
+    'sample_types', 'channel_configs', 'device_names', 'decoder_factories',
+    'sample_size', 'sample_length', 'query_extension',
     'current_context', 'use_context', 'current_fileio', 'use_fileio',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'FileIO',
@@ -104,6 +103,7 @@ from cpython.ref cimport Py_INCREF, Py_DECREF
 from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
 
+
 # Aliases
 getter = property   # bypass Cython property hijack
 setter = lambda fset: property(fset=fset, doc=fset.__doc__)     # noqa
@@ -140,7 +140,6 @@ FLOAT: int = alure.ALC_FLOAT_SOFT
 HRTF: int = alure.ALC_HRTF_SOFT
 HRTF_ID: int = alure.ALC_HRTF_ID_SOFT
 
-
 sample_types: Tuple[str, ...] = (
     'Unsigned 8-bit', 'Signed 16-bit', '32-bit float', 'Mulaw')
 channel_configs: Tuple[str, ...] = (
@@ -153,15 +152,7 @@ channel_configs: Tuple[str, ...] = (
 # its attributes and methods.  This also prevents the device manager
 # from being garbage collected by keeping a reference to the instance.
 cdef alure.DeviceManager devmgr = alure.DeviceManager.get_instance()
-
-device_names: Dict[str, List[str]] = dict(
-    basic=devmgr.enumerate(alure.DeviceEnumeration.Basic),
-    full=devmgr.enumerate(alure.DeviceEnumeration.Full),
-    capture=devmgr.enumerate(alure.DeviceEnumeration.Capture))
-device_name_default: Dict[str, str] = dict(
-    basic=devmgr.default_device_name(alure.DefaultDeviceType.Basic),
-    full=devmgr.default_device_name(alure.DefaultDeviceType.Full),
-    capture=devmgr.default_device_name(alure.DefaultDeviceType.Capture))
+device_names: DeviceNames = DeviceNames()
 
 decoder_factories: DecoderNamespace = DecoderNamespace()
 cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
@@ -261,6 +252,46 @@ def use_fileio(factory: Optional[Callable[[str], FileIO]],
             new CppFileIOFactory(fileio_factory, buffer_size)))
 
 
+cdef class DeviceNames:
+    """Read-only namespace of device names by category.
+
+    Attributes
+    ----------
+    basic : Tuple[str, ...]
+        Basic device names, with the first one being the default.
+    full : Tuple[str, ...]
+        Full device names, with the first one being the default.
+    capture : Tuple[str, ...]
+        Capture device names, with the first one being the default.
+    """
+    cdef readonly tuple basic
+    cdef readonly tuple full
+    cdef readonly tuple capture
+
+    def __cinit__(self) -> None:
+        cdef list basic = devmgr.enumerate(alure.DeviceEnumeration.Basic)
+        default: int = basic.index(devmgr.default_device_name(
+            alure.DefaultDeviceType.Basic))
+        basic[0], basic[default] = basic[default], basic[0]
+        self.basic = tuple(basic)
+
+        cdef list full = devmgr.enumerate(alure.DeviceEnumeration.Full)
+        default: int = full.index(devmgr.default_device_name(
+            alure.DefaultDeviceType.Full))
+        full[0], full[default] = full[default], full[0]
+        self.full = tuple(full)
+
+        cdef list capture = devmgr.enumerate(alure.DeviceEnumeration.Capture)
+        default: int = capture.index(devmgr.default_device_name(
+            alure.DefaultDeviceType.Capture))
+        capture[0], capture[default] = capture[default], capture[0]
+        self.capture = tuple(capture)
+
+    def __repr__(self) -> str:
+        return (f'DeviceNames(basic={self.basic}, full={self.full},'
+                f' capture={self.capture})')
+
+
 cdef class Device:
     """Audio mix output, which is either a system audio output stream
     or an actual audio port.
@@ -740,9 +771,6 @@ cdef class Buffer:
     name : str
         Audio file or resource name.  Multiple calls with the same name
         will return the same buffer.
-    existed : bool, optional
-        Whether to require the resource must be cached before,
-        default to `False`.
 
     Attributes
     ----------
@@ -761,11 +789,8 @@ cdef class Buffer:
 
     def __init__(self, context: Context, name: str,
                  existed: bool = False) -> None:
-        if existed:
-            self.impl = context.impl.find_buffer(name)
-            if not self:
-                raise RuntimeError(f'{name} does not exist in the cache')
-        else:
+        self.impl = context.impl.find_buffer(name)
+        if not self:
             decoder: Decoder = Decoder.smart(context, name)
             self.impl = context.impl.create_buffer_from(name, decoder.pimpl)
         self.context, self.name = context, name

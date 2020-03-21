@@ -19,7 +19,7 @@
 
 from argparse import ArgumentParser
 
-from palace import device_names, device_name_default, Device
+from palace import device_names, Device
 
 
 parser = ArgumentParser()
@@ -28,13 +28,12 @@ parser.add_argument('device', type=Device, default='', nargs='?',
 args = parser.parse_args()
 
 with args.device:
-    names = device_names.copy()
-    for kind, default in device_name_default.items():
-        i = names[kind].index(default)
-        names[kind][i] += '  [DEFAULT]'
-    print('Available basic devices:', *names['basic'], sep='\n  ')
-    print('\nAvailable devices:', *names['full'], sep='\n  ')
-    print('\nAvailable capture devices:', *names['capture'], sep='\n  ')
+    print('Available basic devices, with the first being default:',
+          *device_names.basic, sep='\n  ')
+    print('\nAvailable devices, with the first being default:',
+          *device_names.full, sep='\n  ')
+    print('\nAvailable capture devices, with the first being default:',
+          *device_names.capture, sep='\n  ')
 
     print(f'\nInfo of device "{args.device.name["full"]}":')
     print('ALC version: {}.{}'.format(*args.device.alc_version))

@@ -18,6 +18,7 @@
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 from libc.stdint cimport int64_t
+from libcpp cimport bool as boolean
 
 
 cdef extern from '<chrono>' namespace 'std::chrono' nogil:
@@ -33,12 +34,13 @@ cdef extern from '<chrono>' namespace 'std::chrono' nogil:
 
 cdef extern from '<iostream>' namespace 'std' nogil:
     cdef cppclass istream:
-        istream(streambuf*)
+        istream(streambuf*) except +
 
 
 cdef extern from '<future>' namespace 'std' nogil:
     cdef cppclass shared_future[R]:
-        pass
+        R& get() except +
+        boolean valid() const
 
 
 cdef extern from '<ratio>' namespace 'std' nogil:
@@ -50,4 +52,4 @@ cdef extern from '<ratio>' namespace 'std' nogil:
 
 cdef extern from '<streambuf>' namespace 'std' nogil:
     cdef cppclass streambuf:
-        void setg(char*, char*, char*)
+        void setg(char*, char*, char*) except +
