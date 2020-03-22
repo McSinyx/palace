@@ -35,7 +35,7 @@ with args.device:
     print('\nAvailable capture devices, with the first being default:',
           *device_names.capture, sep='\n  ')
 
-    print(f'\nInfo of device "{args.device.name["full"]}":')
+    print(f'\nInfo of device {args.device.name!r}:')
     print('ALC version: {}.{}'.format(*args.device.alc_version))
     efx = args.device.efx_version
     if efx == (0, 0):

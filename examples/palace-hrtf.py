@@ -20,6 +20,7 @@
 from argparse import ArgumentParser
 from datetime import datetime, timedelta
 from itertools import count, takewhile
+from math import cos, sin
 from sys import stderr
 from time import sleep
 from typing import Iterable
@@ -39,12 +40,10 @@ def pretty_time(seconds: float) -> str:
 
 
 def play(files: Iterable[str], device: str, hrtf_name: str,
-         omega: float, angle: float) -> None:
-    """HRTF render files with stereo source (angle radians apart)
-    rotating around in omega rad/s using ALC_SOFT_HRTF extension.
-    """
-    with Device(device, fail_safe=True) as dev:
-        print('Opened', dev.name['full'])
+         omega: float) -> None:
+    """Render files using HRTF with source rotating in omega rad/s."""
+    with Device(device) as dev:
+        print('Opened', dev.name)
         hrtf_names = dev.hrtf_names
         if hrtf_names:
             print('Available HRTFs:')
@@ -56,13 +55,15 @@ def play(files: Iterable[str], device: str, hrtf_name: str,
             try:
                 attrs[HRTF_ID] = hrtf_names.index(hrtf_name)
             except ValueError:
-                stderr.write(f'HRTF "{hrtf_name}" not found\n')
+                stderr.write(f'HRTF {hrtf_name!r} not found\n')
 
         with Context(dev, attrs) as ctx, Source(ctx) as src:
             if dev.hrtf_enabled:
-                print(f'Using HRTF "{dev.current_hrtf}"')
+                print(f'Using HRTF {dev.current_hrtf!r}')
             else:
                 print('HRTF not enabled!')
+            src.spatialize = True
+
             for filename in files:
                 try:
                     decoder = Decoder(ctx, filename)
@@ -75,10 +76,10 @@ def play(files: Iterable[str], device: str, hrtf_name: str,
 
                 for i in takewhile(lambda i: src.playing,
                                    count(step=PERIOD)):
-                    src.stereo_angles = i*omega, i*omega+angle
                     print(f' {pretty_time(src.offset_seconds)} /'
                           f' {pretty_time(decoder.length_seconds)}',
                           end='\r', flush=True)
+                    src.position = sin(i*omega), 0, -cos(i*omega)
                     sleep(PERIOD)
                     ctx.update()
                 print()
@@ -91,7 +92,5 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--hrtf', dest='hrtf_name', help='HRTF name')
     parser.add_argument('-o', '--omega', type=float, default=1.0,
                         help='angular velocity')
-    parser.add_argument('-a', '--angle', type=float, default=1.0,
-                        help='relative angle between left and right sources')
     args = parser.parse_args()
-    play(args.files, args.device, args.hrtf_name, args.omega, args.angle)
+    play(args.files, args.device, args.hrtf_name, args.omega)

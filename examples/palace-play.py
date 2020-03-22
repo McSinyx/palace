@@ -47,8 +47,8 @@ def pretty_time(seconds: float) -> str:
 
 def play(files: Iterable[str], device: str) -> None:
     """Load and play files on the given device."""
-    with Device(device, fail_safe=True) as dev, Context(dev) as ctx:
-        print('Opened', dev.name['full'])
+    with Device(device) as dev, Context(dev) as ctx:
+        print('Opened', dev.name)
         ctx.message_handler = LoadingBufferHandler()
         for filename in files:
             try:

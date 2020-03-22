@@ -79,9 +79,9 @@ from abc import abstractmethod, ABCMeta
 from io import DEFAULT_BUFFER_SIZE
 from operator import itemgetter
 from types import TracebackType
-from typing import (Any, Callable, Iterator, Optional, Type,
+from typing import (Any, Callable, Iterable, Iterator, Optional, Type,
                     Dict, FrozenSet, List, Tuple)
-from warnings import warn
+from warnings import catch_warnings, simplefilter, warn
 
 try:    # Python 3.8+
     from typing import Protocol
@@ -288,13 +288,12 @@ cdef class DeviceNames:
         self.capture = tuple(capture)
 
     def __repr__(self) -> str:
-        return (f'DeviceNames(basic={self.basic}, full={self.full},'
-                f' capture={self.capture})')
+        return (f'{self.__class__.__name__}(basic={self.basic},'
+                f' full={self.full}, capture={self.capture})')
 
 
 cdef class Device:
-    """Audio mix output, which is either a system audio output stream
-    or an actual audio port.
+    """Audio mix output, via either a system stream or a hardware port.
 
     This can be used as a context manager that calls `close` upon
     completion of the block, even if an error occurs.
@@ -303,9 +302,8 @@ cdef class Device:
     ----------
     name : str, optional
         The name of the playback device.
-    fail_safe : bool, optional
-        On failure, fallback to the default device if this is `True`,
-        otherwise `RuntimeError` is raised.  Default to `False`.
+    fallback : Iterable[str], optional
+        Device names to fallback to, default to an empty tuple.
 
     Raises
     ------
@@ -315,26 +313,29 @@ cdef class Device:
     Warns
     -----
     RuntimeWarning
-        If `fail_safe` is `True` and the device of given `name`
-        cannot be opened.
+        Before each fallback.
 
     See Also
     --------
     device_names : Available device names
-    device_name_default : Default device names
     """
     cdef alure.Device impl
 
-    def __init__(self, name: str = '', fail_safe: bool = False) -> None:
-        try:
-            self.impl = devmgr.open_playback(name)
-        except RuntimeError as exc:
-            if fail_safe:
-                warn(f'Failed to open device "{name}" - trying default',
-                     category=RuntimeWarning)
-                self.impl = devmgr.open_playback()
+    def __init__(self, name: str = '', fallback: Iterable[str] = ()) -> None:
+        names: Tuple[str] = name, *fallback
+        message: Optional[str] = None
+        for name in names:
+            if message is not None:
+                with catch_warnings():
+                    simplefilter('always')
+                    warn(message, category=RuntimeWarning)
+            try:
+                self.impl = devmgr.open_playback(name)
+            except RuntimeError:
+                message = f'Failed to open device: {name}'
             else:
-                raise exc
+                return
+        raise RuntimeError(message)
 
     def __enter__(self) -> Device:
         return self
@@ -375,11 +376,18 @@ cdef class Device:
     def __bool__(self) -> bool:
         return <boolean> self.impl
 
-    @property
-    def name(self) -> Dict[str, str]:
-        """A dictionary of device name corresponding to each type."""
-        return {'basic': self.impl.get_name(alure.PlaybackName.Basic),
-                'full': self.impl.get_name(alure.PlaybackName.Full)}
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.name!r})'
+
+    @getter
+    def name(self) -> str:
+        """Name of the device."""
+        return self.impl.get_name(alure.PlaybackName.Full)
+
+    @getter
+    def basic_name(self) -> str:
+        """Basic name of the device."""
+        return self.impl.get_name(alure.PlaybackName.Basic)
 
     def query_extension(self, name: str) -> bool:
         """Return if an ALC extension exists on this device.
@@ -390,13 +398,13 @@ cdef class Device:
         """
         return self.impl.query_extension(name)
 
-    @property
+    @getter
     def alc_version(self) -> Tuple[int, int]:
         """ALC version supported by this device."""
         cdef alure.Version version = self.impl.get_alc_version()
         return version.get_major(), version.get_minor()
 
-    @property
+    @getter
     def efx_version(self) -> Tuple[int, int]:
         """EFX version supported by this device.
 
@@ -406,12 +414,12 @@ cdef class Device:
         cdef alure.Version version = self.impl.get_efx_version()
         return version.get_major(), version.get_minor()
 
-    @property
+    @getter
     def frequency(self) -> int:
         """Playback frequency in hertz."""
         return self.impl.get_frequency()
 
-    @property
+    @getter
     def max_auxiliary_sends(self) -> int:
         """Maximum number of auxiliary source sends.
 
@@ -419,7 +427,7 @@ cdef class Device:
         """
         return self.impl.get_max_auxiliary_sends()
 
-    @property
+    @getter
     def hrtf_names(self) -> List[str]:
         """List of available HRTF names.
 
@@ -431,7 +439,7 @@ cdef class Device:
         """
         return self.impl.enumerate_hrtf_names()
 
-    @property
+    @getter
     def hrtf_enabled(self) -> bool:
         """Whether HRTF is enabled on the device.
 
@@ -441,7 +449,7 @@ cdef class Device:
         """
         return self.impl.is_hrtf_enabled()
 
-    @property
+    @getter
     def current_hrtf(self) -> Optional[str]:
         """Name of the HRTF currently being used by this device.
 
@@ -475,7 +483,7 @@ cdef class Device:
         """
         self.impl.resume_dsp()
 
-    @property
+    @getter
     def clock_time(self) -> int:
         """Current clock time for the device.
 
@@ -638,7 +646,7 @@ cdef class Context:
         return self.impl.is_supported(to_channel_config(channel_config),
                                       to_sample_type(sample_type))
 
-    @property
+    @getter
     def available_resamplers(self) -> List[str]:
         """The list of resamplers supported by the context.
 
@@ -650,7 +658,7 @@ cdef class Context:
         resamplers = self.impl.get_available_resamplers()
         return [resampler for resampler in resamplers]
 
-    @property
+    @getter
     def default_resampler_index(self) -> int:
         """The context's default resampler index.
 
@@ -834,6 +842,9 @@ cdef class Buffer:
     def __bool__(self) -> bool:
         return <boolean> self.impl
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.name!r})'
+
     @staticmethod
     def from_decoder(decoder: Decoder, context: Context, name: str) -> Buffer:
         """Return a buffer created by reading the given decoder.
@@ -858,34 +869,34 @@ cdef class Buffer:
         buffer.context, buffer.name = context, name
         return buffer
 
-    @property
+    @getter
     def length(self) -> int:
         """Length of the buffer in sample frames."""
         return self.impl.get_length()
 
-    @property
+    @getter
     def length_seconds(self) -> float:
         """Length of the buffer in seconds."""
         return self.length / self.frequency
 
-    @property
+    @getter
     def frequency(self) -> int:
         """Buffer's frequency in hertz."""
         return self.impl.get_frequency()
 
-    @property
+    @getter
     def channel_config(self) -> str:
         """Buffer's sample configuration."""
         return alure.get_channel_config_name(
             self.impl.get_channel_config())
 
-    @property
+    @getter
     def sample_type(self) -> str:
         """Buffer's sample type."""
         return alure.get_sample_type_name(
             self.impl.get_sample_type())
 
-    @property
+    @getter
     def size(self) -> int:
         """Storage size used by the buffer, in bytes.
 
@@ -935,7 +946,7 @@ cdef class Buffer:
         start, end = value
         self.impl.set_loop_points(start, end)
 
-    @property
+    @getter
     def sources(self) -> List[Source]:
         """`Source` objects currently playing the buffer."""
         sources = []
@@ -945,7 +956,7 @@ cdef class Buffer:
             sources.append(source)
         return sources
 
-    @property
+    @getter
     def source_count(self) -> int:
         """Number of sources currently using the buffer.
 
@@ -1063,22 +1074,22 @@ cdef class Source:
         """Resume the source if it is paused."""
         self.impl.resume()
 
-    @property
+    @getter
     def pending(self) -> bool:
         """Whether the source is waiting to play a future buffer."""
         return self.impl.is_pending()
 
-    @property
+    @getter
     def playing(self) -> bool:
         """Whether the source is currently playing."""
         return self.impl.is_playing()
 
-    @property
+    @getter
     def paused(self) -> bool:
         """Whether the source is currently paused."""
         return self.impl.is_paused()
 
-    @property
+    @getter
     def playing_or_pending(self) -> bool:
         """Whether the source is currently playing
         or waiting to play in a future buffer.
@@ -1137,7 +1148,7 @@ cdef class Source:
     def offset(self, value: int) -> None:
         self.impl.set_offset(value)
 
-    @property
+    @getter
     def latency(self) -> int:
         """Source latency in nanoseconds.
 
@@ -1146,7 +1157,7 @@ cdef class Source:
         """
         return self.impl.get_sample_offset_latency().second.count()
 
-    @property
+    @getter
     def offset_seconds(self) -> float:
         """Source offset in seconds.
 
@@ -1155,7 +1166,7 @@ cdef class Source:
         """
         return self.impl.get_sec_offset().count()
 
-    @property
+    @getter
     def latency_seconds(self) -> float:
         """Source latency in seconds.
 
@@ -1641,7 +1652,7 @@ cdef class SourceGroup:
     def pitch(self, value: float) -> None:
         self.impl.set_pitch(value)
 
-    @property
+    @getter
     def sources(self) -> List[Source]:
         """Sources under this group."""
         sources = []
@@ -1651,7 +1662,7 @@ cdef class SourceGroup:
             sources.append(source)
         return sources
 
-    @property
+    @getter
     def sub_groups(self) -> List[SourceGroup]:
         """Source groups under this group."""
         source_groups = []
@@ -1774,7 +1785,7 @@ cdef class AuxiliaryEffectSlot:
         """
         return self.impl.destroy()
 
-    @property
+    @getter
     def source_sends(self) -> List[Tuple[Source, int]]:
         """List of each `Source` object and its pairing
         send this effect slot is set on.
@@ -1787,7 +1798,7 @@ cdef class AuxiliaryEffectSlot:
             source_sends.append((source, send))
         return source_sends
 
-    @property
+    @getter
     def use_count(self):
         """Number of source sends the effect slot
         is used by.  This is equivalent to calling
@@ -1855,24 +1866,24 @@ cdef class Decoder:
                 continue
         return Decoder(context, name)
 
-    @property
+    @getter
     def frequency(self) -> int:
         """Sample frequency, in hertz, of the audio being decoded."""
         return self.pimpl.get()[0].get_frequency()
 
-    @property
+    @getter
     def channel_config(self) -> str:
         """Channel configuration of the audio being decoded."""
         return alure.get_channel_config_name(
             self.pimpl.get()[0].get_channel_config())
 
-    @property
+    @getter
     def sample_type(self) -> str:
         """Sample type of the audio being decoded."""
         return alure.get_sample_type_name(
             self.pimpl.get()[0].get_sample_type())
 
-    @property
+    @getter
     def length(self) -> int:
         """Length of audio in sample frames, falling-back to 0.
 
@@ -1882,7 +1893,7 @@ cdef class Decoder:
         """
         return self.pimpl.get()[0].get_length()
 
-    @property
+    @getter
     def length_seconds(self) -> float:
         """Length of audio in seconds, falling-back to 0.0.
 
@@ -1899,7 +1910,7 @@ cdef class Decoder:
         """
         return self.pimpl.get()[0].seek(pos)
 
-    @property
+    @getter
     def loop_points(self) -> Tuple[int, int]:
         """Loop points in sample frames.
 
@@ -2087,7 +2098,7 @@ cdef class DecoderNamespace:
     def __repr__(self) -> str:
         decoders: str = ', '.join(
             f'{k}={v}' for k, v in sorted(vars(self).items()))
-        return f'DecoderNamespace({decoders})'
+        return f'{self.__class__.__name__}({decoders})'
 
     def __iter__(self) -> Iterator[Callable[[FileIO], BaseDecoder]]:
         return map(itemgetter(1), sorted(vars(self).items()))
