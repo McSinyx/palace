@@ -79,6 +79,41 @@ cdef extern from 'alure2-typeviews.h' namespace 'alure' nogil:
 
 
 # Alure main module
+cdef extern from 'alure2.h' nogil:
+    cdef cppclass EFXEAXREVERBPROPERTIES:
+        float flDensity
+        float flDiffusion
+        float flGain
+        float flGainHF
+        float flGainLF
+        float flDecayTime
+        float flDecayHFRatio
+        float flDecayLFRatio
+        float flReflectionsGain
+        float flReflectionsDelay
+        float flReflectionsPan[3]
+        float flLateReverbGain
+        float flLateReverbDelay
+        float flLateReverbPan[3]
+        float flEchoTime
+        float flEchoDepth
+        float flModulationTime
+        float flModulationDepth
+        float flAirAbsorptionGainHF
+        float flHFReference
+        float flLFReference
+        float flRoomRolloffFactor
+        int   iDecayHFLimit
+
+    cdef cppclass EFXCHORUSPROPERTIES:
+        int iWaveform
+        int iPhase
+        float flRate
+        float flDepth
+        float flFeedback
+        float flDelay
+
+
 cdef extern from 'alure2.h' namespace 'alure' nogil:
     # Type aliases:
     # char*: string
@@ -607,7 +642,31 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         size_t get_use_count 'getUseCount'() except +
 
     cdef cppclass Effect:
-        pass
+        ctypedef EffectImpl* handle_type
+
+        Effect()    # nil
+        Effect(EffectImpl*)
+        Effect(const Effect&)
+        Effect(Effect&&)
+
+        Effect& operator=(const Effect&)
+        Effect& operator=(Effect&&)
+
+        boolean operator==(const Effect&)
+        boolean operator!=(const Effect&)
+        boolean operator<=(const Effect&)
+        boolean operator>=(const Effect&)
+        boolean operator<(const Effect&)
+        boolean operator>(const Effect&)
+
+        boolean operator bool()
+
+        handle_type get_handle 'getHandle'()
+
+        void set_reverb_properties 'setReverbProperties'(const EFXEAXREVERBPROPERTIES&) except +
+        void set_chorus_properties 'setChorusProperties'(const EFXCHORUSPROPERTIES&) except +
+
+        void destroy() except +
 
     cdef cppclass Decoder:
         int get_frequency 'getFrequency'()

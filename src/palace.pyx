@@ -72,7 +72,7 @@ __all__ = [
     'sample_size', 'sample_length', 'query_extension',
     'current_context', 'use_context', 'current_fileio', 'use_fileio',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
-    'AuxiliaryEffectSlot', 'Decoder', 'BaseDecoder', 'FileIO',
+    'AuxiliaryEffectSlot', 'Effect', 'Decoder', 'BaseDecoder', 'FileIO',
     'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
@@ -102,6 +102,7 @@ from cpython.ref cimport Py_INCREF, Py_DECREF
 
 from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
+from alure cimport EFXEAXREVERBPROPERTIES, EFXCHORUSPROPERTIES
 
 
 # Aliases
@@ -1691,9 +1692,7 @@ cdef class SourceGroup:
         self.impl.stop_all()
 
     def destroy(self) -> None:
-        """Destroy the source group, removing all sources from it
-        before being freed.
-        """
+        """Destroy the source group, remove and free all sources."""
         self.impl.destroy()
 
 
@@ -1776,7 +1775,14 @@ cdef class AuxiliaryEffectSlot:
         """
         self.impl.set_send_auto(value)
 
-    # TODO: apply effect
+    @setter
+    def effect(self, value: Effect) -> None:
+        """Effect to be held by the slot.
+
+        The given effect object may be altered or destroyed without
+        affecting the effect slot.
+        """
+        self.impl.apply_effect(value.impl)
 
     def destroy(self) -> None:
         """Destroy the effect slot, returning it to the system.
@@ -1805,6 +1811,118 @@ cdef class AuxiliaryEffectSlot:
         `len(tuple(self.source_sends))`.
         """
         return self.impl.get_use_count()
+
+
+cdef class Effect:
+    """A collection of settings or parameters.
+
+    This can be used as a context manager that calls `destroy`
+    upon completion of the block, even if an error occurs.
+
+    Parameters
+    ----------
+    context : Context
+        The context from which the effect is to be created.
+    """
+    cdef alure.Effect impl
+
+    def __init__(self, context: Context) -> None:
+        self.impl = context.impl.create_effect()
+
+    def __enter__(self) -> Effect:
+        return self
+
+    def __exit__(self, *exc) -> Optional[bool]:
+        self.destroy()
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, Effect):
+            return NotImplemented
+        return self.impl < (<Effect> other).impl
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, Effect):
+            return NotImplemented
+        return self.impl <= (<Effect> other).impl
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Effect):
+            return NotImplemented
+        return self.impl == (<Effect> other).impl
+
+    def __ne__(self, other: Any) -> bool:
+        if not isinstance(other, Effect):
+            return NotImplemented
+        return self.impl != (<Effect> other).impl
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, Effect):
+            return NotImplemented
+        return self.impl > (<Effect> other).impl
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, Effect):
+            return NotImplemented
+        return self.impl >= (<Effect> other).impl
+
+    def __bool__(self) -> bool:
+        return <boolean> self.impl
+
+    @setter
+    def reverb_properties(self, value: dict) -> None:
+        """The effect with the specified reverb properties.
+
+        It will automatically downgrade to the Standard Reverb effect
+        if EAXReverb effect is not supported.
+        """
+        cdef EFXEAXREVERBPROPERTIES properties
+        properties.flDensity = value['density']
+        properties.flDiffusion = value['diffusion']
+        properties.flGain = value['gain']
+        properties.flGainHF = value['gain_hf']
+        properties.flGainLF = value['gain_lf']
+        properties.flDecayTime = value['decay_time']
+        properties.flDecayHFRatio = value['decay_hf_ratio']
+        properties.flDecayLFRatio = value['decay_lf_ratio']
+        properties.flReflectionsGain = value['reflections_gain']
+        properties.flReflectionsDelay = value['reflections_delay']
+        properties.flReflectionsPan[0] = value['reflections_pan'][0]
+        properties.flReflectionsPan[1] = value['reflections_pan'][1]
+        properties.flReflectionsPan[2] = value['reflections_pan'][2]
+        properties.flLateReverbGain = value['late_reverb_gain']
+        properties.flLateReverbDelay = value['late_reverb_delay']
+        properties.flLateReverbPan[0] = value['late_reverb_pan'][0]
+        properties.flLateReverbPan[1] = value['late_reverb_pan'][1]
+        properties.flLateReverbPan[2] = value['late_reverb_pan'][2]
+        properties.flEchoTime = value['echo_time']
+        properties.flEchoDepth = value['echo_depth']
+        properties.flModulationTime = value['modulation_time']
+        properties.flModulationDepth = value['modulation_depth']
+        properties.flAirAbsorptionGainHF = value['air_absorption_gain_hf']
+        properties.flHFReference = value['hf_reference']
+        properties.flLFReference = value['lf_reference']
+        properties.flRoomRolloffFactor = value['room_rolloff_factor']
+        properties.iDecayHFLimit = value['decay_hf_limit']
+        self.impl.set_reverb_properties(properties)
+
+    @setter
+    def chorus_properties(self, value: dict) -> None:
+        """The effect with the specified chorus properties.
+
+        It will be thrown if EAXReverb effect is not supported.
+        """
+        cdef EFXCHORUSPROPERTIES properties
+        properties.iWaveform = value['waveform']
+        properties.iPhase = value['phase']
+        properties.flRate = value['rate']
+        properties.flDepth = value['depth']
+        properties.flFeedback = value['feedback']
+        properties.flDelay = value['delay']
+        self.impl.set_chorus_properties(properties)
+
+    def destroy(self) -> None:
+        """Destroy the effect."""
+        self.impl.destroy()
 
 
 cdef class Decoder:
