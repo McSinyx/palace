@@ -37,10 +37,26 @@
 </div>
 <span class="target" id="module-palace"></span><p>Pythonic Audio Library and Codecs Environment</p>
 <dl class="attribute">
+<dt id="palace.Vector3">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Vector3</code><a class="headerlink" href="#palace.Vector3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tuple of three floats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="palace.CHANNEL_CONFIG">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">CHANNEL_CONFIG</code><a class="headerlink" href="#palace.CHANNEL_CONFIG" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify the channel configuration
 (either <cite>MONO</cite>, <cite>STEREO</cite>, <cite>QUAD</cite>, <cite>X51</cite>, <cite>X61</cite> or <cite>X71</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -59,18 +75,33 @@
 <dt id="palace.FREQUENCY">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FREQUENCY</code><a class="headerlink" href="#palace.FREQUENCY" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify the frequency in hertz.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="palace.MONO_SOURCES">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MONO_SOURCES</code><a class="headerlink" href="#palace.MONO_SOURCES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify the number of mono (3D) sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="palace.STEREO_SOURCES">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">STEREO_SOURCES</code><a class="headerlink" href="#palace.STEREO_SOURCES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify the number of stereo sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -78,6 +109,11 @@
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MAX_AUXILIARY_SENDS</code><a class="headerlink" href="#palace.MAX_AUXILIARY_SENDS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify the maximum number of
 auxiliary source sends.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -85,12 +121,22 @@ auxiliary source sends.</p>
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">HRTF</code><a class="headerlink" href="#palace.HRTF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify whether to enable HRTF
 (either <cite>FALSE</cite>, <cite>TRUE</cite> or <cite>DONT_CARE</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="palace.HRTF_ID">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">HRTF_ID</code><a class="headerlink" href="#palace.HRTF_ID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify the HRTF to be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -98,26 +144,9 @@ auxiliary source sends.</p>
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">OUTPUT_LIMITER</code><a class="headerlink" href="#palace.OUTPUT_LIMITER" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context creation key to specify whether to use a gain limiter
 (either <cite>FALSE</cite>, <cite>TRUE</cite> or <cite>DONT_CARE</cite>).</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="palace.device_names">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">device_names</code><a class="headerlink" href="#palace.device_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dictionary of available device names corresponding to each type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Dict[str, List[str]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="palace.device_name_default">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">device_name_default</code><a class="headerlink" href="#palace.device_name_default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dictionary of the default device name corresponding to each type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Dict[str, str]</p>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -125,10 +154,10 @@ auxiliary source sends.</p>
 <dl class="attribute">
 <dt id="palace.sample_types">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_types</code><a class="headerlink" href="#palace.sample_types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set of sample types.</p>
+<dd><p>Names of available sample types.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>FrozenSet[str]</p>
+<dd class="field-odd"><p>Tuple[str, ..]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -136,10 +165,36 @@ auxiliary source sends.</p>
 <dl class="attribute">
 <dt id="palace.channel_configs">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">channel_configs</code><a class="headerlink" href="#palace.channel_configs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set of channel configurations.</p>
+<dd><p>Names of available channel configurations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>FrozenSet[str]</p>
+<dd class="field-odd"><p>Tuple[str, ..]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.device_names">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">device_names</code><a class="headerlink" href="#palace.device_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only namespace of device names by category (basic, full and
+capture), as tuples of strings whose first item being the default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DeviceNames</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.decoder_factories">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">decoder_factories</code><a class="headerlink" href="#palace.decoder_factories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple object for storing decoder factories.</p>
+<p>User-registered factories are tried one after another
+if <cite>RuntimeError</cite> is raised, in lexicographical order.
+Internal decoder factories are always used after registered ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DecoderNamespace</p>
 </dd>
 </dl>
 </dd></dl>
@@ -176,14 +231,22 @@ auxiliary source sends.</p>
 
 <dl class="function">
 <dt id="palace.current_context">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">current_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional[Context]<a class="headerlink" href="#palace.current_context" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">current_context</code><span class="sig-paren">(</span><em class="sig-param">thread: bool = False</em><span class="sig-paren">)</span> &#x2192; Optional[Context]<a class="headerlink" href="#palace.current_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the context that is currently used.</p>
+<p>If <cite>thread</cite> is set to <cite>True</cite>, return the thread-specific context
+used for OpenAL operations.  This requires the non-device-specific
+as well as the context’s device <cite>ALC_EXT_thread_local_context</cite>
+extension to be available.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="palace.use_context">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><span class="sig-paren">(</span><em class="sig-param">context: Optional[Context], thread: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make the specified context current for OpenAL operations.</p>
+<p>If <cite>thread</cite> is set to <cite>True</cite>, make the context current
+for OpenAL operations on the calling thread only.
+This requires the non-device-specific as well as the context’s
+device <a href="#id1"><span class="problematic" id="id2">`</span></a>ALC_EXT_thread_local_context extension to be available.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
@@ -193,27 +256,38 @@ auxiliary source sends.</p>
 </div>
 </dd></dl>
 
+<dl class="function">
+<dt id="palace.current_fileio">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">current_fileio</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional[Callable[[str], FileIO]]<a class="headerlink" href="#palace.current_fileio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file I/O factory currently in used by audio decoders.</p>
+<p>If the default is being used, return <cite>None</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="palace.use_fileio">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_fileio</code><span class="sig-paren">(</span><em class="sig-param">factory: Optional[Callable[[str], FileIO]], buffer_size: int = DEFAULT_BUFFER_SIZE</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_fileio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the file I/O factory instance to be used by audio decoders.</p>
+<p>If <cite>factory=None</cite> is provided, revert to the default.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="palace.Device">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param">str name: str = ''</em>, <em class="sig-param">fail_safe: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
-<dd><p>Audio mix output, which is either a system audio output stream
-or an actual audio port.</p>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param">str name: str = ''</em>, <em class="sig-param">fallback: Iterable[str] = ()</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Audio mix output, via either a system stream or a hardware port.</p>
 <p>This can be used as a context manager that calls <cite>close</cite> upon
 completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the playback device.</p></li>
-<li><p><strong>fail_safe</strong> (<em>bool</em><em>, </em><em>optional</em>) – On failure, fallback to the default device if this is <cite>True</cite>,
-otherwise <cite>RuntimeError</cite> is raised.  Default to <cite>False</cite>.</p></li>
+<li><p><strong>fallback</strong> (<em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Device names to fallback to, default to an empty tuple.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – If device creation fails.</p>
 </dd>
 <dt class="field-odd">Warns</dt>
-<dd class="field-odd"><p><strong>RuntimeWarning</strong> – If <cite>fail_safe</cite> is <cite>True</cite> and the device of given <cite>name</cite>
-cannot be opened.</p>
+<dd class="field-odd"><p><strong>RuntimeWarning</strong> – Before each fallback.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -221,19 +295,23 @@ cannot be opened.</p>
 <dl class="simple">
 <dt><a class="reference internal" href="#palace.device_names" title="palace.device_names"><code class="xref py py-class docutils literal notranslate"><span class="pre">device_names</span></code></a></dt><dd><p>Available device names</p>
 </dd>
-<dt><a class="reference internal" href="#palace.device_name_default" title="palace.device_name_default"><code class="xref py py-class docutils literal notranslate"><span class="pre">device_name_default</span></code></a></dt><dd><p>Default device names</p>
-</dd>
 </dl>
 </div>
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.alc_version">
-<code class="sig-name descname">alc_version</code><a class="headerlink" href="#palace.Device.alc_version" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">alc_version</code><a class="headerlink" href="#palace.Device.alc_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>ALC version supported by this device.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
+<dt id="palace.Device.basic_name">
+<em class="property">property </em><code class="sig-name descname">basic_name</code><a class="headerlink" href="#palace.Device.basic_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic name of the device.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="palace.Device.clock_time">
-<code class="sig-name descname">clock_time</code><a class="headerlink" href="#palace.Device.clock_time" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">clock_time</code><a class="headerlink" href="#palace.Device.clock_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Current clock time for the device.</p>
 <p class="rubric">Notes</p>
 <p>This starts relative to the device being opened, and does not
@@ -250,39 +328,39 @@ extension to retrieve the audio device’s real clock.</p>
 <p>All previously-created contexts must first be destroyed.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.current_hrtf">
-<code class="sig-name descname">current_hrtf</code><a class="headerlink" href="#palace.Device.current_hrtf" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">current_hrtf</code><a class="headerlink" href="#palace.Device.current_hrtf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the HRTF currently being used by this device.</p>
 <p>If HRTF is not currently enabled, this will be <cite>None</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.efx_version">
-<code class="sig-name descname">efx_version</code><a class="headerlink" href="#palace.Device.efx_version" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">efx_version</code><a class="headerlink" href="#palace.Device.efx_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>EFX version supported by this device.</p>
 <p>If the <cite>ALC_EXT_EFX</cite> extension is unsupported,
 this will be <cite>(0, 0)</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.frequency">
-<code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Device.frequency" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Device.frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Playback frequency in hertz.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.hrtf_enabled">
-<code class="sig-name descname">hrtf_enabled</code><a class="headerlink" href="#palace.Device.hrtf_enabled" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">hrtf_enabled</code><a class="headerlink" href="#palace.Device.hrtf_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether HRTF is enabled on the device.</p>
 <p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will return False although there could still be
 HRTF applied at a lower hardware level.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.hrtf_names">
-<code class="sig-name descname">hrtf_names</code><a class="headerlink" href="#palace.Device.hrtf_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">hrtf_names</code><a class="headerlink" href="#palace.Device.hrtf_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of available HRTF names.</p>
 <p>The order is retained from OpenAL, such that the index of
 a given name is the ID to use with <cite>ALC_HRTF_ID_SOFT</cite>.</p>
@@ -290,17 +368,17 @@ a given name is the ID to use with <cite>ALC_HRTF_ID_SOFT</cite>.</p>
 this will be an empty list.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.max_auxiliary_sends">
-<code class="sig-name descname">max_auxiliary_sends</code><a class="headerlink" href="#palace.Device.max_auxiliary_sends" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">max_auxiliary_sends</code><a class="headerlink" href="#palace.Device.max_auxiliary_sends" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum number of auxiliary source sends.</p>
 <p>If <cite>ALC_EXT_EFX</cite> is unsupported, this will be 0.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Device.name">
-<code class="sig-name descname">name</code><a class="headerlink" href="#palace.Device.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary of device name corresponding to each type.</p>
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#palace.Device.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the device.</p>
 </dd></dl>
 
 <dl class="method">
@@ -397,11 +475,49 @@ and components such as sources, buffers and effects.</p>
 <dd class="field-odd"><p><strong>RuntimeError</strong> – If context creation fails.</p>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="palace.Context.async_wake_interval">
+<code class="sig-name descname">async_wake_interval</code><a class="headerlink" href="#palace.Context.async_wake_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current interval used for waking up the background thread.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Context.available_resamplers">
+<em class="property">property </em><code class="sig-name descname">available_resamplers</code><a class="headerlink" href="#palace.Context.available_resamplers" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of resamplers supported by the context.</p>
+<p>If the <cite>AL_SOFT_source_resampler</cite> extension is unsupported
+this will be an empty list, otherwise there would be
+at least one entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Context.default_resampler_index">
+<em class="property">property </em><code class="sig-name descname">default_resampler_index</code><a class="headerlink" href="#palace.Context.default_resampler_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The context’s default resampler index.</p>
+<p>If the <cite>AL_SOFT_source_resampler</cite> extension is unsupported
+the resampler list will be empty and this will return 0.</p>
+<p>If you try to access the resampler list with this index
+without extension, undefined behavior will occur
+(accessing an out of bounds array index).</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="palace.Context.destroy">
 <code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroy the context.</p>
 <p>The context must not be current when this is called.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Context.doppler_factor">
+<em class="property">property </em><code class="sig-name descname">doppler_factor</code><a class="headerlink" href="#palace.Context.doppler_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factor to apply to all source’s doppler calculations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Context.end_batch">
+<code class="sig-name descname">end_batch</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.end_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Continue processing the context and end batching.</p>
 </dd></dl>
 
 <dl class="method">
@@ -427,6 +543,24 @@ are supported by the context.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="palace.Context.speed_of_sound">
+<em class="property">property </em><code class="sig-name descname">speed_of_sound</code><a class="headerlink" href="#palace.Context.speed_of_sound" title="Permalink to this definition">¶</a></dt>
+<dd><p>The speed of sound propagation in units per second.</p>
+<p>It is used to calculate the doppler effect along with other
+distance-related time effects.</p>
+<p>The default is 343.3 units per second (a realistic speed
+assuming 1 meter per unit). If this is adjusted for a
+different unit scale, <cite>Listener.meters_per_unit</cite> should
+also be adjusted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Context.start_batch">
+<code class="sig-name descname">start_batch</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.start_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suspend the context to start batching.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="palace.Context.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the context and all sources belonging to this context.</p>
@@ -448,8 +582,6 @@ even if an error occurs.</p>
 <li><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the buffer is to be created and cached.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.  Multiple calls with the same name
 will return the same buffer.</p></li>
-<li><p><strong>existed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to require the resource must be cached before,
-default to <cite>False</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -470,9 +602,9 @@ default to <cite>False</cite>.</p></li>
     nor be found when <cite>existed</cite> is set.</p>
 </dd>
 </dl>
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.channel_config">
-<code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Buffer.channel_config" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Buffer.channel_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer’s sample configuration.</p>
 </dd></dl>
 
@@ -483,9 +615,9 @@ default to <cite>False</cite>.</p></li>
 <p>This invalidates all other <cite>Buffer</cite> objects with the same name.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.frequency">
-<code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Buffer.frequency" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Buffer.frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer’s frequency in hertz.</p>
 </dd></dl>
 
@@ -508,15 +640,15 @@ but it must not currently exist in the buffer cache.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.length">
-<code class="sig-name descname">length</code><a class="headerlink" href="#palace.Buffer.length" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.Buffer.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of the buffer in sample frames.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.length_seconds">
-<code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Buffer.length_seconds" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Buffer.length_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of the buffer in seconds.</p>
 </dd></dl>
 
@@ -548,15 +680,15 @@ create a new one.</p>
 <p>One buffer may be played from multiple sources simultaneously.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.sample_type">
-<code class="sig-name descname">sample_type</code><a class="headerlink" href="#palace.Buffer.sample_type" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">sample_type</code><a class="headerlink" href="#palace.Buffer.sample_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Buffer’s sample type.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.size">
-<code class="sig-name descname">size</code><a class="headerlink" href="#palace.Buffer.size" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#palace.Buffer.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Storage size used by the buffer, in bytes.</p>
 <p class="rubric">Notes</p>
 <p>The size in bytes may not be what you expect from the length,
@@ -564,9 +696,9 @@ as it may take more space internally than the <cite>channel_config</cite>
 and <cite>sample_type</cite> suggest.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.source_count">
-<code class="sig-name descname">source_count</code><a class="headerlink" href="#palace.Buffer.source_count" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">source_count</code><a class="headerlink" href="#palace.Buffer.source_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of sources currently using the buffer.</p>
 <p>Notes:
 <cite>Context.update</cite> needs to be called to reliably ensure the count
@@ -574,9 +706,9 @@ is kept updated for when sources reach their end.  This is
 equivalent to calling <cite>len(self.sources)</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Buffer.sources">
-<code class="sig-name descname">sources</code><a class="headerlink" href="#palace.Buffer.sources" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">sources</code><a class="headerlink" href="#palace.Buffer.sources" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>Source</cite> objects currently playing the buffer.</p>
 </dd></dl>
 
@@ -758,17 +890,17 @@ from its current group.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.latency">
-<code class="sig-name descname">latency</code><a class="headerlink" href="#palace.Source.latency" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">latency</code><a class="headerlink" href="#palace.Source.latency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source latency in nanoseconds.</p>
 <p>If the <cite>AL_SOFT_source_latency</cite> extension is unsupported,
 the latency will be 0.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.latency_seconds">
-<code class="sig-name descname">latency_seconds</code><a class="headerlink" href="#palace.Source.latency_seconds" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">latency_seconds</code><a class="headerlink" href="#palace.Source.latency_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source latency in seconds.</p>
 <p>If the <cite>AL_SOFT_source_latency</cite> extension is unsupported,
 the latency will be 0.</p>
@@ -788,9 +920,9 @@ object’s loop points.</p>
 this will be the offset based on the decoder’s read position.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.offset_seconds">
-<code class="sig-name descname">offset_seconds</code><a class="headerlink" href="#palace.Source.offset_seconds" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">offset_seconds</code><a class="headerlink" href="#palace.Source.offset_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source offset in seconds.</p>
 <p>For streaming sources this will be the offset based on
 the decoder’s read position.</p>
@@ -840,15 +972,15 @@ without the <cite>ALC_EXT_EFX</cite> extension.</p></li>
 <dd><p>Pause the source if it is playing.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.paused">
-<code class="sig-name descname">paused</code><a class="headerlink" href="#palace.Source.paused" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">paused</code><a class="headerlink" href="#palace.Source.paused" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the source is currently paused.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.pending">
-<code class="sig-name descname">pending</code><a class="headerlink" href="#palace.Source.pending" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">pending</code><a class="headerlink" href="#palace.Source.pending" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the source is waiting to play a future buffer.</p>
 </dd></dl>
 
@@ -863,15 +995,15 @@ without the <cite>ALC_EXT_EFX</cite> extension.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.playing">
-<code class="sig-name descname">playing</code><a class="headerlink" href="#palace.Source.playing" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">playing</code><a class="headerlink" href="#palace.Source.playing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the source is currently playing.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Source.playing_or_pending">
-<code class="sig-name descname">playing_or_pending</code><a class="headerlink" href="#palace.Source.playing_or_pending" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">playing_or_pending</code><a class="headerlink" href="#palace.Source.playing_or_pending" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the source is currently playing
 or waiting to play in a future buffer.</p>
 </dd></dl>
@@ -997,8 +1129,7 @@ completion of the block, even if an error occurs.</p>
 <dl class="method">
 <dt id="palace.SourceGroup.destroy">
 <code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.destroy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Destroy the source group, removing all sources from it
-before being freed.</p>
+<dd><p>Destroy the source group, remove and free all sources.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1041,10 +1172,10 @@ this group, including sub-groups.</p>
 including sub-groups.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.SourceGroup.sources">
-<code class="sig-name descname">sources</code><a class="headerlink" href="#palace.SourceGroup.sources" title="Permalink to this definition">¶</a></dt>
-<dd><p>The list of sources currently in the group.</p>
+<em class="property">property </em><code class="sig-name descname">sources</code><a class="headerlink" href="#palace.SourceGroup.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sources under this group.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1054,10 +1185,10 @@ including sub-groups.</p>
 including sub-groups.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.SourceGroup.sub_groups">
-<code class="sig-name descname">sub_groups</code><a class="headerlink" href="#palace.SourceGroup.sub_groups" title="Permalink to this definition">¶</a></dt>
-<dd><p>The list of subgroups currently in the group.</p>
+<em class="property">property </em><code class="sig-name descname">sub_groups</code><a class="headerlink" href="#palace.SourceGroup.sub_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source groups under this group.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1088,6 +1219,14 @@ it will be removed first.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="palace.AuxiliaryEffectSlot.effect">
+<em class="property">property </em><code class="sig-name descname">effect</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.effect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Effect to be held by the slot.</p>
+<p>The given effect object may be altered or destroyed without
+affecting the effect slot.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="palace.AuxiliaryEffectSlot.gain">
 <em class="property">property </em><code class="sig-name descname">gain</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.gain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gain of the effect slot.</p>
@@ -1102,19 +1241,53 @@ on the effect properties.</p>
 <p>Has no effect when using non-reverb effects.  Default is <cite>True</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.AuxiliaryEffectSlot.source_sends">
-<code class="sig-name descname">source_sends</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.source_sends" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterator of each <cite>Source</cite> object and its pairing
+<em class="property">property </em><code class="sig-name descname">source_sends</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.source_sends" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of each <cite>Source</cite> object and its pairing
 send this effect slot is set on.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.AuxiliaryEffectSlot.use_count">
-<code class="sig-name descname">use_count</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.use_count" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">use_count</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.use_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of source sends the effect slot
 is used by.  This is equivalent to calling
 <cite>len(tuple(self.source_sends))</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="palace.Effect">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Effect</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Effect" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of settings or parameters.</p>
+<p>This can be used as a context manager that calls <cite>destroy</cite>
+upon completion of the block, even if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a>) – The context from which the effect is to be created.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="palace.Effect.chorus_properties">
+<em class="property">property </em><code class="sig-name descname">chorus_properties</code><a class="headerlink" href="#palace.Effect.chorus_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>The effect with the specified chorus properties.</p>
+<p>It will be thrown if EAXReverb effect is not supported.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Effect.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Effect.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the effect.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Effect.reverb_properties">
+<em class="property">property </em><code class="sig-name descname">reverb_properties</code><a class="headerlink" href="#palace.Effect.reverb_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>The effect with the specified reverb properties.</p>
+<p>It will automatically downgrade to the Standard Reverb effect
+if EAXReverb effect is not supported.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1130,6 +1303,9 @@ is used by.  This is equivalent to calling
 <li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If decoder creation fails.</p>
+</dd>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -1141,38 +1317,40 @@ is used by.  This is equivalent to calling
 <p class="rubric">Notes</p>
 <p>Due to implementation details, while this creates decoder objects
 from filenames using contexts, it is the superclass of the ABC
-(abstract base class) <cite>BaseDecoder</cite>.</p>
-<dl class="attribute">
+(abstract base class) <cite>BaseDecoder</cite>.  Because of this, <cite>Decoder</cite>
+may only initialize an internal one.  To use registered factories,
+please call the <cite>smart</cite> static method instead.</p>
+<dl class="method">
 <dt id="palace.Decoder.channel_config">
-<code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Decoder.channel_config" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Decoder.channel_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Channel configuration of the audio being decoded.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Decoder.frequency">
-<code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Decoder.frequency" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Decoder.frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample frequency, in hertz, of the audio being decoded.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Decoder.length">
-<code class="sig-name descname">length</code><a class="headerlink" href="#palace.Decoder.length" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.Decoder.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in sample frames, falling-back to 0.</p>
 <p class="rubric">Notes</p>
 <p>Zero-length decoders may not be used to load a <cite>Buffer</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Decoder.length_seconds">
-<code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Decoder.length_seconds" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Decoder.length_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in seconds, falling-back to 0.0.</p>
 <p class="rubric">Notes</p>
 <p>Zero-length decoders may not be used to load a <cite>Buffer</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Decoder.loop_points">
-<code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.Decoder.loop_points" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.Decoder.loop_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loop points in sample frames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1223,9 +1401,9 @@ the end of the audio has been reached.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="palace.Decoder.sample_type">
-<code class="sig-name descname">sample_type</code><a class="headerlink" href="#palace.Decoder.sample_type" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">sample_type</code><a class="headerlink" href="#palace.Decoder.sample_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample type of the audio being decoded.</p>
 </dd></dl>
 
@@ -1234,6 +1412,14 @@ the end of the audio has been reached.</p>
 <code class="sig-name descname">seek</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">pos: int</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#palace.Decoder.seek" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seek to pos, specified in sample frames.</p>
 <p>Return if the seek was successful.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="palace.Decoder.smart">
+<em class="property">static </em><code class="sig-name descname">smart</code><span class="sig-paren">(</span><em class="sig-param">Context context: Context</em>, <em class="sig-param">str name: str</em><span class="sig-paren">)</span> &#x2192; Decoder<a class="headerlink" href="#palace.Decoder.smart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the decoder created from the given resource name.</p>
+<p>This first tries user-registered decoder factories in
+lexicographical order, then fallback to the internal ones.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1301,6 +1487,48 @@ the end of the audio has been reached.</p>
 <code class="sig-name descname">seek</code><a class="headerlink" href="#palace.BaseDecoder.seek" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seek to pos, specified in sample frames.</p>
 <p>Return if the seek was successful.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="palace.FileIO">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FileIO</code><a class="headerlink" href="#palace.FileIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>File I/O protocol.</p>
+<p>This static duck type defines methods required to be used by
+palace decoders.  Despite its name, a <cite>FileIO</cite> is not necessarily
+created from a file, but any seekable finite input stream.</p>
+<p>Many classes defined in the standard library module <cite>io</cite>
+are compatible with this protocol.</p>
+<p class="rubric">Notes</p>
+<p>Since PEP 544 is only implemented in Python 3.8+, type checking
+for this on earlier Python version might not work as expected.</p>
+<dl class="attribute">
+<dt id="palace.FileIO.close">
+<code class="sig-name descname">close</code><a class="headerlink" href="#palace.FileIO.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.FileIO.read">
+<code class="sig-name descname">read</code><a class="headerlink" href="#palace.FileIO.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read at most size bytes, returned as bytes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="palace.FileIO.seek">
+<code class="sig-name descname">seek</code><a class="headerlink" href="#palace.FileIO.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move to new file position and return the file position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>offset</strong> (<em>int</em>) – A byte count.</p></li>
+<li><p><strong>whence</strong> (<em>int</em><em>, </em><em>optional</em>) – Either 0 (default, move relative to start of file),
+1 (move relative to current position)
+or 2 (move relative to end of file).</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
