@@ -10,6 +10,28 @@ Cython, Python and C++11.
 
 .. _alure: https://github.com/kcat/alure
 
+Project Overview
+----------------
+
+Before diving into the design, here is a brief overview of the functionalities
+provided by palace:
+
+#. Audio device creation and auxiliary functionalities:
+   :py:const:`palace.device_names`, :py:func:`palace.query_extension`
+   and :py:class:`palace.Device`
+#. Context creation and management: :py:func:`palace.current_context`,
+   :py:func:`palace.use_context`, :py:class:`palace.Context`,
+   :py:class:`palace.Listener` and :py:class:`palace.MessageHandler`
+#. Creation and caching of internal audio decoders and user-defined ones:
+   :py:class:`palace.Decoder`, :py:class:`palace.BaseDecoder`,
+   :py:data:`palace.decoder_factories`, :py:class:`palace.FileIO`,
+   :py:func:`palace.current_fileio`, :py:func:`palace.use_fileio`
+   and :py:class:`palace.Buffer`
+#. Source of audio playback: :py:class:`palace.Source`
+   and :py:class:`palace.SourceGroup`
+#. Audio effect: :py:class:`palace.AuxiliaryEffectSlot`
+   and :py:class:`palace.Effect`
+
 .. _impl-idiom:
 
 The Impl Idiom
