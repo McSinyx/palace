@@ -71,7 +71,7 @@ __all__ = [
     'sample_types', 'channel_configs', 'device_names', 'decoder_factories',
     'sample_size', 'sample_length', 'query_extension', 'thread_local',
     'current_context', 'use_context', 'current_fileio', 'use_fileio',
-    'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
+    'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Effect', 'Decoder', 'BaseDecoder', 'FileIO',
     'MessageHandler']
 
@@ -723,18 +723,28 @@ cdef class Context:
 
 
 cdef class Listener:
-    """Listener instance of the context, i.e each context
-    will only have one listener.
+    """Listener instance of the given context.
+
+    It is recommended that application access the listener via
+    `Context.listener`, which avoid the overhead caused by the
+    creation of the wrapper object.
 
     Parameters
     ----------
-    context : Context
-        The `context` on which the listener instance is to be created.
+    context : Optional[Context], optional
+        The context on which the listener instance is to be created.
+        By default `current_context()` is used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
     """
     cdef alure.Listener impl
 
-    def __init__(self, context: Context) -> None:
-        self.impl = context.impl.get_listener()
+    def __init__(self, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
+        self.impl = (<Context> context).impl.get_listener()
 
     def __bool__(self) -> bool:
         return <boolean> self.impl
@@ -797,11 +807,12 @@ cdef class Buffer:
 
     Parameters
     ----------
-    context : Context
-        The context from which the buffer is to be created and cached.
     name : str
         Audio file or resource name.  Multiple calls with the same name
         will return the same buffer.
+    context : Optional[Context], optional
+        The context from which the buffer is to be created and cached.
+        By default `current_context()` is used.
 
     Attributes
     ----------
@@ -811,20 +822,20 @@ cdef class Buffer:
     Raises
     ------
     RuntimeError
-        If the buffer can neither be loaded
-        nor be found when `existed` is set.
+        If there is neither any context specified nor current.
     """
     cdef alure.Buffer impl
     cdef Context context
     cdef readonly str name
 
-    def __init__(self, context: Context, name: str,
-                 existed: bool = False) -> None:
-        self.impl = context.impl.find_buffer(name)
-        if not self:
-            decoder: Decoder = Decoder.smart(context, name)
-            self.impl = context.impl.create_buffer_from(name, decoder.pimpl)
+    def __init__(self, name: str, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
         self.context, self.name = context, name
+        self.impl = self.context.impl.find_buffer(self.name)
+        if not self:
+            decoder: Decoder = Decoder.smart(self.name, self.context)
+            self.impl = self.context.impl.create_buffer_from(
+                self.name, decoder.pimpl)
 
     def __enter__(self) -> Buffer:
         return self
@@ -869,27 +880,32 @@ cdef class Buffer:
         return f'{self.__class__.__name__}({self.name!r})'
 
     @staticmethod
-    def from_decoder(decoder: Decoder, context: Context, name: str) -> Buffer:
+    def from_decoder(decoder: Decoder, name: str,
+                     context: Optional[Context] = None) -> Buffer:
         """Return a buffer created by reading the given decoder.
 
         Parameters
         ----------
         decoder : Decoder
             The decoder from which the buffer is to be cached.
-        context : Context
-            The context from which the buffer is to be created.
         name : str
             The name to give to the buffer.  It may alias an audio file,
             but it must not currently exist in the buffer cache.
+        context : Optional[Context], optional
+            The context from which the buffer is to be created.
+            By default `current_context()` is used.
 
         Raises
         ------
         RuntimeError
-            If the buffer cannot be created.
+            If there is neither any context specified nor current;
+            or if `name` is already used for another buffer.
         """
+        if context is None: context = current_context()
         buffer: Buffer = Buffer.__new__(Buffer)
-        buffer.impl = context.impl.create_buffer_from(name, decoder.pimpl)
         buffer.context, buffer.name = context, name
+        buffer.impl = buffer.context.impl.create_buffer_from(
+            buffer.name, decoder.pimpl)
         return buffer
 
     @getter
@@ -1009,13 +1025,20 @@ cdef class Source:
 
     Parameters
     ----------
-    context : Context
+    context : Optional[Context], optional
         The context from which the source is to be created.
+        By default `current_context()` is used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
     """
     cdef alure.Source impl
 
-    def __init__(self, context: Context) -> None:
-        self.impl = context.impl.create_source()
+    def __init__(self, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
+        self.impl = (<Context> context).impl.create_source()
 
     def __enter__(self) -> Source:
         return self
@@ -1586,13 +1609,20 @@ cdef class SourceGroup:
 
     Parameters
     ----------
-    context : Context
+    context : Optional[Context], optional
         The context from which the source group is to be created.
+        By default `current_context()` is used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
     """
     cdef alure.SourceGroup impl
 
-    def __init__(self, context: Context) -> None:
-        self.impl = context.impl.create_source_group()
+    def __init__(self, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
+        self.impl = (<Context> context).impl.create_source_group()
 
     def __enter__(self) -> SourceGroup:
         return self
@@ -1730,18 +1760,20 @@ cdef class AuxiliaryEffectSlot:
 
     Parameters
     ----------
-    context : Context
+    context : Optional[Context], optional
         The context to create the auxiliary effect slot.
+        By default `current_context()` is used.
 
     Raises
     ------
     RuntimeError
-        If the effect slot can't be created.
+        If there is neither any context specified nor current.
     """
     cdef alure.AuxiliaryEffectSlot impl
 
-    def __init__(self, context: Context) -> None:
-        self.impl = context.impl.create_auxiliary_effect_slot()
+    def __init__(self, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
+        self.impl = (<Context> context).impl.create_auxiliary_effect_slot()
 
     def __enter__(self) -> AuxiliaryEffectSlot:
         return self
@@ -1843,13 +1875,20 @@ cdef class Effect:
 
     Parameters
     ----------
-    context : Context
+    context : Optional[Context], optional
         The context from which the effect is to be created.
+        By default `current_context()` is used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
     """
     cdef alure.Effect impl
 
-    def __init__(self, context: Context) -> None:
-        self.impl = context.impl.create_effect()
+    def __init__(self, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
+        self.impl = (<Context> context).impl.create_effect()
 
     def __enter__(self) -> Effect:
         return self
@@ -1952,15 +1991,16 @@ cdef class Decoder:
 
     Parameters
     ----------
-    context : Context
-        The context from which the decoder is to be created.
     name : str
         Audio file or resource name.
+    context : Optional[Context], optional
+        The context from which the decoder is to be created.
+        By default `current_context()` is used.
 
     Raises
     ------
     RuntimeError
-        If decoder creation fails.
+        If there is neither any context specified nor current.
 
     See Also
     --------
@@ -1976,15 +2016,25 @@ cdef class Decoder:
     """
     cdef shared_ptr[alure.Decoder] pimpl
 
-    def __init__(self, context: Context, name: str) -> None:
-        self.pimpl = context.impl.create_decoder(name)
+    def __init__(self, name: str, context: Optional[Context] = None) -> None:
+        if context is None: context = current_context()
+        self.pimpl = (<Context> context).impl.create_decoder(name)
 
     @staticmethod
-    def smart(context: Context, name: str) -> Decoder:
+    def smart(name: str, context: Optional[Context] = None) -> Decoder:
         """Return the decoder created from the given resource name.
 
         This first tries user-registered decoder factories in
         lexicographical order, then fallback to the internal ones.
+
+        Raises
+        ------
+        RuntimeError
+            If there is neither any context specified nor current.
+
+        See Also
+        --------
+        decoder_factories : Simple object for storing decoder factories
         """
         def find_resource(name, subst):
             if not name: raise RuntimeError('Failed to open file')
@@ -1996,6 +2046,7 @@ cdef class Decoder:
             except FileNotFoundError:
                 return find_resource(subst(name), subst)
 
+        if context is None: context = current_context()
         resource = find_resource(
             name, context.message_handler.resource_not_found)
         for decoder_factory in decoder_factories:
@@ -2004,7 +2055,7 @@ cdef class Decoder:
                 return decoder_factory(resource)
             except RuntimeError:
                 continue
-        return Decoder(context, name)
+        return Decoder(name, context)
 
     @getter
     def frequency(self) -> int:
@@ -2089,7 +2140,8 @@ cdef class Decoder:
         PyMem_RawFree(ptr)
         return samples
 
-    def play(self, source: Source, chunk_len: int, queue_size: int) -> None:
+    def play(self, chunk_len: int, queue_size: int,
+             source: Optional[Source] = None) -> Source:
         """Stream audio asynchronously from the decoder.
 
         The decoder must NOT have its `read` or `seek` called
@@ -2097,8 +2149,6 @@ cdef class Decoder:
 
         Parameters
         ----------
-        source : Source
-            The source object to play audio.
         chunk_len : int
             The number of sample frames to read for each chunk update.
             Smaller values will require more frequent updates and
@@ -2107,8 +2157,16 @@ cdef class Decoder:
             The number of chunks to keep queued during playback.
             Smaller values use less memory while larger values
             improve protection against underruns.
+        source : Optional[Source], optional
+            The source object to play audio.  If `None` is given,
+            a new one will be created from the current context.
+
+        Returns
+        -------
+        The source used for playing.
         """
-        source.impl.play(self.pimpl, chunk_len, queue_size)
+        if source is None: source = Source()
+        (<Source> source).impl.play(self.pimpl, chunk_len, queue_size)
 
 
 # Decoder interface

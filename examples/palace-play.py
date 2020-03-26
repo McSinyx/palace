@@ -52,7 +52,7 @@ def play(files: Iterable[str], device: str) -> None:
         ctx.message_handler = LoadingBufferHandler()
         for filename in files:
             try:
-                buffer = Buffer(ctx, filename)
+                buffer = Buffer(filename)
             except RuntimeError:
                 stderr.write(f'Failed to open file: {filename}\n')
                 continue

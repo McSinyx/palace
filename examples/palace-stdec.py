@@ -43,11 +43,11 @@ def pretty_time(seconds: float) -> str:
 
 def play(files: Iterable[str], device: str) -> None:
     """Load and play files on the given device."""
-    with Device(device) as dev, Context(dev) as ctx:
+    with Device(device) as dev, Context(dev):
         print('Opened', dev.name)
         for filename in files:
             try:
-                buffer = Buffer(ctx, filename)
+                buffer = Buffer(filename)
             except RuntimeError:
                 stderr.write(f'Failed to open file: {filename}\n')
                 continue

@@ -57,7 +57,7 @@ def play(files: Iterable[str], device: str, hrtf_name: str,
             except ValueError:
                 stderr.write(f'HRTF {hrtf_name!r} not found\n')
 
-        with Context(dev, attrs) as ctx, Source(ctx) as src:
+        with Context(dev, attrs) as ctx, Source() as src:
             if dev.hrtf_enabled:
                 print(f'Using HRTF {dev.current_hrtf!r}')
             else:
@@ -66,11 +66,11 @@ def play(files: Iterable[str], device: str, hrtf_name: str,
 
             for filename in files:
                 try:
-                    decoder = Decoder(ctx, filename)
+                    decoder = Decoder(filename)
                 except RuntimeError:
                     stderr.write(f'Failed to open file: {filename}\n')
                     continue
-                decoder.play(src, CHUNK_LEN, QUEUE_SIZE)
+                decoder.play(CHUNK_LEN, QUEUE_SIZE, src)
                 print(f'Playing {filename} ({decoder.sample_type},',
                       f'{decoder.channel_config}, {decoder.frequency} Hz)')
 
