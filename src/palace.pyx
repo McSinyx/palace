@@ -69,18 +69,20 @@ __all__ = [
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
     'sample_types', 'channel_configs', 'device_names', 'decoder_factories',
-    'sample_size', 'sample_length', 'query_extension',
+    'sample_size', 'sample_length', 'query_extension', 'thread_local',
     'current_context', 'use_context', 'current_fileio', 'use_fileio',
     'Device', 'Context', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Effect', 'Decoder', 'BaseDecoder', 'FileIO',
     'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
+from contextlib import contextmanager
 from io import DEFAULT_BUFFER_SIZE
 from operator import itemgetter
 from types import TracebackType
-from typing import (Any, Callable, Iterable, Iterator, Optional, Type,
-                    Dict, FrozenSet, List, Tuple)
+from typing import (
+    Any, Callable, ContextManager, Iterable, Iterator, Optional, Type,
+    Dict, FrozenSet, List, Tuple)
 from warnings import catch_warnings, simplefilter, warn
 
 try:    # Python 3.8+
@@ -154,6 +156,7 @@ channel_configs: Tuple[str, ...] = (
 # from being garbage collected by keeping a reference to the instance.
 cdef alure.DeviceManager devmgr = alure.DeviceManager.get_instance()
 device_names: DeviceNames = DeviceNames()
+cdef boolean _thread = False
 
 decoder_factories: DecoderNamespace = DecoderNamespace()
 cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
@@ -187,43 +190,62 @@ def query_extension(name: str) -> bool:
     return devmgr.query_extension(name)
 
 
-def current_context(thread: bool = False) -> Optional[Context]:
+@contextmanager
+def thread_local(state: bool) -> ContextManager[None]:
+    """Return a context manager controlling preference of local thread.
+
+    Effectively, it sets the fallback value for the `thread` argument
+    for `current_context` and `use_context`.
+
+    Initially, globally current `Context` is preferred.
+    """
+    global _thread
+    previous, _thread = _thread, state
+    try:
+        yield
+    finally:
+        _thread = previous
+
+
+def current_context(thread: Optional[bool] = None) -> Optional[Context]:
     """Return the context that is currently used.
 
     If `thread` is set to `True`, return the thread-specific context
     used for OpenAL operations.  This requires the non-device-specific
     as well as the context's device `ALC_EXT_thread_local_context`
     extension to be available.
+
+    In case `thread` is not specified, fallback to preference made by
+    `thread_local`.
     """
     cdef Context current = Context.__new__(Context)
+    if thread is None: thread = _thread
     if thread:
         current.impl = alure.Context.get_thread_current()
     else:
         current.impl = alure.Context.get_current()
-    if not current:
-        return None
+    if not current: return None
     current.device = Device.__new__(Device)
     current.device.impl = current.impl.get_device()
     current.listener = Listener(current)
     return current
 
 
-def use_context(context: Optional[Context], thread: bool = False) -> None:
+def use_context(context: Optional[Context],
+                thread: Optional[bool] = None) -> None:
     """Make the specified context current for OpenAL operations.
 
     If `thread` is set to `True`, make the context current
     for OpenAL operations on the calling thread only.
     This requires the non-device-specific as well as the context's
-    device `ALC_EXT_thread_local_context extension to be available.
+    device `ALC_EXT_thread_local_context` extension to be available.
 
-    See Also
-    --------
-    Context : Audio environment container
+    In case `thread` is not specified, fallback to preference made by
+    `thread_local`.
     """
     cdef alure.Context alure_context = <alure.Context> nullptr
-    if context is not None:
-        alure_context = (<Context> context).impl
-
+    if context is not None: alure_context = (<Context> context).impl
+    if thread is None: thread = _thread
     if thread:
         alure.Context.make_thread_current(alure_context)
     else:
