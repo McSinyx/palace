@@ -77,6 +77,8 @@ __all__ = [
 
 from abc import abstractmethod, ABCMeta
 from contextlib import contextmanager
+from enum import Enum, auto
+from contextlib import contextmanager
 from io import DEFAULT_BUFFER_SIZE
 from operator import itemgetter
 from types import TracebackType
@@ -101,6 +103,7 @@ from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
 from cpython.ref cimport Py_INCREF, Py_DECREF
+from cython.operator cimport dereference as deref
 
 from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
@@ -567,6 +570,7 @@ cdef class Context:
         If context creation fails.
     """
     cdef alure.Context impl
+    cdef vector[alure.StringView] precached_buffers
     cdef alure.Context previous
     cdef readonly Device device
     cdef readonly Listener listener
@@ -655,11 +659,11 @@ cdef class Context:
     def async_wake_interval(self, value: int) -> None:
         self.impl.set_async_wake_interval(milliseconds(value))
 
-    # TODO: document that methods below require context to be current
-
     def is_supported(self, channel_config: str, sample_type: str) -> bool:
         """Return if the channel configuration and sample type
         are supported by the context.
+
+        This method require the context to be current.
 
         See Also
         --------
@@ -676,6 +680,8 @@ cdef class Context:
         If the `AL_SOFT_source_resampler` extension is unsupported
         this will be an empty list, otherwise there would be
         at least one entry.
+
+        This method require the context to be current.
         """
         cdef alure.ArrayView[string] resamplers
         resamplers = self.impl.get_available_resamplers()
@@ -691,10 +697,37 @@ cdef class Context:
         If you try to access the resampler list with this index
         without extension, undefined behavior will occur
         (accessing an out of bounds array index).
+
+        This method require the context to be current.
         """
         return self.impl.get_default_resampler_index()
 
-    # TODO: async buffers
+    def precache_buffers_async(self, names: List[str]) -> None:
+        """Prepare asynchronously cached buffers for the given
+        audio files or resource names.
+
+        Duplicate names and buffers already cached are ignored.
+        Cached buffers must be free using `remove_buffer`
+        before destroying the context.
+
+        The `Buffer` objects will be scheduled for loading
+        asynchronously, and should be retrieved later when needed
+        using `buffer_async` or `buffer`.  Buffers that cannot be
+        loaded, for example due to an unsupported format, will be
+        ignored and a later call to `buffer` or `buffer_async` will
+        throw an exception.
+
+        This method require the context to be current.
+        """
+        # FIXME: Running this function still leads to segfault
+        cdef vector[string] std_names = names
+        cdef vector[alure.StringView] alure_names
+        cdef alure.StringView* alure_name
+        for name in std_names:
+            alure_name = new alure.StringView(name)
+            alure_names.push_back(deref(alure_name))
+            self.precached_buffers.push_back(deref(alure_name))
+        self.impl.precache_buffers_async(alure_names)
 
     @setter
     def doppler_factor(self, value: float) -> None:
@@ -715,7 +748,20 @@ cdef class Context:
         """
         self.impl.set_speed_of_sound(value)
 
-    # TODO: distance model
+    @setter
+    def distance_model(self, value: DistanceModel) -> None:
+        """The model for source attenuation based on distance.
+
+        The default, `DistanceModel.InverseClamped`, provides a realistic
+        l/r reduction in volume (that is, every doubling of distance
+        cause the gain to reduce by half).
+
+        The Clamped distance models restrict the source distance for
+        the purpose of distance attenuation, so a source won't sound
+        closer than its reference distance or farther than its max
+        distance.
+        """
+        self.impl.set_distance_model(to_distance_model(value))
 
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
@@ -2560,3 +2606,33 @@ cdef alure.ChannelConfig to_channel_config(str name) except +:
     elif name == 'B-Format 3D':
         return alure.ChannelConfig.BFormat3D
     raise ValueError(f'Invalid channel configuration name: {name}')
+
+
+class DistanceModel(Enum):
+    """Enum for DistanceModel."""
+    INVERSE_CLAMPED = auto()
+    LINEAR_CLAMPED = auto()
+    EXPONENT_CLAMPED = auto()
+    INVERSE = auto()
+    LINEAR = auto()
+    EXPONENT = auto()
+    NONE = auto()
+
+
+cdef alure.DistanceModel to_distance_model(int model_id) except +:
+    """Converts distance model enum."""
+    if model_id == DistanceModel.INVERSE_CLAMPED:
+        return alure.DistanceModel.INVERSE_CLAMPED
+    elif model_id == DistanceModel.LINEAR_CLAMPED:
+        return alure.DistanceModel.LINEAR_CLAMPED
+    elif model_id == DistanceModel.EXPONENT_CLAMPED:
+        return alure.DistanceModel.EXPONENT_CLAMPED
+    elif model_id == DistanceModel.INVERSE:
+        return alure.DistanceModel.INVERSE
+    elif model_id == DistanceModel.LINEAR:
+        return alure.DistanceModel.LINEAR
+    elif model_id == DistanceModel.EXPONENT:
+        return alure.DistanceModel.EXPONENT
+    elif model_id == DistanceModel.NONE:
+        return alure.DistanceModel.NONE
+    raise ValueError(f'Invalid DistanceModel ID: {model_id}')
