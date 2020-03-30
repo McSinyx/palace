@@ -18,10 +18,13 @@
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 import re
+from distutils import log
+from distutils.command.clean import clean
 from distutils.dir_util import mkpath
+from distutils.errors import DistutilsFileError
 from distutils.file_util import copy_file
 from operator import methodcaller
-from os import environ
+from os import environ, unlink
 from os.path import dirname, join
 from subprocess import DEVNULL, PIPE, run
 
@@ -56,11 +59,26 @@ class BuildAlure2Ext(build_ext):
                 getattr(ext, key).extend(value.split(';'))
 
 
-setup(cmdclass={'build_ext': BuildAlure2Ext},
+class CleanCppToo(clean):
+    """Clean command that remove Cython C++ outputs."""
+    def run(self) -> None:
+        """Remove Cython C++ outputs on `setup.py clean --all`."""
+        if self.all:
+            for cpp in [join('src', 'palace.cpp')]:
+                log.info(f'removing {cpp!r}')
+                try:
+                    unlink(cpp)
+                except OSError as e:
+                    raise DistutilsFileError(
+                        f'could not delete {cpp!r}: {e.strerror}')
+        super().run()
+
+
+setup(cmdclass=dict(build_ext=BuildAlure2Ext, clean=CleanCppToo),
       ext_modules=cythonize(
           Extension(name='palace', sources=[join('src', 'palace.pyx')],
                     define_macros=[('CYTHON_TRACE', TRACE)],
                     extra_compile_args=["-std=c++14"], language='c++'),
-          compiler_directives=dict(language_level='3str', c_string_type='str',
-                                   c_string_encoding='utf8', linetrace=TRACE,
-                                   binding=False, embedsignature=True)))
+          compiler_directives=dict(
+              binding=True, linetrace=TRACE, language_level='3str',
+              c_string_type='str', c_string_encoding='utf8')))

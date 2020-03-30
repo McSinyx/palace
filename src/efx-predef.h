@@ -97,4 +97,4 @@ namespace palace
 } // namespace palace
 #undef DECL
 
-#endif // PALACE_BASES_H
+#endif // PALACE_PREDEF_H
