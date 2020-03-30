@@ -54,6 +54,8 @@ channel_configs : Tuple[str, ...]
 device_names : DeviceNames
     Read-only namespace of device names by category (basic, full and
     capture), as tuples of strings whose first item being the default.
+device_names : Tuple[str]
+    Names of predefined reverb effect presets in lexicographical order.
 decoder_factories : DecoderNamespace
     Simple object for storing decoder factories.
 
@@ -68,7 +70,8 @@ __all__ = [
     'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
-    'sample_types', 'channel_configs', 'device_names', 'decoder_factories',
+    'sample_types', 'channel_configs', 'device_names',
+    'reverb_preset_names', 'decoder_factories',
     'sample_size', 'sample_length', 'query_extension', 'thread_local',
     'current_context', 'use_context', 'current_fileio', 'use_fileio',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
@@ -95,19 +98,20 @@ except ImportError:
 from libc.stdint cimport uint64_t   # noqa
 from libc.stdio cimport EOF
 from libc.string cimport memcpy
+
 from libcpp cimport bool as boolean, nullptr
 from libcpp.memory cimport (make_unique, unique_ptr,    # noqa
                             shared_ptr, static_pointer_cast)
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
+
 from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
 from cpython.ref cimport Py_INCREF, Py_DECREF
 from cython.operator cimport dereference as deref
 
 from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
-from alure cimport EFXEAXREVERBPROPERTIES, EFXCHORUSPROPERTIES
 
 
 # Aliases
@@ -161,6 +165,7 @@ cdef alure.DeviceManager devmgr = alure.DeviceManager.get_instance()
 device_names: DeviceNames = DeviceNames()
 cdef boolean _thread = False
 
+reverb_preset_names: Tuple[str] = tuple(sorted(alure.reverb_preset_names()))
 decoder_factories: DecoderNamespace = DecoderNamespace()
 cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
 
@@ -1630,12 +1635,13 @@ cdef class Source:
     # TODO: set send filter
 
     @setter
-    def auxiliary_send(self, slot: AuxiliaryEffectSlot, send: int) -> None:
+    def auxiliary_send(self, value: Tuple[AuxiliaryEffectSlot, int]) -> None:
         """Connect the effect slot to the given send path.
 
         Any filter properties on the send path remain as they were.
         """
-        self.impl.set_auxiliary_send(slot.impl, send)
+        self.impl.set_auxiliary_send(
+            (<AuxiliaryEffectSlot> value[0]).impl, value[1])
 
     # TODO: set auxiliary send filter
 
@@ -1976,13 +1982,31 @@ cdef class Effect:
         return <boolean> self.impl
 
     @setter
+    def reverb_preset(self, value: str) -> None:
+        """Pre-defined reverb effect.
+
+        Raises
+        ------
+        ValueError
+            If set to a preset cannot be found in `reverb_preset_names`.
+        """
+        try:
+            self.impl.set_reverb_properties(alure.REVERB_PRESETS.at(value))
+        except IndexError:
+            raise ValueError(f'Invalid preset name: {value}')
+
+    @setter
     def reverb_properties(self, value: dict) -> None:
         """The effect with the specified reverb properties.
 
         It will automatically downgrade to the Standard Reverb effect
         if EAXReverb effect is not supported.
+
+        See Also
+        --------
+        reverb_preset : Pre-defined reverb effect.
         """
-        cdef EFXEAXREVERBPROPERTIES properties
+        cdef alure.EFXEAXREVERBPROPERTIES properties
         properties.flDensity = value['density']
         properties.flDiffusion = value['diffusion']
         properties.flGain = value['gain']
@@ -2016,9 +2040,12 @@ cdef class Effect:
     def chorus_properties(self, value: dict) -> None:
         """The effect with the specified chorus properties.
 
-        It will be thrown if EAXReverb effect is not supported.
+        Raises
+        ------
+        RuntimeError
+            If the chorus effect is not supported.
         """
-        cdef EFXCHORUSPROPERTIES properties
+        cdef alure.EFXCHORUSPROPERTIES properties
         properties.iWaveform = value['waveform']
         properties.iPhase = value['phase']
         properties.flRate = value['rate']

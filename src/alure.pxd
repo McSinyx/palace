@@ -20,6 +20,7 @@
 
 from libc.stdint cimport int64_t, uint64_t
 from libcpp cimport bool as boolean, nullptr_t
+from libcpp.unordered_map cimport unordered_map
 from libcpp.memory cimport shared_ptr, unique_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
@@ -66,6 +67,11 @@ cdef extern from 'alure2-alext.h' nogil:
     cdef int ALC_HRTF_ID_SOFT
 
     cdef int ALC_OUTPUT_LIMITER_SOFT
+
+
+cdef extern from 'efx-predef.h' namespace 'palace' nogil:
+    cdef const unordered_map[string, EFXEAXREVERBPROPERTIES] REVERB_PRESETS
+    cdef vector[string] reverb_preset_names() except +
 
 
 cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:
