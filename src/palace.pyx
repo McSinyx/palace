@@ -105,12 +105,12 @@ from libcpp.memory cimport (make_unique, unique_ptr,    # noqa
 from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
+from std cimport istream, milliseconds, streambuf
 
 from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
 from cpython.ref cimport Py_INCREF, Py_DECREF
 from cython.operator cimport dereference as deref
 
-from std cimport istream, milliseconds, streambuf
 cimport alure   # noqa
 
 
@@ -260,7 +260,7 @@ def use_context(context: Optional[Context],
         alure.Context.make_current(alure_context)
 
 
-def current_fileio() -> Optional[Callable[[str], FileIO]]:
+def current_fileio() -> Optional[Callable[[str], 'FileIO']]:
     """Return the file I/O factory currently in used by audio decoders.
 
     If the default is being used, return `None`.
@@ -268,7 +268,7 @@ def current_fileio() -> Optional[Callable[[str], FileIO]]:
     return fileio_factory
 
 
-def use_fileio(factory: Optional[Callable[[str], FileIO]],
+def use_fileio(factory: Optional[Callable[[str], 'FileIO']],
                buffer_size: int = DEFAULT_BUFFER_SIZE) -> None:
     """Set the file I/O factory instance to be used by audio decoders.
 
@@ -754,23 +754,49 @@ cdef class Context:
         self.impl.set_speed_of_sound(value)
 
     @setter
-    def distance_model(self, value: DistanceModel) -> None:
+    def distance_model(self, value: 'DistanceModel') -> None:
         """The model for source attenuation based on distance.
 
-        The default, `DistanceModel.InverseClamped`, provides a realistic
-        l/r reduction in volume (that is, every doubling of distance
+        The default, `INVERSE_CLAMPED`, provides a realistic l/r
+        reduction in volume (that is, every doubling of distance
         cause the gain to reduce by half).
 
-        The Clamped distance models restrict the source distance for
+        The `CLAMPED` distance models restrict the source distance for
         the purpose of distance attenuation, so a source won't sound
         closer than its reference distance or farther than its max
         distance.
         """
-        self.impl.set_distance_model(to_distance_model(value))
+        if value == DistanceModel.INVERSE_CLAMPED:
+            self.impl.set_distance_model(alure.DistanceModel.INVERSE_CLAMPED)
+        elif value == DistanceModel.LINEAR_CLAMPED:
+            self.impl.set_distance_model(alure.DistanceModel.LINEAR_CLAMPED)
+        elif value == DistanceModel.EXPONENT_CLAMPED:
+            self.impl.set_distance_model(alure.DistanceModel.EXPONENT_CLAMPED)
+        elif value == DistanceModel.INVERSE:
+            self.impl.set_distance_model(alure.DistanceModel.INVERSE)
+        elif value == DistanceModel.LINEAR:
+            self.impl.set_distance_model(alure.DistanceModel.LINEAR)
+        elif value == DistanceModel.EXPONENT:
+            self.impl.set_distance_model(alure.DistanceModel.EXPONENT)
+        elif value == DistanceModel.NONE:
+            self.impl.set_distance_model(alure.DistanceModel.NONE)
+        else:
+            raise ValueError(f'Invalid DistanceModel ID: {value}')
 
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
+
+
+class DistanceModel(Enum):
+    """Enum for distance models."""
+    INVERSE_CLAMPED = auto()
+    LINEAR_CLAMPED = auto()
+    EXPONENT_CLAMPED = auto()
+    INVERSE = auto()
+    LINEAR = auto()
+    EXPONENT = auto()
+    NONE = auto()
 
 
 cdef class Listener:
@@ -2633,33 +2659,3 @@ cdef alure.ChannelConfig to_channel_config(str name) except +:
     elif name == 'B-Format 3D':
         return alure.ChannelConfig.BFormat3D
     raise ValueError(f'Invalid channel configuration name: {name}')
-
-
-class DistanceModel(Enum):
-    """Enum for DistanceModel."""
-    INVERSE_CLAMPED = auto()
-    LINEAR_CLAMPED = auto()
-    EXPONENT_CLAMPED = auto()
-    INVERSE = auto()
-    LINEAR = auto()
-    EXPONENT = auto()
-    NONE = auto()
-
-
-cdef alure.DistanceModel to_distance_model(int model_id) except +:
-    """Converts distance model enum."""
-    if model_id == DistanceModel.INVERSE_CLAMPED:
-        return alure.DistanceModel.INVERSE_CLAMPED
-    elif model_id == DistanceModel.LINEAR_CLAMPED:
-        return alure.DistanceModel.LINEAR_CLAMPED
-    elif model_id == DistanceModel.EXPONENT_CLAMPED:
-        return alure.DistanceModel.EXPONENT_CLAMPED
-    elif model_id == DistanceModel.INVERSE:
-        return alure.DistanceModel.INVERSE
-    elif model_id == DistanceModel.LINEAR:
-        return alure.DistanceModel.LINEAR
-    elif model_id == DistanceModel.EXPONENT:
-        return alure.DistanceModel.EXPONENT
-    elif model_id == DistanceModel.NONE:
-        return alure.DistanceModel.NONE
-    raise ValueError(f'Invalid DistanceModel ID: {model_id}')
