@@ -22,7 +22,7 @@ copyright = '2019, 2020  Nguyễn Gia Phong et al'
 author = 'Nguyễn Gia Phong et al.'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.12'
+release = '0.0.14'
 
 
 # -- General configuration ---------------------------------------------------
