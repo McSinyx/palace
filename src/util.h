@@ -1,4 +1,4 @@
-// Predefined environmental effects
+// Helper functions and mapping
 // Copyright (C) 2020  Nguyễn Gia Phong
 //
 // This file is part of palace.
@@ -16,20 +16,39 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef PALACE_PREDEF_H
-#define PALACE_PREDEF_H
+#ifndef PALACE_UTIL_H
+#define PALACE_UTIL_H
 
 #include <string>
-#include <unordered_map>
+#include <map>
+#include <utility>
 #include <vector>
 
+#include "alure2.h"
 #include "efx-presets.h"
 
-#define DECL(x) { #x, EFX_REVERB_PRESET_##x }
 namespace palace
 {
+  const std::map<std::string, alure::SampleType> SAMPLE_TYPES {
+    {"Unsigned 8-bit", alure::SampleType::UInt8},
+    {"Signed 16-bit", alure::SampleType::Int16},
+    {"32-bit float", alure::SampleType::Float32},
+    {"Mulaw", alure::SampleType::Mulaw}};
+
+  const std::map<std::string, alure::ChannelConfig> CHANNEL_CONFIGS {
+    {"Mono", alure::ChannelConfig::Mono},
+    {"Stereo", alure::ChannelConfig::Stereo},
+    {"Rear", alure::ChannelConfig::Rear},
+    {"Quadrophonic", alure::ChannelConfig::Quad},
+    {"5.1 Surround", alure::ChannelConfig::X51},
+    {"6.1 Surround", alure::ChannelConfig::X61},
+    {"7.1 Surround", alure::ChannelConfig::X71},
+    {"B-Format 2D", alure::ChannelConfig::BFormat2D},
+    {"B-Format 3D", alure::ChannelConfig::BFormat3D}};
+
   // This is ported from alure-reverb example.
-  const std::unordered_map<std::string, EFXEAXREVERBPROPERTIES> REVERB_PRESETS {
+  #define DECL(x) { #x, EFX_REVERB_PRESET_##x }
+  const std::map<std::string, EFXEAXREVERBPROPERTIES> REVERB_PRESETS {
     DECL(GENERIC), DECL(PADDEDCELL), DECL(ROOM), DECL(BATHROOM),
     DECL(LIVINGROOM), DECL(STONEROOM), DECL(AUDITORIUM), DECL(CONCERTHALL),
     DECL(CAVE), DECL(ARENA), DECL(HANGAR), DECL(CARPETEDHALLWAY), DECL(HALLWAY),
@@ -83,18 +102,35 @@ namespace palace
     DECL(CITY_STREETS), DECL(CITY_SUBWAY), DECL(CITY_MUSEUM),
     DECL(CITY_LIBRARY), DECL(CITY_UNDERPASS), DECL(CITY_ABANDONED),
 
-    DECL(DUSTYROOM), DECL(CHAPEL), DECL(SMALLWATERROOM),
-  };
+    DECL(DUSTYROOM), DECL(CHAPEL), DECL(SMALLWATERROOM)};
+  #undef DECL
 
   inline std::vector<std::string>
-  reverb_preset_names()
+  reverb_presets() noexcept
   {
     std::vector<std::string> presets;
     for (auto const& preset : REVERB_PRESETS)
       presets.push_back (preset.first);
     return presets;
   }
-} // namespace palace
-#undef DECL
 
-#endif // PALACE_PREDEF_H
+  inline std::vector<alure::AttributePair>
+  mkattrs (std::vector<std::pair<int, int>> attrs) noexcept
+  {
+    std::vector<alure::AttributePair> attributes;
+    for (auto const& pair : attrs)
+      attributes.push_back ({pair.first, pair.second});
+    attributes.push_back (alure::AttributesEnd());
+    return attributes;
+  }
+
+  inline std::vector<float>
+  from_vector3 (alure::Vector3 v) noexcept
+  { return std::vector<float> {v[0], v[1], v[2]}; }
+
+  inline alure::Vector3
+  to_vector3 (std::vector<float> v) noexcept
+  { return alure::Vector3 (v[0], v[1], v[2]); }
+} // namespace palace
+
+#endif // PALACE_UTIL_H

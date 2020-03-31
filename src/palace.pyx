@@ -54,7 +54,7 @@ channel_configs : Tuple[str, ...]
 device_names : DeviceNames
     Read-only namespace of device names by category (basic, full and
     capture), as tuples of strings whose first item being the default.
-device_names : Tuple[str]
+reverb_preset_names : Tuple[str]
     Names of predefined reverb effect presets in lexicographical order.
 decoder_factories : DecoderNamespace
     Simple object for storing decoder factories.
@@ -112,6 +112,8 @@ from cpython.ref cimport Py_INCREF, Py_DECREF
 from cython.operator cimport dereference as deref
 
 cimport alure   # noqa
+from util cimport (REVERB_PRESETS, SAMPLE_TYPES, CHANNEL_CONFIGS,   # noqa
+                   reverb_presets, mkattrs, from_vector3, to_vector3)
 
 
 # Aliases
@@ -165,7 +167,7 @@ cdef alure.DeviceManager devmgr = alure.DeviceManager.get_instance()
 device_names: DeviceNames = DeviceNames()
 cdef boolean _thread = False
 
-reverb_preset_names: Tuple[str] = tuple(sorted(alure.reverb_preset_names()))
+reverb_preset_names: Tuple[str] = tuple(reverb_presets())
 decoder_factories: DecoderNamespace = DecoderNamespace()
 cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
 
@@ -178,14 +180,22 @@ def sample_size(length: int, channel_config: str, sample_type: str) -> int:
     RuntimeError
         If the byte size result too large.
     """
-    return alure.frames_to_bytes(
-        length, to_channel_config(channel_config), to_sample_type(sample_type))
+    try:
+        return alure.frames_to_bytes(length,
+                                     CHANNEL_CONFIGS.at(channel_config),
+                                     SAMPLE_TYPES.at(sample_type))
+    except IndexError as e:
+        raise ValueError(str(e))
 
 
 def sample_length(size: int, channel_config: str, sample_type: str) -> int:
     """Return the number of frames stored in the given byte size."""
-    return alure.bytes_to_frames(
-        size, to_channel_config(channel_config), to_sample_type(sample_type))
+    try:
+        return alure.bytes_to_frames(size,
+                                     CHANNEL_CONFIGS.at(channel_config),
+                                     SAMPLE_TYPES.at(sample_type))
+    except IndexError as e:
+        raise ValueError(str(e))
 
 
 def query_extension(name: str) -> bool:
@@ -675,8 +685,11 @@ cdef class Context:
         sample_types : Set of sample types
         channel_configs : Set of channel configurations
         """
-        return self.impl.is_supported(to_channel_config(channel_config),
-                                      to_sample_type(sample_type))
+        try:
+            return self.impl.is_supported(CHANNEL_CONFIGS.at(channel_config),
+                                          SAMPLE_TYPES.at(sample_type))
+        except IndexError as e:
+            raise ValueError(str(e))
 
     @getter
     def available_resamplers(self) -> List[str]:
@@ -2017,7 +2030,7 @@ cdef class Effect:
             If set to a preset cannot be found in `reverb_preset_names`.
         """
         try:
-            self.impl.set_reverb_properties(alure.REVERB_PRESETS.at(value))
+            self.impl.set_reverb_properties(REVERB_PRESETS.at(value))
         except IndexError:
             raise ValueError(f'Invalid preset name: {value}')
 
@@ -2268,7 +2281,6 @@ cdef class Decoder:
         (<Source> source).impl.play(self.pimpl, chunk_len, queue_size)
 
 
-# Decoder interface
 cdef class _BaseDecoder(Decoder):
     """Cython bridge for BaseDecoder.
 
@@ -2365,10 +2377,10 @@ cdef cppclass CppDecoder(alure.BaseDecoder):
         return pyo.frequency
 
     alure.ChannelConfig get_channel_config_() const:
-        return to_channel_config(pyo.channel_config)
+        return CHANNEL_CONFIGS.at(pyo.channel_config)
 
     alure.SampleType get_sample_type_() const:
-        return to_sample_type(pyo.sample_type)
+        return SAMPLE_TYPES.at(pyo.sample_type)
 
     uint64_t get_length_() const:
         return pyo.length
@@ -2597,65 +2609,3 @@ cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
 
     string resource_not_found(string name):
         return pyo.resource_not_found(name)
-
-
-# Helper cdef functions
-cdef vector[alure.AttributePair] mkattrs(vector[pair[int, int]] attrs):
-    """Convert attribute pairs from Python object to alure format."""
-    cdef vector[alure.AttributePair] attributes
-    cdef alure.AttributePair pair
-    for attribute, value in attrs:
-        pair.attribute = attribute
-        pair.value = value
-        attributes.push_back(pair)  # insert a copy
-    pair.attribute = pair.value = 0
-    attributes.push_back(pair)  # insert a copy
-    return attributes
-
-
-cdef vector[float] from_vector3(alure.Vector3 v):
-    """Convert alure::Vector3 to std::vector of 3 floats."""
-    cdef vector[float] result
-    for i in range(3): result.push_back(v[i])
-    return result
-
-
-cdef alure.Vector3 to_vector3(vector[float] v):
-    """Convert std::vector of 3 floats to alure::Vector3."""
-    return alure.Vector3(v[0], v[1], v[2])
-
-
-cdef alure.SampleType to_sample_type(str name) except +:
-    """Return the specified sample type enumeration."""
-    if name == 'Unsigned 8-bit':
-        return alure.SampleType.UInt8
-    elif name == 'Signed 16-bit':
-        return alure.SampleType.Int16
-    elif name == '32-bit float':
-        return alure.SampleType.Float32
-    elif name == 'Mulaw':
-        return alure.SampleType.Mulaw
-    raise ValueError(f'Invalid sample type name: {name}')
-
-
-cdef alure.ChannelConfig to_channel_config(str name) except +:
-    """Return the specified channel configuration enumeration."""
-    if name == 'Mono':
-        return alure.ChannelConfig.Mono
-    elif name == 'Stereo':
-        return alure.ChannelConfig.Stereo
-    elif name == 'Rear':
-        return alure.ChannelConfig.Rear
-    elif name == 'Quadrophonic':
-        return alure.ChannelConfig.Quad
-    elif name == '5.1 Surround':
-        return alure.ChannelConfig.X51
-    elif name == '6.1 Surround':
-        return alure.ChannelConfig.X61
-    elif name == '7.1 Surround':
-        return alure.ChannelConfig.X71
-    elif name == 'B-Format 2D':
-        return alure.ChannelConfig.BFormat2D
-    elif name == 'B-Format 3D':
-        return alure.ChannelConfig.BFormat3D
-    raise ValueError(f'Invalid channel configuration name: {name}')

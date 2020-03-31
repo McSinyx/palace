@@ -20,7 +20,6 @@
 
 from libc.stdint cimport int64_t, uint64_t
 from libcpp cimport bool as boolean, nullptr_t
-from libcpp.unordered_map cimport unordered_map
 from libcpp.memory cimport shared_ptr, unique_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
@@ -67,11 +66,6 @@ cdef extern from 'alure2-alext.h' nogil:
     cdef int ALC_HRTF_ID_SOFT
 
     cdef int ALC_OUTPUT_LIMITER_SOFT
-
-
-cdef extern from 'efx-predef.h' namespace 'palace' nogil:
-    cdef const unordered_map[string, EFXEAXREVERBPROPERTIES] REVERB_PRESETS
-    cdef vector[string] reverb_preset_names() except +
 
 
 cdef extern from 'alure2-aliases.h' namespace 'alure' nogil:
@@ -139,9 +133,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
     # Structs:
     cdef cppclass AttributePair:
-        int attribute 'mAttribute'
-        int value 'mValue'
-
+        pass
     cdef cppclass FilterParams:
         pass
 
@@ -151,21 +143,9 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
     # Enum classes:
     cdef enum SampleType:
-        UInt8   'alure::SampleType::UInt8'      # Unsigned 8-bit
-        Int16   'alure::SampleType::Int16'      # Signed 16-bit
-        Float32 'alure::SampleType::Float32'    # 32-bit float
-        Mulaw   'alure::SampleType::Mulaw'      # Mulaw
-
+        pass
     cdef enum ChannelConfig:
-        Mono        'alure::ChannelConfig::Mono'        # Mono
-        Stereo      'alure::ChannelConfig::Stereo'      # Stereo
-        Rear        'alure::ChannelConfig::Rear'        # Rear
-        Quad        'alure::ChannelConfig::Quad'        # Quadrophonic
-        X51         'alure::ChannelConfig::X51'         # 5.1 Surround
-        X61         'alure::ChannelConfig::X61'         # 6.1 Surround
-        X71         'alure::ChannelConfig::X71'         # 7.1 Surround
-        BFormat2D   'alure::ChannelConfig::BFormat2D'   # B-Format 2D
-        BFormat3D   'alure::ChannelConfig::BFormat3D'   # B-Format 3D
+        pass
 
     # The following relies on C++ implicit conversion from char* to string.
     cdef const string get_sample_type_name 'GetSampleTypeName'(SampleType) except +

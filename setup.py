@@ -62,15 +62,14 @@ class BuildAlure2Ext(build_ext):
 class CleanCppToo(clean):
     """Clean command that remove Cython C++ outputs."""
     def run(self) -> None:
-        """Remove Cython C++ outputs on `setup.py clean --all`."""
-        if self.all:
-            for cpp in [join('src', 'palace.cpp')]:
-                log.info(f'removing {cpp!r}')
-                try:
-                    unlink(cpp)
-                except OSError as e:
-                    raise DistutilsFileError(
-                        f'could not delete {cpp!r}: {e.strerror}')
+        """Remove Cython C++ outputs on clean command."""
+        for cpp in [join('src', 'palace.cpp')]:
+            log.info(f'removing {cpp!r}')
+            try:
+                unlink(cpp)
+            except OSError as e:
+                raise DistutilsFileError(
+                    f'could not delete {cpp!r}: {e.strerror}')
         super().run()
 
 
