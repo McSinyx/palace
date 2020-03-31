@@ -1,2 +1,2 @@
 palace
-sphinx
+sphinx >= 3.*
