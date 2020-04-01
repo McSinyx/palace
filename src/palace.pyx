@@ -54,7 +54,7 @@ channel_configs : Tuple[str, ...]
 device_names : DeviceNames
     Read-only namespace of device names by category (basic, full and
     capture), as tuples of strings whose first item being the default.
-reverb_preset_names : Tuple[str]
+reverb_preset_names : Tuple[str, ...]
     Names of predefined reverb effect presets in lexicographical order.
 decoder_factories : DecoderNamespace
     Simple object for storing decoder factories.
@@ -85,9 +85,8 @@ from contextlib import contextmanager
 from io import DEFAULT_BUFFER_SIZE
 from operator import itemgetter
 from types import TracebackType
-from typing import (
-    Any, Callable, ContextManager, Iterable, Iterator, Optional, Type,
-    Dict, FrozenSet, List, Tuple)
+from typing import (Any, Callable, Iterable, Iterator, Optional, Type,
+                    Dict, FrozenSet, List, Tuple)
 from warnings import catch_warnings, simplefilter, warn
 
 try:    # Python 3.8+
@@ -168,7 +167,7 @@ cdef alure.DeviceManager devmgr = alure.DeviceManager.get_instance()
 device_names: DeviceNames = DeviceNames()
 cdef boolean _thread = False
 
-reverb_preset_names: Tuple[str] = tuple(reverb_presets())
+reverb_preset_names: Tuple[str, ...] = tuple(reverb_presets())
 decoder_factories: DecoderNamespace = DecoderNamespace()
 cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
 
@@ -210,7 +209,7 @@ def query_extension(name: str) -> bool:
 
 
 @contextmanager
-def thread_local(state: bool) -> ContextManager[None]:
+def thread_local(state: bool) -> Iterator[None]:
     """Return a context manager controlling preference of local thread.
 
     Effectively, it sets the fallback value for the `thread` argument

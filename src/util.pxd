@@ -1,4 +1,4 @@
-# Helper functions and mapping
+# Helper functions and mappings
 # Copyright (C) 2020  Nguyễn Gia Phong
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
 #

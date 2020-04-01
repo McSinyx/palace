@@ -1,4 +1,4 @@
-// Helper functions and mapping
+// Helper functions and mappings
 // Copyright (C) 2020  Nguyễn Gia Phong
 // Copyright (C) 2020  Ngô Ngọc Đức Huy
 //
@@ -127,9 +127,7 @@ namespace palace
 
   inline alure::FilterParams
   make_filter_params (std::vector<float> params) noexcept
-  {
-    return alure::FilterParams {params[0], params[1], params[2]};
-  }
+  { return alure::FilterParams {params[0], params[1], params[2]}; }
 
   inline std::vector<float>
   from_vector3 (alure::Vector3 v) noexcept
@@ -137,7 +135,7 @@ namespace palace
 
   inline alure::Vector3
   to_vector3 (std::vector<float> v) noexcept
-  { return alure::Vector3 (v[0], v[1], v[2]); }
+  { return alure::Vector3 {v[0], v[1], v[2]}; }
 } // namespace palace
 
 #endif // PALACE_UTIL_H

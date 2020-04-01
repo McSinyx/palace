@@ -40,6 +40,11 @@ except ValueError:
     TRACE = 0
 
 
+def src(file: str) -> str:
+    """Return path to the given file in src."""
+    return join(dirname(__file__), 'src', file)
+
+
 class BuildAlure2Ext(build_ext):
     """Builder of extensions linked to alure2."""
     def finalize_options(self) -> None:
@@ -63,7 +68,7 @@ class CleanCppToo(clean):
     """Clean command that remove Cython C++ outputs."""
     def run(self) -> None:
         """Remove Cython C++ outputs on clean command."""
-        for cpp in [join('src', 'palace.cpp')]:
+        for cpp in [src('palace.cpp')]:
             log.info(f'removing {cpp!r}')
             try:
                 unlink(cpp)
@@ -75,7 +80,7 @@ class CleanCppToo(clean):
 
 setup(cmdclass=dict(build_ext=BuildAlure2Ext, clean=CleanCppToo),
       ext_modules=cythonize(
-          Extension(name='palace', sources=[join('src', 'palace.pyx')],
+          Extension(name='palace', sources=[src('palace.pyx')],
                     define_macros=[('CYTHON_TRACE', TRACE)],
                     extra_compile_args=["-std=c++14"], language='c++'),
           compiler_directives=dict(
