@@ -113,7 +113,8 @@ from cython.operator cimport dereference as deref
 
 cimport alure   # noqa
 from util cimport (REVERB_PRESETS, SAMPLE_TYPES, CHANNEL_CONFIGS,   # noqa
-                   reverb_presets, mkattrs, from_vector3, to_vector3)
+                   reverb_presets, mkattrs, make_filter_params,
+                   from_vector3, to_vector3)
 
 
 # Aliases
@@ -1670,8 +1671,21 @@ cdef class Source:
         directhf, send, sendhf = value
         self.impl.set_gain_auto(directhf, send, sendhf)
 
-    # TODO: set direct filter
-    # TODO: set send filter
+    @setter
+    def direct_filter(self, value: Tuple[float, float, float]) -> None:
+        """The filter properties on the direct path signal."""
+        self.impl.set_direct_filter(make_filter_params(value))
+
+    @setter
+    def send_filter(self,
+                    value: Tuple[int, Tuple[float, float, float]]) -> None:
+        """The filter properties on the given send path signal.
+
+        Any filter properties on the send path remain as they were.
+        """
+        self.impl.set_send_filter(
+            value[0],
+            make_filter_params(value[1]))
 
     @setter
     def auxiliary_send(self, value: Tuple[AuxiliaryEffectSlot, int]) -> None:
@@ -1682,7 +1696,16 @@ cdef class Source:
         self.impl.set_auxiliary_send(
             (<AuxiliaryEffectSlot> value[0]).impl, value[1])
 
-    # TODO: set auxiliary send filter
+    @setter
+    def auxiliary_send_filter(
+            self,
+            value: Tuple[AuxiliaryEffectSlot, int,
+                         Tuple[float, float, float]]) -> None:
+        """Connect the effect slot to the given send path, using the filter."""
+        self.impl.set_auxiliary_send_filter(
+            (<AuxiliaryEffectSlot> value[0]).impl,
+            value[1],
+            make_filter_params(value[2]))
 
     def destroy(self) -> None:
         """Destroy the source, stop playback and release resources."""

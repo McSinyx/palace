@@ -1,5 +1,6 @@
 // Helper functions and mapping
 // Copyright (C) 2020  Nguyễn Gia Phong
+// Copyright (C) 2020  Ngô Ngọc Đức Huy
 //
 // This file is part of palace.
 //
@@ -122,6 +123,12 @@ namespace palace
       attributes.push_back ({pair.first, pair.second});
     attributes.push_back (alure::AttributesEnd());
     return attributes;
+  }
+
+  inline alure::FilterParams
+  make_filter_params (std::vector<float> params) noexcept
+  {
+    return alure::FilterParams {params[0], params[1], params[2]};
   }
 
   inline std::vector<float>

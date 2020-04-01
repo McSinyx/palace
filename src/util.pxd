@@ -1,5 +1,6 @@
 # Helper functions and mapping
 # Copyright (C) 2020  Nguyễn Gia Phong
+# Copyright (C) 2020  Ngô Ngọc Đức Huy
 #
 # This file is part of palace.
 #
@@ -22,7 +23,7 @@ from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
 from alure cimport (AttributePair, EFXEAXREVERBPROPERTIES,  # noqa
-                    ChannelConfig, SampleType, Vector3)
+                    FilterParams, ChannelConfig, SampleType, Vector3)
 
 
 cdef extern from 'util.h' namespace 'palace' nogil:
@@ -31,5 +32,6 @@ cdef extern from 'util.h' namespace 'palace' nogil:
     cdef const map[string, ChannelConfig] CHANNEL_CONFIGS
     cdef vector[string] reverb_presets()
     cdef vector[AttributePair] mkattrs(vector[pair[int, int]])
+    cdef FilterParams make_filter_params(vector[float])
     cdef vector[float] from_vector3(Vector3)
     cdef Vector3 to_vector3(vector[float])
