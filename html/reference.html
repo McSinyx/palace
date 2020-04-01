@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Reference &#8212; palace 0.0.14 documentation</title>
+    <title>Reference &#8212; palace 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -189,7 +189,7 @@ capture), as tuples of strings whose first item being the default.</p>
 <dd><p>Names of predefined reverb effect presets in lexicographical order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Tuple[str]</p>
+<dd class="field-odd"><p>Tuple[str, ..]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -240,7 +240,7 @@ Internal decoder factories are always used after registered ones.</p>
 
 <dl class="py function">
 <dt id="palace.thread_local">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">thread_local</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; AbstractContextManager[None]<a class="headerlink" href="#palace.thread_local" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">thread_local</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; Iterator[None]<a class="headerlink" href="#palace.thread_local" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a context manager controlling preference of local thread.</p>
 <p>Effectively, it sets the fallback value for the <cite>thread</cite> argument
 for <cite>current_context</cite> and <cite>use_context</cite>.</p>
@@ -861,6 +861,12 @@ foggy air and lower values simulating dryer air; default to 0.</p>
 <p>Any filter properties on the send path remain as they were.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="palace.Source.auxiliary_send_filter">
+<em class="property">property </em><code class="sig-name descname">auxiliary_send_filter</code><a class="headerlink" href="#palace.Source.auxiliary_send_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the effect slot to the given send path, using the filter.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="palace.Source.cone_angles">
 <code class="sig-name descname">cone_angles</code><a class="headerlink" href="#palace.Source.cone_angles" title="Permalink to this definition">¶</a></dt>
@@ -889,6 +895,12 @@ the source is in the inner cone.</p>
 <dt id="palace.Source.destroy">
 <code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroy the source, stop playback and release resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.direct_filter">
+<em class="property">property </em><code class="sig-name descname">direct_filter</code><a class="headerlink" href="#palace.Source.direct_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The filter properties on the direct path signal.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1191,6 +1203,13 @@ the reference distance.</p>
 set room factor to 0.  The reverb engine will, by default,
 apply a more realistic room decay based on the reverb decay
 time and distance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.send_filter">
+<em class="property">property </em><code class="sig-name descname">send_filter</code><a class="headerlink" href="#palace.Source.send_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The filter properties on the given send path signal.</p>
+<p>Any filter properties on the send path remain as they were.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1844,7 +1863,7 @@ or stream, which is detected upon a call to <cite>Context.update</cite>.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0+/7427c8e</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0+/4e6f8bc</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
