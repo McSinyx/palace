@@ -140,17 +140,15 @@ namespace palace
 
     virtual void buffer_loading (std::string name, std::string channel_config,
                                  std::string sample_type, unsigned sample_rate,
-                                 std::vector<signed char> data) = 0;
+                                 const signed char* data, size_t size) = 0;
     inline void
     bufferLoading (alure::StringView name, alure::ChannelConfig channels,
                    alure::SampleType type, ALuint samplerate,
                    alure::ArrayView<ALbyte> data) noexcept override
     {
-      std::vector<signed char> std_data (data.size());
-      // FIXME: This defeats the entire point of alure::ArrayView.
-      std::copy (data.begin(), data.end(), std_data.begin());
       buffer_loading (name.data(), alure::GetChannelConfigName (channels),
-                      alure::GetSampleTypeName (type), samplerate, std_data);
+                      alure::GetSampleTypeName (type), samplerate,
+                      data.begin(), data.size());
     }
 
     virtual std::string resource_not_found (std::string name) = 0;

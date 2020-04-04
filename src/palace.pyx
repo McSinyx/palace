@@ -85,8 +85,8 @@ from contextlib import contextmanager
 from io import DEFAULT_BUFFER_SIZE
 from operator import itemgetter
 from types import TracebackType
-from typing import (Any, Callable, Iterable, Iterator, Optional, Type,
-                    Dict, FrozenSet, List, Tuple)
+from typing import (Any, Callable, Dict, Iterable, Iterator,
+                    List, Optional, Sequence, Tuple, Type)
 from warnings import catch_warnings, simplefilter, warn
 
 try:    # Python 3.8+
@@ -108,7 +108,7 @@ from std cimport istream, milliseconds, streambuf
 
 from cpython.mem cimport PyMem_RawMalloc, PyMem_RawFree
 from cpython.ref cimport Py_INCREF, Py_DECREF
-from cython.operator cimport dereference as deref
+from cython.view cimport array
 
 cimport alure   # noqa
 from util cimport (REVERB_PRESETS, SAMPLE_TYPES, CHANNEL_CONFIGS,   # noqa
@@ -585,7 +585,6 @@ cdef class Context:
         If context creation fails.
     """
     cdef alure.Context impl
-    cdef vector[alure.StringView] precached_buffers
     cdef alure.Context previous
     cdef readonly Device device
     cdef readonly Listener listener
@@ -721,30 +720,24 @@ cdef class Context:
         return self.impl.get_default_resampler_index()
 
     def precache_buffers_async(self, names: List[str]) -> None:
-        """Prepare asynchronously cached buffers for the given
-        audio files or resource names.
+        """Cache given audio resources asynchronously.
 
         Duplicate names and buffers already cached are ignored.
         Cached buffers must be free using `remove_buffer`
         before destroying the context.
 
-        The `Buffer` objects will be scheduled for loading
-        asynchronously, and should be retrieved later when needed
-        using `buffer_async` or `buffer`.  Buffers that cannot be
+        The resources will be scheduled for caching asynchronously,
+        and should be retrieved later when needed by initializing
+        `Buffer` corresponding objects.  Resources that cannot be
         loaded, for example due to an unsupported format, will be
-        ignored and a later call to `buffer` or `buffer_async` will
-        throw an exception.
+        ignored and a later `Buffer` initialization will raise
+        an exception.
 
         This method require the context to be current.
         """
-        # FIXME: Running this function still leads to segfault
         cdef vector[string] std_names = names
         cdef vector[alure.StringView] alure_names
-        cdef alure.StringView* alure_name
-        for name in std_names:
-            alure_name = new alure.StringView(name)
-            alure_names.push_back(deref(alure_name))
-            self.precached_buffers.push_back(deref(alure_name))
+        for name in std_names: alure_names.push_back(<alure.StringView> name)
         self.impl.precache_buffers_async(alure_names)
 
     @setter
@@ -799,6 +792,11 @@ cdef class Context:
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
+        # source_stopped is called outside of alure::Context::update
+        # to allow application to destroy the source on this message.
+        handler: MessageHandler = self.message_handler
+        while handler.stopped_sources:
+            handler.source_stopped(handler.stopped_sources.pop())
 
 
 class DistanceModel(Enum):
@@ -2525,6 +2523,11 @@ cdef class MessageHandler:
 
     Exceptions raised from `MessageHandler` instances are ignored.
     """
+    cdef list stopped_sources
+
+    def __cinit__(self, *args, **kwargs) -> None:
+        self.stopped_sources = []
+
     def device_disconnected(self, device: Device) -> None:
         """Handle disconnected device messages.
 
@@ -2564,7 +2567,7 @@ cdef class MessageHandler:
         """
 
     def buffer_loading(self, name: str, channel_config: str, sample_type: str,
-                       sample_rate: int, data: List[int]) -> None:
+                       sample_rate: int, data: Sequence[int]) -> None:
         """Handle messages from Buffer initialization.
 
         This is called when a new buffer is about to be created
@@ -2581,8 +2584,11 @@ cdef class MessageHandler:
             Sample type of the given audio data.
         sample_rate : int
             Sample rate of the given audio data.
-        data : List[int]
+        data : Sequence[int]
             The audio data that is about to be fed to the OpenAL buffer.
+
+            It is a mutable array of signed 8-bit integers
+            and follows the Python buffer protocol.
         """
 
     def resource_not_found(self, name: str) -> str:
@@ -2617,17 +2623,20 @@ cdef cppclass CppMessageHandler(alure.BaseMessageHandler):
     void source_stopped(alure.Source& alure_source):
         cdef Source source = Source.__new__(Source)
         source.impl = alure_source
-        pyo.source_stopped(source)
+        pyo.stopped_sources.append(source)
 
     void source_force_stopped(alure.Source& alure_source):
         cdef Source source = Source.__new__(Source)
         source.impl = alure_source
         pyo.source_force_stopped(source)
 
-    void buffer_loading(string name, string channel_config, string sample_type,
-                        unsigned sample_rate, vector[signed char] data):
-        pyo.buffer_loading(name, channel_config, sample_type,
-                           sample_rate, data)
+    void buffer_loading(
+        string name, string channel_config, string sample_type,
+        unsigned sample_rate, const signed char* data, size_t size) with gil:
+        cdef array a = array(shape=(size,), itemsize=sizeof(signed char),
+                             format="b", allocate_buffer=False)
+        a.data = <char*> data
+        pyo.buffer_loading(name, channel_config, sample_type, sample_rate, a)
 
     string resource_not_found(string name):
         return pyo.resource_not_found(name)
