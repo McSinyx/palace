@@ -25,7 +25,7 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from palace import TRUE, HRTF, HRTF_ID, Device, Context, Source, Decoder
+from palace import TRUE, HRTF, HRTF_ID, decode, Device, Context, Source
 
 CHUNK_LEN: int = 12000
 QUEUE_SIZE: int = 4
@@ -66,7 +66,7 @@ def play(files: Iterable[str], device: str, hrtf_name: str,
 
             for filename in files:
                 try:
-                    decoder = Decoder(filename)
+                    decoder = decode(filename)
                 except RuntimeError:
                     stderr.write(f'Failed to open file: {filename}\n')
                     continue

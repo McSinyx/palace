@@ -70,10 +70,10 @@ __all__ = [
     'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
-    'sample_types', 'channel_configs', 'device_names',
-    'reverb_preset_names', 'decoder_factories',
-    'sample_size', 'sample_length', 'query_extension', 'thread_local',
-    'current_context', 'use_context', 'current_fileio', 'use_fileio',
+    'sample_types', 'channel_configs', 'device_names', 'reverb_preset_names',
+    'decoder_factories', 'current_fileio', 'use_fileio', 'query_extension',
+    'thread_local', 'current_context', 'use_context',
+    'cache', 'decode', 'sample_size', 'sample_length',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Effect', 'Decoder', 'BaseDecoder', 'FileIO',
     'MessageHandler']
@@ -268,6 +268,71 @@ def use_context(context: Optional[Context],
         alure.Context.make_thread_current(alure_context)
     else:
         alure.Context.make_current(alure_context)
+
+
+def cache(*names: str, context: Optional[Context] = None) -> None:
+    """Cache given audio resources asynchronously.
+
+    Duplicate names and buffers already cached are ignored.
+    Cached buffers must be free using `remove_buffer`
+    before destroying the context.
+
+    The resources will be scheduled for caching asynchronously,
+    and should be retrieved later when needed by initializing
+    `Buffer` corresponding objects.  Resources that cannot be
+    loaded, for example due to an unsupported format, will be
+    ignored and a later `Buffer` initialization will raise
+    an exception.
+
+    If `context` is not given, `current_context()` will be used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
+    """
+    cdef vector[string] std_names = names
+    cdef vector[alure.StringView] alure_names
+    for name in std_names: alure_names.push_back(<alure.StringView> name)
+    if context is None: context = current_context()
+    (<Context> context).impl.precache_buffers_async(alure_names)
+
+
+def decode(name: str, context: Optional[Context] = None) -> Decoder:
+    """Return the decoder created from the given resource name.
+
+    This first tries user-registered decoder factories in
+    lexicographical order, then fallback to the internal ones.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
+
+    See Also
+    --------
+    decoder_factories : Simple object for storing decoder factories
+    """
+    def find_resource(name, subst):
+        if not name: raise RuntimeError('Failed to open file')
+        try:
+            if fileio_factory is None:
+                return open(name, 'rb')
+            else:
+                return fileio_factory(name)
+        except FileNotFoundError:
+            return find_resource(subst(name), subst)
+
+    if context is None: context = current_context()
+    resource = find_resource(
+        name, context.message_handler.resource_not_found)
+    for decoder_factory in decoder_factories:
+        resource.seek(0)
+        try:
+            return decoder_factory(resource)
+        except RuntimeError:
+            continue
+    return Decoder(name, context)
 
 
 def current_fileio() -> Optional[Callable[[str], 'FileIO']]:
@@ -719,27 +784,6 @@ cdef class Context:
         """
         return self.impl.get_default_resampler_index()
 
-    def precache_buffers_async(self, names: List[str]) -> None:
-        """Cache given audio resources asynchronously.
-
-        Duplicate names and buffers already cached are ignored.
-        Cached buffers must be free using `remove_buffer`
-        before destroying the context.
-
-        The resources will be scheduled for caching asynchronously,
-        and should be retrieved later when needed by initializing
-        `Buffer` corresponding objects.  Resources that cannot be
-        loaded, for example due to an unsupported format, will be
-        ignored and a later `Buffer` initialization will raise
-        an exception.
-
-        This method require the context to be current.
-        """
-        cdef vector[string] std_names = names
-        cdef vector[alure.StringView] alure_names
-        for name in std_names: alure_names.push_back(<alure.StringView> name)
-        self.impl.precache_buffers_async(alure_names)
-
     @setter
     def doppler_factor(self, value: float) -> None:
         """Factor to apply to all source's doppler calculations."""
@@ -921,7 +965,7 @@ cdef class Buffer:
         self.context, self.name = context, name
         self.impl = self.context.impl.find_buffer(self.name)
         if not self:
-            decoder: Decoder = Decoder.smart(self.name, self.context)
+            decoder: Decoder = decode(self.name, self.context)
             self.impl = self.context.impl.create_buffer_from(
                 self.name, decoder.pimpl)
 
@@ -1669,20 +1713,17 @@ cdef class Source:
         self.impl.set_gain_auto(directhf, send, sendhf)
 
     @setter
-    def direct_filter(self, value: Tuple[float, float, float]) -> None:
+    def direct_filter(self, value: Vector3) -> None:
         """The filter properties on the direct path signal."""
         self.impl.set_direct_filter(make_filter_params(value))
 
     @setter
-    def send_filter(self,
-                    value: Tuple[int, Tuple[float, float, float]]) -> None:
+    def send_filter(self, value: Tuple[int, Vector3]) -> None:
         """The filter properties on the given send path signal.
 
         Any filter properties on the send path remain as they were.
         """
-        self.impl.set_send_filter(
-            value[0],
-            make_filter_params(value[1]))
+        self.impl.set_send_filter(value[0], make_filter_params(value[1]))
 
     @setter
     def auxiliary_send(self, value: Tuple[AuxiliaryEffectSlot, int]) -> None:
@@ -1695,9 +1736,7 @@ cdef class Source:
 
     @setter
     def auxiliary_send_filter(
-            self,
-            value: Tuple[AuxiliaryEffectSlot, int,
-                         Tuple[float, float, float]]) -> None:
+        self, value: Tuple[AuxiliaryEffectSlot, int, Vector3]) -> None:
         """Connect the effect slot to the given send path, using the filter."""
         self.impl.set_auxiliary_send_filter(
             (<AuxiliaryEffectSlot> value[0]).impl,
@@ -2144,50 +2183,13 @@ cdef class Decoder:
     from filenames using contexts, it is the superclass of the ABC
     (abstract base class) `BaseDecoder`.  Because of this, `Decoder`
     may only initialize an internal one.  To use registered factories,
-    please call the `smart` static method instead.
+    please call the module-level `decode` function instead.
     """
     cdef shared_ptr[alure.Decoder] pimpl
 
     def __init__(self, name: str, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
         self.pimpl = (<Context> context).impl.create_decoder(name)
-
-    @staticmethod
-    def smart(name: str, context: Optional[Context] = None) -> Decoder:
-        """Return the decoder created from the given resource name.
-
-        This first tries user-registered decoder factories in
-        lexicographical order, then fallback to the internal ones.
-
-        Raises
-        ------
-        RuntimeError
-            If there is neither any context specified nor current.
-
-        See Also
-        --------
-        decoder_factories : Simple object for storing decoder factories
-        """
-        def find_resource(name, subst):
-            if not name: raise RuntimeError('Failed to open file')
-            try:
-                if fileio_factory is None:
-                    return open(name, 'rb')
-                else:
-                    return fileio_factory(name)
-            except FileNotFoundError:
-                return find_resource(subst(name), subst)
-
-        if context is None: context = current_context()
-        resource = find_resource(
-            name, context.message_handler.resource_not_found)
-        for decoder_factory in decoder_factories:
-            resource.seek(0)
-            try:
-                return decoder_factory(resource)
-            except RuntimeError:
-                continue
-        return Decoder(name, context)
 
     @getter
     def frequency(self) -> int:
@@ -2584,11 +2586,11 @@ cdef class MessageHandler:
             Sample type of the given audio data.
         sample_rate : int
             Sample rate of the given audio data.
-        data : Sequence[int]
+        data : MutableSequence[int]
             The audio data that is about to be fed to the OpenAL buffer.
 
-            It is a mutable array of signed 8-bit integers
-            and follows the Python buffer protocol.
+            It is a mutable memory array of signed 8-bit integers,
+            following Python buffer protocol.
         """
 
     def resource_not_found(self, name: str) -> str:

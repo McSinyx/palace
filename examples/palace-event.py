@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 from itertools import count, takewhile
 from sys import stderr
 from time import sleep
-from typing import Iterable, Sequence
+from typing import Iterable, MutableSequence
 
 from palace import Device, Context, Buffer, Source, MessageHandler
 
@@ -32,7 +32,7 @@ PERIOD: float = 0.025
 class EventHandler(MessageHandler):
     """Message handler of buffer loading events."""
     def buffer_loading(self, name: str, channel_config: str, sample_type: str,
-                       sample_rate: int, data: Sequence[int]) -> None:
+                       sample_rate: int, data: MutableSequence[int]) -> None:
         """Print buffers information on buffer loading events."""
         print(f'Playing {name} ({sample_type},',
               f'{channel_config}, {sample_rate} Hz)')

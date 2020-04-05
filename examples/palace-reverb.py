@@ -24,8 +24,8 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from palace import (Device, Context, Source, Decoder,
-                    AuxiliaryEffectSlot, Effect, reverb_preset_names)
+from palace import (reverb_preset_names, decode,
+                    Device, Context, Source, AuxiliaryEffectSlot, Effect)
 
 CHUNK_LEN: int = 12000
 QUEUE_SIZE: int = 4
@@ -57,7 +57,7 @@ def play(files: Iterable[str], device: str, reverb: str) -> None:
 
             for filename in files:
                 try:
-                    decoder = Decoder(filename)
+                    decoder = decode(filename)
                 except RuntimeError:
                     stderr.write(f'Failed to open file: {filename}\n')
                     continue
