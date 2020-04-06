@@ -19,7 +19,6 @@
 
 from argparse import Action, ArgumentParser
 from datetime import datetime, timedelta
-from itertools import count, takewhile
 from sys import stderr
 from time import sleep
 from typing import Iterable
@@ -64,7 +63,7 @@ def play(files: Iterable[str], device: str, reverb: str) -> None:
                 decoder.play(CHUNK_LEN, QUEUE_SIZE, src)
                 print(f'Playing {filename} ({decoder.sample_type},',
                       f'{decoder.channel_config}, {decoder.frequency} Hz)')
-                for i in takewhile(lambda i: src.playing, count()):
+                while src.playing:
                     print(f' {pretty_time(src.offset_seconds)} /'
                           f' {pretty_time(decoder.length_seconds)}',
                           end='\r', flush=True)

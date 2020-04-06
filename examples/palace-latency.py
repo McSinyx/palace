@@ -18,7 +18,6 @@
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 from argparse import ArgumentParser
-from itertools import count, takewhile
 from sys import stderr
 from time import sleep
 from typing import Iterable
@@ -40,7 +39,7 @@ def play(files: Iterable[str], device: str) -> None:
                 stderr.write(f'Failed to open file: {filename}\n')
             decoder.play(CHUNK_LEN, QUEUE_SIZE, src)
             print('Playing: ', filename)
-            for i in takewhile(lambda i: src.playing, count()):
+            while src.playing:
                 print('Offset:', round(src.offset_seconds), 's - Latency:',
                       src.latency//10**6, 'ms', end='\r', flush=True)
                 sleep(PERIOD)

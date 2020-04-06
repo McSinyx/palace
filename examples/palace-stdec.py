@@ -22,7 +22,6 @@ import sunau
 import wave
 from argparse import ArgumentParser
 from datetime import datetime, timedelta
-from itertools import count, takewhile
 from sys import stderr
 from time import sleep
 from typing import Iterable, Tuple
@@ -54,7 +53,7 @@ def play(files: Iterable[str], device: str) -> None:
             with buffer, buffer.play() as src:
                 print(f'Playing {filename} ({buffer.sample_type},',
                       f'{buffer.channel_config}, {buffer.frequency} Hz)')
-                for i in takewhile(lambda i: src.playing, count()):
+                while src.playing:
                     print(f' {pretty_time(src.offset_seconds)} /'
                           f' {pretty_time(buffer.length_seconds)}',
                           end='\r', flush=True)
