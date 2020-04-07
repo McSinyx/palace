@@ -22,8 +22,6 @@
 
 Attributes
 ----------
-Vector3 : Type
-    Tuple of three floats.
 CHANNEL_CONFIG : int
     Context creation key to specify the channel configuration
     (either `MONO`, `STEREO`, `QUAD`, `X51`, `X61` or `X71`).
@@ -65,7 +63,7 @@ decoder_factories : DecoderNamespace
 """
 
 __all__ = [
-    'Vector3', 'FALSE', 'TRUE', 'DONT_CARE', 'FREQUENCY',
+    'FALSE', 'TRUE', 'DONT_CARE', 'FREQUENCY',
     'MONO_SOURCES', 'STEREO_SOURCES', 'MAX_AUXILIARY_SENDS', 'OUTPUT_LIMITER',
     'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
@@ -73,7 +71,7 @@ __all__ = [
     'sample_types', 'channel_configs', 'device_names', 'reverb_preset_names',
     'decoder_factories', 'current_fileio', 'use_fileio', 'query_extension',
     'thread_local', 'current_context', 'use_context',
-    'cache', 'decode', 'sample_size', 'sample_length',
+    'cache', 'free', 'decode', 'sample_size', 'sample_length',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
     'AuxiliaryEffectSlot', 'Effect', 'Decoder', 'BaseDecoder', 'FileIO',
     'MessageHandler']
@@ -270,12 +268,11 @@ def use_context(context: Optional[Context],
         alure.Context.make_current(alure_context)
 
 
-def cache(*names: str, context: Optional[Context] = None) -> None:
+def cache(names: Iterable[str], context: Optional[Context] = None) -> None:
     """Cache given audio resources asynchronously.
 
     Duplicate names and buffers already cached are ignored.
-    Cached buffers must be free using `remove_buffer`
-    before destroying the context.
+    Cached buffers must be freed before destroying the context.
 
     The resources will be scheduled for caching asynchronously,
     and should be retrieved later when needed by initializing
@@ -290,12 +287,34 @@ def cache(*names: str, context: Optional[Context] = None) -> None:
     ------
     RuntimeError
         If there is neither any context specified nor current.
+
+    See Also
+    --------
+    free : Free cached audio resources given their names
+    Buffer.destroy : Free the buffer's cache
     """
-    cdef vector[string] std_names = names
+    cdef vector[string] std_names = list(names)
     cdef vector[alure.StringView] alure_names
     for name in std_names: alure_names.push_back(<alure.StringView> name)
     if context is None: context = current_context()
     (<Context> context).impl.precache_buffers_async(alure_names)
+
+
+def free(names: Iterable[str], context: Optional[Context] = None) -> None:
+    """Free cached audio resources given their names.
+
+    If `context` is not given, `current_context()` will be used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
+    """
+    if context is None: context = current_context()
+    cdef alure.Context alure_context = (<Context> context).impl
+    # Cython cannot infer collection types yet.
+    cdef vector[string] std_names = list(names)
+    for name in std_names: alure_context.remove_buffer(name)
 
 
 def decode(name: str, context: Optional[Context] = None) -> Decoder:
@@ -1139,7 +1158,7 @@ cdef class Buffer:
         return self.impl.get_source_count()
 
     def destroy(self) -> None:
-        """Free the buffer's cache
+        """Free the buffer's cache.
 
         This invalidates all other `Buffer` objects with the same name.
         """
@@ -2010,9 +2029,9 @@ cdef class AuxiliaryEffectSlot:
 
     @getter
     def use_count(self):
-        """Number of source sends the effect slot
-        is used by.  This is equivalent to calling
-        `len(tuple(self.source_sends))`.
+        """Number of source sends the effect slot is used by.
+
+        This is equivalent to calling `len(self.source_sends)`.
         """
         return self.impl.get_use_count()
 
