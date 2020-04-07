@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Design Principles &#8212; palace 0.1.0 documentation</title>
+    <title>Design Principles &#8212; palace 0.1.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,8 +14,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Reference" href="reference.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
+    <link rel="prev" title="Reference" href="reference.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -39,28 +38,6 @@ a safe, efficient, easy-to-use and extendable 3D audio library for Python,
 by wrapping existing functionalities from the C++ API <a class="reference external" href="https://github.com/kcat/alure">alure</a>.</p>
 <p>This part of the documentation assumes its reader are at least familiar with
 Cython, Python and C++11.</p>
-<div class="section" id="project-overview">
-<h2>Project Overview<a class="headerlink" href="#project-overview" title="Permalink to this headline">¶</a></h2>
-<p>Before diving into the design, here is a brief overview of the functionalities
-provided by palace:</p>
-<ol class="arabic simple">
-<li><p>Audio device creation and auxiliary functionalities:
-<a class="reference internal" href="reference.html#palace.device_names" title="palace.device_names"><code class="xref py py-const docutils literal notranslate"><span class="pre">palace.device_names</span></code></a>, <a class="reference internal" href="reference.html#palace.query_extension" title="palace.query_extension"><code class="xref py py-func docutils literal notranslate"><span class="pre">palace.query_extension()</span></code></a>
-and <a class="reference internal" href="reference.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Device</span></code></a></p></li>
-<li><p>Context creation and management: <a class="reference internal" href="reference.html#palace.current_context" title="palace.current_context"><code class="xref py py-func docutils literal notranslate"><span class="pre">palace.current_context()</span></code></a>,
-<a class="reference internal" href="reference.html#palace.use_context" title="palace.use_context"><code class="xref py py-func docutils literal notranslate"><span class="pre">palace.use_context()</span></code></a>, <a class="reference internal" href="reference.html#palace.Context" title="palace.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Context</span></code></a>,
-<a class="reference internal" href="reference.html#palace.Listener" title="palace.Listener"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Listener</span></code></a> and <a class="reference internal" href="reference.html#palace.MessageHandler" title="palace.MessageHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.MessageHandler</span></code></a></p></li>
-<li><p>Creation and caching of internal audio decoders and user-defined ones:
-<a class="reference internal" href="reference.html#palace.Decoder" title="palace.Decoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Decoder</span></code></a>, <a class="reference internal" href="reference.html#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.BaseDecoder</span></code></a>,
-<a class="reference internal" href="reference.html#palace.decoder_factories" title="palace.decoder_factories"><code class="xref py py-data docutils literal notranslate"><span class="pre">palace.decoder_factories</span></code></a>, <a class="reference internal" href="reference.html#palace.FileIO" title="palace.FileIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.FileIO</span></code></a>,
-<a class="reference internal" href="reference.html#palace.current_fileio" title="palace.current_fileio"><code class="xref py py-func docutils literal notranslate"><span class="pre">palace.current_fileio()</span></code></a>, <a class="reference internal" href="reference.html#palace.use_fileio" title="palace.use_fileio"><code class="xref py py-func docutils literal notranslate"><span class="pre">palace.use_fileio()</span></code></a>
-and <a class="reference internal" href="reference.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Buffer</span></code></a></p></li>
-<li><p>Source of audio playback: <a class="reference internal" href="reference.html#palace.Source" title="palace.Source"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Source</span></code></a>
-and <a class="reference internal" href="reference.html#palace.SourceGroup" title="palace.SourceGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.SourceGroup</span></code></a></p></li>
-<li><p>Audio effect: <a class="reference internal" href="reference.html#palace.AuxiliaryEffectSlot" title="palace.AuxiliaryEffectSlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.AuxiliaryEffectSlot</span></code></a>
-and <a class="reference internal" href="reference.html#palace.Effect" title="palace.Effect"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Effect</span></code></a></p></li>
-</ol>
-</div>
 <div class="section" id="the-impl-idiom">
 <span id="impl-idiom"></span><h2>The Impl Idiom<a class="headerlink" href="#the-impl-idiom" title="Permalink to this headline">¶</a></h2>
 <p><em>Not to be confused with</em> <a class="reference external" href="https://wiki.c2.com/?PimplIdiom">the pimpl idiom</a>.</p>
@@ -226,22 +203,20 @@ implementation as a pure Python class and <a class="reference internal" href="#g
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Design Principles</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#project-overview">Project Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-impl-idiom">The Impl Idiom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-modern-python">The Modern Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-double-reference">The Double Reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
-      <li>Next: <a href="reference.html" title="next chapter">Reference</a></li>
+      <li>Previous: <a href="reference.html" title="previous chapter">Reference</a></li>
   </ul></li>
 </ul>
 </div>
@@ -271,7 +246,7 @@ implementation as a pure Python class and <a class="reference internal" href="#g
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0+/4e6f8bc</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

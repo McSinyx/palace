@@ -22,7 +22,7 @@ copyright = '2019, 2020  Nguyễn Gia Phong et al'
 author = 'Nguyễn Gia Phong et al.'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.1.3'
 
 
 # -- General configuration ---------------------------------------------------
@@ -31,6 +31,9 @@ release = '0.1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+
+napoleon_google_docstring = False
+napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

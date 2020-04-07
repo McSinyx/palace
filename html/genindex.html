@@ -2,10 +2,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Index &#8212; palace 0.1.0 documentation</title>
+    <title>Index &#8212; palace 0.1.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -64,15 +64,9 @@
 </li>
       <li><a href="reference.html#palace.Device.alc_version">alc_version() (palace.Device property)</a>
 </li>
-      <li><a href="reference.html#palace.Context.async_wake_interval">async_wake_interval (palace.Context attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Source.auxiliary_send">auxiliary_send() (palace.Source property)</a>
-</li>
-      <li><a href="reference.html#palace.Source.auxiliary_send_filter">auxiliary_send_filter() (palace.Source property)</a>
-</li>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot">AuxiliaryEffectSlot (class in palace)</a>
+      <li><a href="reference.html#palace.Context.async_wake_interval">async_wake_interval (palace.Context attribute)</a>
 </li>
       <li><a href="reference.html#palace.Context.available_resamplers">available_resamplers() (palace.Context property)</a>
 </li>
@@ -98,6 +92,8 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.cache">cache() (in module palace)</a>
+</li>
       <li><a href="reference.html#palace.CHANNEL_CONFIG">CHANNEL_CONFIG (in module palace)</a>
 </li>
       <li><a href="reference.html#palace.BaseDecoder.channel_config">channel_config() (palace.BaseDecoder property)</a>
@@ -112,10 +108,10 @@
 </li>
       <li><a href="reference.html#palace.Effect.chorus_properties">chorus_properties() (palace.Effect property)</a>
 </li>
-      <li><a href="reference.html#palace.Device.clock_time">clock_time() (palace.Device property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.Device.clock_time">clock_time() (palace.Device property)</a>
+</li>
       <li><a href="reference.html#palace.Device.close">close() (palace.Device method)</a>
 
       <ul>
@@ -138,17 +134,17 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.decode">decode() (in module palace)</a>
+</li>
       <li><a href="reference.html#palace.Decoder">Decoder (class in palace)</a>
 </li>
       <li><a href="reference.html#palace.decoder_factories">decoder_factories (in module palace)</a>
 </li>
       <li><a href="reference.html#palace.Context.default_resampler_index">default_resampler_index() (palace.Context property)</a>
 </li>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot.destroy">destroy() (palace.AuxiliaryEffectSlot method)</a>
+      <li><a href="reference.html#palace.Buffer.destroy">destroy() (palace.Buffer method)</a>
 
       <ul>
-        <li><a href="reference.html#palace.Buffer.destroy">(palace.Buffer method)</a>
-</li>
         <li><a href="reference.html#palace.Context.destroy">(palace.Context method)</a>
 </li>
         <li><a href="reference.html#palace.Effect.destroy">(palace.Effect method)</a>
@@ -162,15 +158,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Device">Device (class in palace)</a>
 </li>
-      <li><a href="reference.html#palace.Context.device">device (palace.Context attribute)</a>
-</li>
       <li><a href="reference.html#palace.MessageHandler.device_disconnected">device_disconnected() (palace.MessageHandler method)</a>
 </li>
       <li><a href="reference.html#palace.device_names">device_names (in module palace)</a>
 </li>
-      <li><a href="reference.html#palace.Source.direct_filter">direct_filter() (palace.Source property)</a>
-</li>
       <li><a href="reference.html#palace.Context.distance_model">distance_model() (palace.Context property)</a>
+</li>
+      <li><a href="reference.html#palace.distance_models">distance_models (in module palace)</a>
 </li>
       <li><a href="reference.html#palace.Source.distance_range">distance_range (palace.Source attribute)</a>
 </li>
@@ -185,8 +179,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Effect">Effect (class in palace)</a>
-</li>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot.effect">effect() (palace.AuxiliaryEffectSlot property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -204,8 +196,14 @@
 </li>
       <li><a href="reference.html#palace.FileIO">FileIO (class in palace)</a>
 </li>
+      <li><a href="reference.html#palace.Source.filter">filter() (palace.Source property)</a>
+</li>
+      <li><a href="reference.html#palace.free">free() (in module palace)</a>
+</li>
       <li><a href="reference.html#palace.FREQUENCY">FREQUENCY (in module palace)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.BaseDecoder.frequency">frequency() (palace.BaseDecoder property)</a>
 
       <ul>
@@ -216,8 +214,6 @@
         <li><a href="reference.html#palace.Device.frequency">(palace.Device property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Buffer.from_decoder">from_decoder() (palace.Buffer static method)</a>
 </li>
   </ul></td>
@@ -232,7 +228,7 @@
         <li><a href="reference.html#palace.SourceGroup.gain">(palace.SourceGroup attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot.gain">gain() (palace.AuxiliaryEffectSlot property)</a>
+      <li><a href="reference.html#palace.Effect.gain">gain() (palace.Effect property)</a>
 
       <ul>
         <li><a href="reference.html#palace.Listener.gain">(palace.Listener property)</a>
@@ -298,8 +294,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Listener">Listener (class in palace)</a>
 </li>
-      <li><a href="reference.html#palace.Context.listener">listener (palace.Context attribute)</a>
-</li>
       <li><a href="reference.html#palace.Buffer.loop_points">loop_points (palace.Buffer attribute)</a>
 </li>
       <li><a href="reference.html#palace.BaseDecoder.loop_points">loop_points() (palace.BaseDecoder property)</a>
@@ -322,19 +316,12 @@
 </li>
       <li><a href="reference.html#palace.Context.message_handler">message_handler (palace.Context attribute)</a>
 </li>
-      <li><a href="reference.html#palace.MessageHandler">MessageHandler (class in palace)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference.html#palace.MessageHandler">MessageHandler (class in palace)</a>
+</li>
       <li><a href="reference.html#palace.Listener.meters_per_unit">meters_per_unit() (palace.Listener property)</a>
 </li>
-      <li>
-    module
-
-      <ul>
-        <li><a href="reference.html#module-palace">palace</a>
-</li>
-      </ul></li>
       <li><a href="reference.html#palace.MONO_SOURCES">MONO_SOURCES (in module palace)</a>
 </li>
   </ul></td>
@@ -342,10 +329,6 @@
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Buffer.name">name (palace.Buffer attribute)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference.html#palace.Device.name">name() (palace.Device property)</a>
 </li>
@@ -375,13 +358,6 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    palace
-
-      <ul>
-        <li><a href="reference.html#module-palace">module</a>
-</li>
-      </ul></li>
       <li><a href="reference.html#palace.SourceGroup.parent_group">parent_group (palace.SourceGroup attribute)</a>
 </li>
       <li><a href="reference.html#palace.Source.pause">pause() (palace.Source method)</a>
@@ -415,8 +391,6 @@
       <li><a href="reference.html#palace.Source.position">position (palace.Source attribute)</a>
 </li>
       <li><a href="reference.html#palace.Listener.position">position() (palace.Listener property)</a>
-</li>
-      <li><a href="reference.html#palace.Context.precache_buffers_async">precache_buffers_async() (palace.Context method)</a>
 </li>
       <li><a href="reference.html#palace.Source.priority">priority (palace.Source attribute)</a>
 </li>
@@ -502,13 +476,11 @@
         <li><a href="reference.html#palace.FileIO.seek">(palace.FileIO method)</a>
 </li>
       </ul></li>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot.send_auto">send_auto() (palace.AuxiliaryEffectSlot property)</a>
+      <li><a href="reference.html#palace.Effect.send_auto">send_auto() (palace.Effect property)</a>
 </li>
-      <li><a href="reference.html#palace.Source.send_filter">send_filter() (palace.Source property)</a>
+      <li><a href="reference.html#palace.Source.sends">sends() (palace.Source property)</a>
 </li>
       <li><a href="reference.html#palace.Buffer.size">size() (palace.Buffer property)</a>
-</li>
-      <li><a href="reference.html#palace.Decoder.smart">smart() (palace.Decoder static method)</a>
 </li>
       <li><a href="reference.html#palace.Source">Source (class in palace)</a>
 </li>
@@ -518,7 +490,7 @@
 </li>
       <li><a href="reference.html#palace.MessageHandler.source_force_stopped">source_force_stopped() (palace.MessageHandler method)</a>
 </li>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot.source_sends">source_sends() (palace.AuxiliaryEffectSlot property)</a>
+      <li><a href="reference.html#palace.Effect.source_sends">source_sends() (palace.Effect property)</a>
 </li>
       <li><a href="reference.html#palace.MessageHandler.source_stopped">source_stopped() (palace.MessageHandler method)</a>
 </li>
@@ -566,7 +538,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.AuxiliaryEffectSlot.use_count">use_count() (palace.AuxiliaryEffectSlot property)</a>
+      <li><a href="reference.html#palace.Effect.use_count">use_count() (palace.Effect property)</a>
 </li>
       <li><a href="reference.html#palace.use_fileio">use_fileio() (in module palace)</a>
 </li>
@@ -576,12 +548,10 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Vector3">Vector3 (in module palace)</a>
+      <li><a href="reference.html#palace.Source.velocity">velocity (palace.Source attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference.html#palace.Source.velocity">velocity (palace.Source attribute)</a>
-</li>
       <li><a href="reference.html#palace.Listener.velocity">velocity() (palace.Listener property)</a>
 </li>
   </ul></td>
@@ -608,8 +578,8 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="design.html">Design Principles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design Principles</a></li>
 </ul>
 
 <div class="relations">
@@ -645,7 +615,7 @@
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0+/4e6f8bc</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
