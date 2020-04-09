@@ -52,6 +52,8 @@ channel_configs : Tuple[str, ...]
 device_names : DeviceNames
     Read-only namespace of device names by category (basic, full and
     capture), as tuples of strings whose first item being the default.
+distance_models : Tuple[str, ...]
+    Names of available distance models.
 reverb_preset_names : Tuple[str, ...]
     Names of predefined reverb effect presets in lexicographical order.
 decoder_factories : DecoderNamespace
@@ -68,8 +70,9 @@ __all__ = [
     'CHANNEL_CONFIG', 'MONO', 'STEREO', 'QUAD', 'X51', 'X61', 'X71',
     'SAMPLE_TYPE', 'BYTE', 'UNSIGNED_BYTE', 'SHORT', 'UNSIGNED_SHORT',
     'INT', 'UNSIGNED_INT', 'FLOAT', 'HRTF', 'HRTF_ID',
-    'sample_types', 'channel_configs', 'device_names', 'reverb_preset_names',
-    'decoder_factories', 'current_fileio', 'use_fileio', 'query_extension',
+    'sample_types', 'channel_configs', 'device_names',
+    'reverb_preset_names', 'decoder_factories', 'distance_models',
+    'current_fileio', 'use_fileio', 'query_extension',
     'thread_local', 'current_context', 'use_context',
     'cache', 'free', 'decode', 'sample_size', 'sample_length',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
@@ -109,9 +112,9 @@ from cpython.ref cimport Py_INCREF, Py_DECREF
 from cython.view cimport array
 
 cimport alure   # noqa
-from util cimport (REVERB_PRESETS, SAMPLE_TYPES, CHANNEL_CONFIGS,   # noqa
-                   reverb_presets, mkattrs, make_filter_params,
-                   from_vector3, to_vector3)
+from util cimport (     # noqa
+    REVERB_PRESETS, SAMPLE_TYPES, CHANNEL_CONFIGS, DISTANCE_MODELS,
+    reverb_presets, mkattrs, make_filter_params, from_vector3, to_vector3)
 
 
 # Aliases
@@ -156,6 +159,9 @@ channel_configs: Tuple[str, ...] = (
     'Mono', 'Stereo', 'Rear', 'Quadrophonic',
     '5.1 Surround', '6.1 Surround', '7.1 Surround',
     'B-Format 2D', 'B-Format 3D')
+distance_models: Tuple[str, ...] = (
+    'inverse clamped', 'linear clamped', 'exponent clamped',
+    'inverse', 'linear', 'exponent', 'none')
 
 # Since multiple calls of DeviceManager.get_instance() will give
 # the same instance, we can create module-level variable and expose
@@ -183,7 +189,7 @@ def sample_size(length: int, channel_config: str, sample_type: str) -> int:
                                      CHANNEL_CONFIGS.at(channel_config),
                                      SAMPLE_TYPES.at(sample_type))
     except IndexError as e:
-        raise ValueError(str(e))
+        raise ValueError(str(e)) from None
 
 
 def sample_length(size: int, channel_config: str, sample_type: str) -> int:
@@ -193,7 +199,7 @@ def sample_length(size: int, channel_config: str, sample_type: str) -> int:
                                      CHANNEL_CONFIGS.at(channel_config),
                                      SAMPLE_TYPES.at(sample_type))
     except IndexError as e:
-        raise ValueError(str(e))
+        raise ValueError(str(e)) from None
 
 
 def query_extension(name: str) -> bool:
@@ -772,7 +778,7 @@ cdef class Context:
             return self.impl.is_supported(CHANNEL_CONFIGS.at(channel_config),
                                           SAMPLE_TYPES.at(sample_type))
         except IndexError as e:
-            raise ValueError(str(e))
+            raise ValueError(str(e)) from None
 
     @getter
     def available_resamplers(self) -> List[str]:
@@ -823,34 +829,27 @@ cdef class Context:
         self.impl.set_speed_of_sound(value)
 
     @setter
-    def distance_model(self, value: 'DistanceModel') -> None:
+    def distance_model(self, value: str) -> None:
         """The model for source attenuation based on distance.
 
-        The default, `INVERSE_CLAMPED`, provides a realistic l/r
+        The default, 'inverse clamped', provides a realistic l/r
         reduction in volume (that is, every doubling of distance
         cause the gain to reduce by half).
 
-        The `CLAMPED` distance models restrict the source distance for
+        The clamped distance models restrict the source distance for
         the purpose of distance attenuation, so a source won't sound
         closer than its reference distance or farther than its max
         distance.
+
+        Raises
+        ------
+        ValueError
+            If set to a preset cannot be found in `distance_models`.
         """
-        if value == DistanceModel.INVERSE_CLAMPED:
-            self.impl.set_distance_model(alure.DistanceModel.INVERSE_CLAMPED)
-        elif value == DistanceModel.LINEAR_CLAMPED:
-            self.impl.set_distance_model(alure.DistanceModel.LINEAR_CLAMPED)
-        elif value == DistanceModel.EXPONENT_CLAMPED:
-            self.impl.set_distance_model(alure.DistanceModel.EXPONENT_CLAMPED)
-        elif value == DistanceModel.INVERSE:
-            self.impl.set_distance_model(alure.DistanceModel.INVERSE)
-        elif value == DistanceModel.LINEAR:
-            self.impl.set_distance_model(alure.DistanceModel.LINEAR)
-        elif value == DistanceModel.EXPONENT:
-            self.impl.set_distance_model(alure.DistanceModel.EXPONENT)
-        elif value == DistanceModel.NONE:
-            self.impl.set_distance_model(alure.DistanceModel.NONE)
-        else:
-            raise ValueError(f'Invalid DistanceModel ID: {value}')
+        try:
+            self.impl.set_distance_model(DISTANCE_MODELS.at(value))
+        except IndexError:
+            raise ValueError(f'Invalid distance model: {value}') from None
 
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
@@ -860,17 +859,6 @@ cdef class Context:
         handler: MessageHandler = self.message_handler
         while handler.stopped_sources:
             handler.source_stopped(handler.stopped_sources.pop())
-
-
-class DistanceModel(Enum):
-    """Enum for distance models."""
-    INVERSE_CLAMPED = auto()
-    LINEAR_CLAMPED = auto()
-    EXPONENT_CLAMPED = auto()
-    INVERSE = auto()
-    LINEAR = auto()
-    EXPONENT = auto()
-    NONE = auto()
 
 
 cdef class Listener:
@@ -2110,7 +2098,7 @@ cdef class Effect:
         try:
             self.impl.set_reverb_properties(REVERB_PRESETS.at(value))
         except IndexError:
-            raise ValueError(f'Invalid preset name: {value}')
+            raise ValueError(f'Invalid preset name: {value}') from None
 
     @setter
     def reverb_properties(self, value: dict) -> None:

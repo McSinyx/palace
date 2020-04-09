@@ -47,6 +47,15 @@ namespace palace
     {"B-Format 2D", alure::ChannelConfig::BFormat2D},
     {"B-Format 3D", alure::ChannelConfig::BFormat3D}};
 
+  const std::map<std::string, alure::DistanceModel> DISTANCE_MODELS {
+    {"inverse clamped", alure::DistanceModel::InverseClamped},
+    {"linear clamped", alure::DistanceModel::LinearClamped},
+    {"exponent clamped", alure::DistanceModel::ExponentClamped},
+    {"inverse", alure::DistanceModel::Inverse},
+    {"linear", alure::DistanceModel::Linear},
+    {"exponent", alure::DistanceModel::Exponent},
+    {"none", alure::DistanceModel::None}};
+
   // This is ported from alure-reverb example.
   #define DECL(x) { #x, EFX_REVERB_PRESET_##x }
   const std::map<std::string, EFXEAXREVERBPROPERTIES> REVERB_PRESETS {
