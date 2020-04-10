@@ -1,0 +1,24 @@
+branches:
+  only:
+    - master
+    - /^\d+(\.\d+)+((a|b|rc)\d+)?(\.post\d+)?(\.dev\d+)?$/
+
+environment:
+  global:
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    Alure2_DIR: C:\Program Files (x86)\alure\lib\cmake\Alure2
+  matrix:
+    - CIBW_BUILD: cp36-win_amd64
+    - CIBW_BUILD: cp37-win_amd64
+    - CIBW_BUILD: cp38-win_amd64
+
+install:
+  - curl "https://openal-soft.org/openal-binaries/openal-soft-1.20.1-bin.zip" -o openal-soft-1.20.1-bin.zip
+  - 7z x -o%APPVEYOR_BUILD_FOLDER%\.. openal-soft-1.20.1-bin.zip
+  - set OPENALDIR=%APPVEYOR_BUILD_FOLDER%\..\openal-soft-1.20.1-bin
+  - git clone https://github.com/kcat/alure %APPVEYOR_BUILD_FOLDER%\..\alure
+  - cmake -A x64 -S %APPVEYOR_BUILD_FOLDER%\..\alure -B %APPVEYOR_BUILD_FOLDER%\..\alure\build
+  - cmake --build %APPVEYOR_BUILD_FOLDER%\..\alure\build --config Release --target install
+  - py -3 -m pip install cibuildwheel
+
+build_script: echo py -3 -m cibuildwheel --output-dir wheelhouse

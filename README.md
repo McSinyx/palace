@@ -27,12 +27,9 @@ Palace can be install from the [Python Package Index][PyPI] via simply
 
     pip install palace
 
-Wheel distributions are only built for GNU/Linux and macOS on amd64
-at the time of writing.  If you want to help out, please head to
-GitHub issue [#1][GH-1].
-
-*Note:  [Wheels built for macOS have yet to include shared libraries][GH-63],
-so it still requires [alure] and its dependencies to be installed.*
+Wheel distributions are built exclusively for amd64.  Currently, only GNU/Linux
+is properly supported.  If you want to help packaging for Windows and macOS,
+see [GH-1] and [GH-63] respectively on our issues tracker on GitHub.
 
 ### From source
 Aside from the build dependencies listed in `pyproject.toml`, one will
@@ -44,10 +41,14 @@ Palace can then be compiled and installed by running
 
 ## Usage
 One may start with the `examples` for sample usage of palace.
-For further information, Python's `help` is your friend.
+For further information, Python's `help` is your friend and
+the API is also available for [online reference][API].
 
 ## License and Credits
-Palace is released under the [GNU LGPL version 3 or later][LGPLv3+].
+Palace is free software: you can redistribute it and/or modify it
+under the terms of the [GNU Lesser General Public License][LGPLv3+]
+as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version.
 
 To ensure that palace can run without any dependencies outside of the [pip]
 toolchain, the wheels are bundled with dynamically linked libraries from
@@ -70,7 +71,8 @@ the build machine, which is similar to static linking:
 [GH-1]: https://github.com/McSinyx/palace/issues/1
 [GH-63]: https://github.com/McSinyx/palace/issues/63
 [CMake]: https://cmake.org/
+[API]: https://mcsinyx.github.io/palace/html/reference.html
+[LGPLv3+]: https://www.gnu.org/licenses/lgpl-3.0.en.html
 [Vorbis]: https://xiph.org/vorbis/
 [Opus]: http://opus-codec.org/
 [libsndfile]: http://www.mega-nerd.com/libsndfile/
-[LGPLv3+]: https://www.gnu.org/licenses/lgpl-3.0.en.html
