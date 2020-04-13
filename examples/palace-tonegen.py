@@ -17,27 +17,28 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
-from argparse import Action, ArgumentParser
+from argparse import ArgumentParser
 from functools import partial
-from math import pi
+from operator import not_
 from random import random
 from time import sleep
 from typing import Callable, Dict, Tuple
 
+from numpy import arange, float32, ndarray, pi, sin, vectorize
 from palace import Buffer, Context, BaseDecoder, Device
-from numpy import arange, float32, ndarray, sin, vectorize
-from scipy.signal import sawtooth, square, unit_impulse
+from scipy.signal import sawtooth, square
 
 WAVEFORMS: Dict[str, Callable[[ndarray], ndarray]] = {
     'sine': sin,
     'square': square,
     'sawtooth': sawtooth,
-    'triangle': partial(sawtooth, 0.5),
-    'impulse': lambda frames: unit_impulse(len(frames)),
+    'triangle': partial(sawtooth, width=0.5),
+    'impulse': vectorize(not_),
     'white-noise': vectorize(lambda time: random())}
 
 
 class ToneGenerator(BaseDecoder):
+    """Generator of elementary signals."""
     def __init__(self, waveform: str, duration: float, frequency: float):
         self.func = lambda frames: WAVEFORMS[waveform](
             frames / self.frequency * pi * 2 * frequency)
@@ -70,31 +71,25 @@ class ToneGenerator(BaseDecoder):
         return data.astype(float32).tobytes()
 
 
-class TypePrinter(Action):
-    def __call__(self, parser: ArgumentParser, *args, **kwargs) -> None:
-        print('Available waveform types:', *WAVEFORMS, sep='\n')
-        parser.exit()
-
-
 def play(device: str, waveform: str,
          duration: float, frequency: float) -> None:
+    """Play waveform at the given frequency for given duration."""
     with Device(device) as dev, Context(dev):
+        print('Opened', dev.name)
         dec = ToneGenerator(waveform, duration, frequency)
-        with Buffer.from_decoder(dec, 'tonegen') as buf, buf.play() as src:
-            while src.playing:
-                sleep()
+        print(f'Playing {waveform} signal at {frequency} Hz for {duration} s')
+        with Buffer.from_decoder(dec, 'tonegen') as buf, buf.play():
+            sleep(duration)
 
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('-t', '--types', nargs=0, action=TypePrinter,
-                        help='print available waveform types in this example')
-    parser.add_argument('-w', '--waveform', default='sine', type=str,
-                        help='waveform to be generated, default to sine')
     parser.add_argument('-d', '--device', default='', help='device name')
-    parser.add_argument('-l', '--duration', default=5.0, type=float,
-                        help='duration, in second')
+    parser.add_argument('-w', '--waveform', default='sine', choices=WAVEFORMS,
+                        help='waveform to be generated, default to sine')
+    parser.add_argument('-l', '--duration', default=1.0, type=float,
+                        help='duration in second, default to 1.0')
     parser.add_argument('-f', '--frequency', default=440.0, type=float,
-                        help='frequency for the wave in hertz, default to 440')
+                        help='wave frequency in hertz, default to 440.0')
     args = parser.parse_args()
     play(args.device, args.waveform, args.duration, args.frequency)

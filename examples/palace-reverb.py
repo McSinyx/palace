@@ -32,6 +32,7 @@ PERIOD: float = 0.025
 
 
 class PresetPrinter(Action):
+    """CLI action to print available preset names and exit."""
     def __call__(self, parser: ArgumentParser, *args, **kwargs) -> None:
         print('Available reverb preset names:', *reverb_preset_names, sep='\n')
         parser.exit()

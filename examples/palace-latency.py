@@ -32,13 +32,15 @@ PERIOD: float = 0.01
 def play(files: Iterable[str], device: str) -> None:
     """Load and play the file on given device."""
     with Device(device) as dev, Context(dev) as ctx, Source() as src:
+        print('Opened', dev.name)
         for filename in files:
             try:
                 decoder = decode(filename)
             except RuntimeError:
                 stderr.write(f'Failed to open file: {filename}\n')
             decoder.play(CHUNK_LEN, QUEUE_SIZE, src)
-            print('Playing: ', filename)
+            print(f'Playing {filename} ({decoder.sample_type},',
+                  f'{decoder.channel_config}, {decoder.frequency} Hz)')
             while src.playing:
                 print('Offset:', round(src.offset_seconds), 's - Latency:',
                       src.latency//10**6, 'ms', end='\r', flush=True)

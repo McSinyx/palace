@@ -637,8 +637,10 @@ cdef class Device:
 
 
 cdef class Context:
-    """Container maintaining the entire audio environment, its settings
-    and components such as sources, buffers and effects.
+    """Container maintaining the audio environment.
+
+    Context contains the environment's settings and components
+    such as sources, buffers and effects.
 
     This can be used as a context manager, e.g. ::
 
@@ -764,8 +766,7 @@ cdef class Context:
         self.impl.set_async_wake_interval(milliseconds(value))
 
     def is_supported(self, channel_config: str, sample_type: str) -> bool:
-        """Return if the channel configuration and sample type
-        are supported by the context.
+        """Return if the channel config and sample type is supported.
 
         This method require the context to be current.
 
@@ -1138,7 +1139,8 @@ cdef class Buffer:
     def source_count(self) -> int:
         """Number of sources currently using the buffer.
 
-        Notes:
+        Notes
+        -----
         `Context.update` needs to be called to reliably ensure the count
         is kept updated for when sources reach their end.  This is
         equivalent to calling `len(self.sources)`.
@@ -1362,8 +1364,9 @@ cdef class Source:
 
     @property
     def looping(self) -> bool:
-        """Whether the source should loop on the Buffer or Decoder
-        object's loop points.
+        """Whether the source should loop.
+
+        The loop points are determined by the playing buffer or decoder.
         """
         return self.impl.get_looping()
 
@@ -1403,9 +1406,10 @@ cdef class Source:
 
     @property
     def gain_range(self) -> Tuple[float, float]:
-        """The range which the source's gain is clamped to after
-        distance and cone attenuation are applied to the gain base,
-        although before the filter gain adjustements.
+        """The range which the source's gain is clamped to.
+
+        This is used after distance and cone attenuation are applied
+        to the gain base and before the adjustments of the filter gain.
 
         Parameters
         ----------
@@ -1541,8 +1545,7 @@ cdef class Source:
 
     @property
     def outer_cone_gains(self) -> Tuple[float, float]:
-        """Linear gain and gainhf multiplier when the listener is
-        outside of the source's outer cone area.
+        """Gain when listener is out of the source's outer cone area.
 
         Parameters
         ----------
@@ -1612,8 +1615,10 @@ cdef class Source:
 
     @property
     def relative(self) -> bool:
-        """Whether the source's position, velocity, and orientation
-        are relative to the listener.
+        """Whether the source's 3D parameters are relative to listener.
+
+        The affected parameters includes `position`, `velocity`,
+        and `orientation`.
         """
         return self.impl.get_relative()
 
@@ -1640,11 +1645,13 @@ cdef class Source:
 
     @property
     def stereo_angles(self) -> Tuple[float, float]:
-        """Left and right channel angles, in radians, when playing
-        a stereo buffer or stream.  The angles go counter-clockwise,
-        with 0 being in front and positive values going left.
+        """Left and right channel angles, in radians.
 
-        This has no effect without the `AL_EXT_STEREO_ANGLES` extension.
+        The angles go counter-clockwise, with 0 being in front
+        and positive values going left.
+
+        This is only used for stereo playback and has no effect
+        without the `AL_EXT_STEREO_ANGLES` extension.
         """
         return self.impl.get_stereo_angles()
 
@@ -1655,7 +1662,9 @@ cdef class Source:
 
     @property
     def spatialize(self) -> Optional[bool]:
-        """Either `True` (the source always has 3D spatialization
+        """Whether to enable 3D spatialization.
+
+        Either `True` (the source always has 3D spatialization
         features), `False` (never has 3D spatialization features),
         or `None` (spatialization is enabled based on playing
         a mono sound or not, default).
@@ -1693,8 +1702,9 @@ cdef class Source:
 
     @property
     def air_absorption_factor(self) -> float:
-        """Multiplier for the amount of atmospheric high-frequency
-        absorption, ranging from 0 to 10.  A factor of 1 results in
+        """Multiplier for atmospheric high-frequency absorption
+
+        Its value ranging from 0 to 10.  A factor of 1 results in
         a nominal -0.05 dB per meter, with higher values simulating
         foggy air and lower values simulating dryer air; default to 0.
         """
@@ -1706,7 +1716,9 @@ cdef class Source:
 
     @property
     def gain_auto(self) -> Tuple[bool, bool, bool]:
-        """Whether the direct path's high frequency gain,
+        """Whether automatically adjust gains.
+
+        Respectively for direct path's high frequency gain,
         send paths' gain and send paths' high-frequency gain are
         automatically adjusted.  The default is `True` for all.
         """
@@ -1883,20 +1895,23 @@ cdef class SourceGroup:
         return source_groups
 
     def pause_all(self) -> None:
-        """Pause all currently-playing sources that are under
-        this group, including sub-groups.
+        """Pause all currently-playing sources under this group.
+
+        This is done recursively, including sub-groups.
         """
         self.impl.pause_all()
 
     def resume_all(self) -> None:
-        """Resume all paused sources that are under this group,
-        including sub-groups.
+        """Resume all currently-playing sources under this group.
+
+        This is done recursively, including sub-groups.
         """
         self.impl.resume_all()
 
     def stop_all(self) -> None:
-        """Stop all sources that are under this group,
-        including sub-groups.
+        """Stop all currently-playing sources under this group.
+
+        This is done recursively, including sub-groups.
         """
         self.impl.stop_all()
 
@@ -1978,11 +1993,9 @@ cdef class AuxiliaryEffectSlot:
 
     @setter
     def send_auto(self, value: bool) -> None:
-        """If set to `True`, the reverb effect will automatically
-        apply adjustments to the source's send slot gains based
-        on the effect properties.
+        """Whether to automatically adjust send slot gains.
 
-        Has no effect when using non-reverb effects.  Default is `True`.
+        This only has effect on reverb effects.  Default is `True`.
         """
         self.impl.set_send_auto(value)
 
@@ -1997,6 +2010,7 @@ cdef class AuxiliaryEffectSlot:
 
     def destroy(self) -> None:
         """Destroy the effect slot, returning it to the system.
+
         If the effect slot is currently set on a source send,
         it will be removed first.
         """
@@ -2004,9 +2018,7 @@ cdef class AuxiliaryEffectSlot:
 
     @getter
     def source_sends(self) -> List[Tuple[Source, int]]:
-        """List of each `Source` object and its pairing
-        send this effect slot is set on.
-        """
+        """List of `Source`s using this slot and their pairing sends."""
         source_sends = []
         for source_send in self.impl.get_source_sends():
             source: Source = Source.__new__(Source)
