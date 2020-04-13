@@ -40,7 +40,7 @@ def test_group(context):
 
 
 def test_priority(context):
-    """Test read-write property group."""
+    """Test read-write property priority."""
     with Source(context) as source:
         assert source.priority == 0
         source.priority = 42
