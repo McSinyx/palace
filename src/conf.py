@@ -22,7 +22,7 @@ copyright = '2019, 2020  Nguyễn Gia Phong et al'
 author = 'Nguyễn Gia Phong et al.'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.1'
+release = '0.1.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -30,7 +30,10 @@ release = '0.1.1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.napoleon']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',
+              'sphinx.ext.napoleon']
+
+autosummary_generate = True
 napoleon_google_docstring = False
 napoleon_use_ivar = True
 

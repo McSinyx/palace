@@ -70,6 +70,11 @@ Audio Library Contexts
    Context creation key to specify whether to use a gain limiter
    (either ``FALSE``, ``TRUE`` or ``DONT_CARE``).
 
+.. data:: distance_models
+   :type: Tuple[str, ...]
+
+   Names of available distance models.
+
 .. autofunction:: thread_local
 
 .. autofunction:: current_context

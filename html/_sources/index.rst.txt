@@ -6,8 +6,8 @@ Welcome to our palace!
    :caption: Contents:
 
    installation
-   design
    reference
+   design
 
 
 Indices and tables
