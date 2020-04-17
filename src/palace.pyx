@@ -76,8 +76,7 @@ __all__ = [
     'thread_local', 'current_context', 'use_context',
     'cache', 'free', 'decode', 'sample_size', 'sample_length',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
-    'AuxiliaryEffectSlot', 'Effect', 'Decoder', 'BaseDecoder', 'FileIO',
-    'MessageHandler']
+    'Effect', 'Decoder', 'BaseDecoder', 'FileIO', 'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
 from contextlib import contextmanager
@@ -475,33 +474,27 @@ cdef class Device:
         self.close()
 
     def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, Device):
-            return NotImplemented
+        if not isinstance(other, Device): return NotImplemented
         return self.impl < (<Device> other).impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, Device):
-            return NotImplemented
+        if not isinstance(other, Device): return NotImplemented
         return self.impl <= (<Device> other).impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Device):
-            return NotImplemented
+        if not isinstance(other, Device): return NotImplemented
         return self.impl == (<Device> other).impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, Device):
-            return NotImplemented
+        if not isinstance(other, Device): return NotImplemented
         return self.impl != (<Device> other).impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, Device):
-            return NotImplemented
+        if not isinstance(other, Device): return NotImplemented
         return self.impl > (<Device> other).impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, Device):
-            return NotImplemented
+        if not isinstance(other, Device): return NotImplemented
         return self.impl >= (<Device> other).impl
 
     def __bool__(self) -> bool:
@@ -698,33 +691,27 @@ cdef class Context:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, Context):
-            return NotImplemented
+        if not isinstance(other, Context): return NotImplemented
         return self.impl < (<Context> other).impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, Context):
-            return NotImplemented
+        if not isinstance(other, Context): return NotImplemented
         return self.impl <= (<Context> other).impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Context):
-            return NotImplemented
+        if not isinstance(other, Context): return NotImplemented
         return self.impl == (<Context> other).impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, Context):
-            return NotImplemented
+        if not isinstance(other, Context): return NotImplemented
         return self.impl != (<Context> other).impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, Context):
-            return NotImplemented
+        if not isinstance(other, Context): return NotImplemented
         return self.impl > (<Context> other).impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, Context):
-            return NotImplemented
+        if not isinstance(other, Context): return NotImplemented
         return self.impl >= (<Context> other).impl
 
     def __bool__(self) -> bool:
@@ -984,33 +971,27 @@ cdef class Buffer:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, Buffer):
-            return NotImplemented
+        if not isinstance(other, Buffer): return NotImplemented
         return self.impl < (<Buffer> other).impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, Buffer):
-            return NotImplemented
+        if not isinstance(other, Buffer): return NotImplemented
         return self.impl <= (<Buffer> other).impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Buffer):
-            return NotImplemented
+        if not isinstance(other, Buffer): return NotImplemented
         return self.impl == (<Buffer> other).impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, Buffer):
-            return NotImplemented
+        if not isinstance(other, Buffer): return NotImplemented
         return self.impl != (<Buffer> other).impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, Buffer):
-            return NotImplemented
+        if not isinstance(other, Buffer): return NotImplemented
         return self.impl > (<Buffer> other).impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, Buffer):
-            return NotImplemented
+        if not isinstance(other, Buffer): return NotImplemented
         return self.impl >= (<Buffer> other).impl
 
     def __bool__(self) -> bool:
@@ -1188,33 +1169,27 @@ cdef class Source:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, Source):
-            return NotImplemented
+        if not isinstance(other, Source): return NotImplemented
         return self.impl < (<Source> other).impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, Source):
-            return NotImplemented
+        if not isinstance(other, Source): return NotImplemented
         return self.impl <= (<Source> other).impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Source):
-            return NotImplemented
+        if not isinstance(other, Source): return NotImplemented
         return self.impl == (<Source> other).impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, Source):
-            return NotImplemented
+        if not isinstance(other, Source): return NotImplemented
         return self.impl != (<Source> other).impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, Source):
-            return NotImplemented
+        if not isinstance(other, Source): return NotImplemented
         return self.impl > (<Source> other).impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, Source):
-            return NotImplemented
+        if not isinstance(other, Source): return NotImplemented
         return self.impl >= (<Source> other).impl
 
     def __bool__(self) -> bool:
@@ -1738,29 +1713,26 @@ cdef class Source:
 
     @setter
     def send_filter(self, value: Tuple[int, Vector3]) -> None:
-        """The filter properties on the given send path signal.
+        """Filter properties on the given send path signal.
 
-        Any filter properties on the send path remain as they were.
+        The effect on the send path remains in place.
         """
         self.impl.set_send_filter(value[0], make_filter_params(value[1]))
 
     @setter
-    def auxiliary_send(self, value: Tuple[AuxiliaryEffectSlot, int]) -> None:
-        """Connect the effect slot to the given send path.
+    def effect_send(self, value: Tuple[Effect, int]) -> None:
+        """Effect on the given send path signal.
 
-        Any filter properties on the send path remain as they were.
+        The filter properties on the send path remain as they were.
         """
-        self.impl.set_auxiliary_send(
-            (<AuxiliaryEffectSlot> value[0]).impl, value[1])
+        self.impl.set_auxiliary_send((<Effect> value[0]).slot, value[1])
 
     @setter
-    def auxiliary_send_filter(
-        self, value: Tuple[AuxiliaryEffectSlot, int, Vector3]) -> None:
-        """Connect the effect slot to the given send path, using the filter."""
+    def effect_send_filter(
+        self, value: Tuple[Effect, int, Vector3]) -> None:
+        """Effect slot on the given send path, using filter parameters."""
         self.impl.set_auxiliary_send_filter(
-            (<AuxiliaryEffectSlot> value[0]).impl,
-            value[1],
-            make_filter_params(value[2]))
+            (<Effect> value[0]).slot, value[1], make_filter_params(value[2]))
 
     def destroy(self) -> None:
         """Destroy the source, stop playback and release resources."""
@@ -1805,28 +1777,23 @@ cdef class SourceGroup:
         return self.impl < (<SourceGroup> other).impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, SourceGroup):
-            return NotImplemented
+        if not isinstance(other, SourceGroup): return NotImplemented
         return self.impl <= (<SourceGroup> other).impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, SourceGroup):
-            return NotImplemented
+        if not isinstance(other, SourceGroup): return NotImplemented
         return self.impl == (<SourceGroup> other).impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, SourceGroup):
-            return NotImplemented
+        if not isinstance(other, SourceGroup): return NotImplemented
         return self.impl != (<SourceGroup> other).impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, SourceGroup):
-            return NotImplemented
+        if not isinstance(other, SourceGroup): return NotImplemented
         return self.impl > (<SourceGroup> other).impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, SourceGroup):
-            return NotImplemented
+        if not isinstance(other, SourceGroup): return NotImplemented
         return self.impl >= (<SourceGroup> other).impl
 
     def __bool__(self) -> bool:
@@ -1920,124 +1887,11 @@ cdef class SourceGroup:
         self.impl.destroy()
 
 
-cdef class AuxiliaryEffectSlot:
+cdef class Effect:
     """An effect processor.
 
     It takes the output mix of zero or more sources,
-    applies DSP for the desired effect (as configured
-    by a given `Effect` object), then adds to the output mix.
-
-    This can be used as a context manager that calls `destroy`
-    upon completion of the block, even if an error occurs.
-
-    Parameters
-    ----------
-    context : Optional[Context], optional
-        The context to create the auxiliary effect slot.
-        By default `current_context()` is used.
-
-    Raises
-    ------
-    RuntimeError
-        If there is neither any context specified nor current.
-    """
-    cdef alure.AuxiliaryEffectSlot impl
-
-    def __init__(self, context: Optional[Context] = None) -> None:
-        if context is None: context = current_context()
-        self.impl = (<Context> context).impl.create_auxiliary_effect_slot()
-
-    def __enter__(self) -> AuxiliaryEffectSlot:
-        return self
-
-    def __exit__(self, *exc) -> Optional[bool]:
-        self.destroy()
-
-    def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, AuxiliaryEffectSlot):
-            return NotImplemented
-        return self.impl < (<AuxiliaryEffectSlot> other).impl
-
-    def __le__(self, other: Any) -> bool:
-        if not isinstance(other, AuxiliaryEffectSlot):
-            return NotImplemented
-        return self.impl <= (<AuxiliaryEffectSlot> other).impl
-
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, AuxiliaryEffectSlot):
-            return NotImplemented
-        return self.impl == (<AuxiliaryEffectSlot> other).impl
-
-    def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, AuxiliaryEffectSlot):
-            return NotImplemented
-        return self.impl != (<AuxiliaryEffectSlot> other).impl
-
-    def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, AuxiliaryEffectSlot):
-            return NotImplemented
-        return self.impl > (<AuxiliaryEffectSlot> other).impl
-
-    def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, AuxiliaryEffectSlot):
-            return NotImplemented
-        return self.impl >= (<AuxiliaryEffectSlot> other).impl
-
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
-
-    @setter
-    def gain(self, value: float) -> None:
-        """Gain of the effect slot."""
-        self.impl.set_gain(value)
-
-    @setter
-    def send_auto(self, value: bool) -> None:
-        """Whether to automatically adjust send slot gains.
-
-        This only has effect on reverb effects.  Default is `True`.
-        """
-        self.impl.set_send_auto(value)
-
-    @setter
-    def effect(self, value: Effect) -> None:
-        """Effect to be held by the slot.
-
-        The given effect object may be altered or destroyed without
-        affecting the effect slot.
-        """
-        self.impl.apply_effect(value.impl)
-
-    def destroy(self) -> None:
-        """Destroy the effect slot, returning it to the system.
-
-        If the effect slot is currently set on a source send,
-        it will be removed first.
-        """
-        return self.impl.destroy()
-
-    @getter
-    def source_sends(self) -> List[Tuple[Source, int]]:
-        """List of `Source`s using this slot and their pairing sends."""
-        source_sends = []
-        for source_send in self.impl.get_source_sends():
-            source: Source = Source.__new__(Source)
-            send = source_send.send
-            source.impl = source_send.source
-            source_sends.append((source, send))
-        return source_sends
-
-    @getter
-    def use_count(self):
-        """Number of source sends the effect slot is used by.
-
-        This is equivalent to calling `len(self.source_sends)`.
-        """
-        return self.impl.get_use_count()
-
-
-cdef class Effect:
-    """A collection of settings or parameters.
+    applies DSP for the desired effect, then adds to the output mix.
 
     This can be used as a context manager that calls `destroy`
     upon completion of the block, even if an error occurs.
@@ -2053,11 +1907,14 @@ cdef class Effect:
     RuntimeError
         If there is neither any context specified nor current.
     """
+    cdef alure.AuxiliaryEffectSlot slot
     cdef alure.Effect impl
 
     def __init__(self, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
-        self.impl = (<Context> context).impl.create_effect()
+        cdef alure.Context alure_context = (<Context> context).impl
+        self.slot = alure_context.create_auxiliary_effect_slot()
+        self.impl = alure_context.create_effect()
 
     def __enter__(self) -> Effect:
         return self
@@ -2066,37 +1923,69 @@ cdef class Effect:
         self.destroy()
 
     def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, Effect):
-            return NotImplemented
-        return self.impl < (<Effect> other).impl
+        if not isinstance(other, Effect): return NotImplemented
+        cdef Effect fx = <Effect> other
+        return self.slot < fx.slot and self.impl < fx.impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, Effect):
-            return NotImplemented
-        return self.impl <= (<Effect> other).impl
+        if not isinstance(other, Effect): return NotImplemented
+        cdef Effect fx = <Effect> other
+        return self.slot <= fx.slot and self.impl <= fx.impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Effect):
-            return NotImplemented
-        return self.impl == (<Effect> other).impl
+        if not isinstance(other, Effect): return NotImplemented
+        cdef Effect fx = <Effect> other
+        return self.slot == fx.slot and self.impl == fx.impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, Effect):
-            return NotImplemented
-        return self.impl != (<Effect> other).impl
+        if not isinstance(other, Effect): return NotImplemented
+        cdef Effect fx = <Effect> other
+        return self.slot != fx.slot and self.impl != fx.impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, Effect):
-            return NotImplemented
-        return self.impl > (<Effect> other).impl
+        if not isinstance(other, Effect): return NotImplemented
+        cdef Effect fx = <Effect> other
+        return self.slot > fx.slot and self.impl > fx.impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, Effect):
-            return NotImplemented
-        return self.impl >= (<Effect> other).impl
+        if not isinstance(other, Effect): return NotImplemented
+        cdef Effect fx = <Effect> other
+        return self.slot >= fx.slot and self.impl >= fx.impl
 
     def __bool__(self) -> bool:
-        return <boolean> self.impl
+        return <boolean> self.slot and <boolean> self.impl
+
+    @setter
+    def gain(self, value: float) -> None:
+        """Gain of the effect slot."""
+        self.slot.set_gain(value)
+
+    @setter
+    def send_auto(self, value: bool) -> None:
+        """Whether to automatically adjust send slot gains.
+
+        This only has effect on reverb effects.  Default is `True`.
+        """
+        self.slot.set_send_auto(value)
+
+    @getter
+    def source_sends(self) -> List[Tuple[Source, int]]:
+        """List of sources using this effect and their pairing sends."""
+        source_sends = []
+        for source_send in self.slot.get_source_sends():
+            source: Source = Source.__new__(Source)
+            send = source_send.send
+            source.impl = source_send.source
+            source_sends.append((source, send))
+        return source_sends
+
+    @getter
+    def use_count(self):
+        """Number of source sends the effect slot is used by.
+
+        This is equivalent to calling `len(self.source_sends)`.
+        """
+        return self.slot.get_use_count()
 
     @setter
     def reverb_preset(self, value: str) -> None:
@@ -2111,6 +2000,8 @@ cdef class Effect:
             self.impl.set_reverb_properties(REVERB_PRESETS.at(value))
         except IndexError:
             raise ValueError(f'Invalid preset name: {value}') from None
+        else:
+            self.slot.apply_effect(self.impl)
 
     @setter
     def reverb_properties(self, value: dict) -> None:
@@ -2152,6 +2043,7 @@ cdef class Effect:
         properties.flRoomRolloffFactor = value['room_rolloff_factor']
         properties.iDecayHFLimit = value['decay_hf_limit']
         self.impl.set_reverb_properties(properties)
+        self.slot.apply_effect(self.impl)
 
     @setter
     def chorus_properties(self, value: dict) -> None:
@@ -2170,9 +2062,15 @@ cdef class Effect:
         properties.flFeedback = value['feedback']
         properties.flDelay = value['delay']
         self.impl.set_chorus_properties(properties)
+        self.slot.apply_effect(self.impl)
 
     def destroy(self) -> None:
-        """Destroy the effect."""
+        """Destroy the effect slot, returning it to the system.
+
+        If the effect slot is currently set on a source send,
+        it will be removed first.
+        """
+        self.slot.destroy()
         self.impl.destroy()
 
 

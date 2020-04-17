@@ -23,8 +23,7 @@ from sys import stderr
 from time import sleep
 from typing import Iterable
 
-from palace import (reverb_preset_names, decode,
-                    Device, Context, Source, AuxiliaryEffectSlot, Effect)
+from palace import reverb_preset_names, decode, Device, Context, Source, Effect
 
 CHUNK_LEN: int = 12000
 QUEUE_SIZE: int = 4
@@ -49,11 +48,10 @@ def play(files: Iterable[str], device: str, reverb: str) -> None:
     """Load and play files on the given device."""
     with Device(device) as dev, Context(dev) as ctx:
         print('Opened', dev.name)
-        with Source() as src, AuxiliaryEffectSlot() as slot, Effect() as fx:
+        with Source() as src, Effect() as fx:
             print('Loading reverb preset', reverb)
             fx.reverb_preset = reverb
-            slot.effect = fx
-            src.auxiliary_send = slot, 0
+            src.effect_send = fx, 0
 
             for filename in files:
                 try:
