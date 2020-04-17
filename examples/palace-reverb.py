@@ -51,7 +51,7 @@ def play(files: Iterable[str], device: str, reverb: str) -> None:
         with Source() as src, Effect() as fx:
             print('Loading reverb preset', reverb)
             fx.reverb_preset = reverb
-            src.effect_send = fx, 0
+            src.sends[0].effect = fx
 
             for filename in files:
                 try:

@@ -113,7 +113,7 @@ from cython.view cimport array
 cimport alure   # noqa
 from util cimport (     # noqa
     REVERB_PRESETS, SAMPLE_TYPES, CHANNEL_CONFIGS, DISTANCE_MODELS,
-    reverb_presets, mkattrs, make_filter_params, from_vector3, to_vector3)
+    reverb_presets, mkattrs, make_filter, from_vector3, to_vector3)
 
 
 # Aliases
@@ -180,25 +180,44 @@ def sample_size(length: int, channel_config: str, sample_type: str) -> int:
 
     Raises
     ------
+    ValueError
+        If either channel_config or sample_type is invalid.
     RuntimeError
         If the byte size result too large.
     """
+    cdef alure.ChannelConfig alure_channel_config
+    cdef alure.SampleType alure_sample_type
     try:
-        return alure.frames_to_bytes(length,
-                                     CHANNEL_CONFIGS.at(channel_config),
-                                     SAMPLE_TYPES.at(sample_type))
-    except IndexError as e:
-        raise ValueError(str(e)) from None
+        alure_channel_config = CHANNEL_CONFIGS.at(channel_config)
+    except IndexError:
+        raise ValueError(f'invalid channel config: {channel_config}') from None
+    try:
+        alure_sample_type = SAMPLE_TYPES.at(sample_type)
+    except IndexError:
+        raise ValueError(f'invalid sample type: {sample_type}') from None
+    return alure.frames_to_bytes(
+        length, alure_channel_config, alure_sample_type)
 
 
 def sample_length(size: int, channel_config: str, sample_type: str) -> int:
-    """Return the number of frames stored in the given byte size."""
+    """Return the number of frames stored in the given byte size.
+
+    Raises
+    ------
+    ValueError
+        If either channel_config or sample_type is invalid.
+    """
+    cdef alure.ChannelConfig alure_channel_config
+    cdef alure.SampleType alure_sample_type
     try:
-        return alure.bytes_to_frames(size,
-                                     CHANNEL_CONFIGS.at(channel_config),
-                                     SAMPLE_TYPES.at(sample_type))
-    except IndexError as e:
-        raise ValueError(str(e)) from None
+        alure_channel_config = CHANNEL_CONFIGS.at(channel_config)
+    except IndexError:
+        raise ValueError(f'invalid channel config: {channel_config}') from None
+    try:
+        alure_sample_type = SAMPLE_TYPES.at(sample_type)
+    except IndexError:
+        raise ValueError(f'invalid sample type: {sample_type}') from None
+    return alure.bytes_to_frames(size, alure_channel_config, alure_sample_type)
 
 
 def query_extension(name: str) -> bool:
@@ -338,7 +357,7 @@ def decode(name: str, context: Optional[Context] = None) -> Decoder:
     decoder_factories : Simple object for storing decoder factories
     """
     def find_resource(name, subst):
-        if not name: raise RuntimeError('Failed to open file')
+        if not name: raise RuntimeError('failed to open file')
         try:
             if fileio_factory is None:
                 return open(name, 'rb')
@@ -462,16 +481,13 @@ cdef class Device:
             try:
                 self.impl = devmgr.open_playback(name)
             except RuntimeError:
-                message = f'Failed to open device: {name}'
+                message = f'failed to open device: {name}'
             else:
                 return
         raise RuntimeError(message)
 
-    def __enter__(self) -> Device:
-        return self
-
-    def __exit__(self, *exc) -> Optional[bool]:
-        self.close()
+    def __enter__(self) -> Device: return self
+    def __exit__(self, *exc) -> Optional[bool]: self.close()
 
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, Device): return NotImplemented
@@ -497,8 +513,7 @@ cdef class Device:
         if not isinstance(other, Device): return NotImplemented
         return self.impl >= (<Device> other).impl
 
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
+    def __bool__(self) -> bool: return <boolean> self.impl
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.name!r})'
@@ -714,8 +729,7 @@ cdef class Context:
         if not isinstance(other, Context): return NotImplemented
         return self.impl >= (<Context> other).impl
 
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
+    def __bool__(self) -> bool: return <boolean> self.impl
 
     def destroy(self) -> None:
         """Destroy the context.
@@ -762,9 +776,20 @@ cdef class Context:
         sample_types : Set of sample types
         channel_configs : Set of channel configurations
         """
+        cdef alure.ChannelConfig alure_channel_config
+        cdef alure.SampleType alure_sample_type
         try:
-            return self.impl.is_supported(CHANNEL_CONFIGS.at(channel_config),
-                                          SAMPLE_TYPES.at(sample_type))
+            alure_channel_config = CHANNEL_CONFIGS.at(channel_config)
+        except IndexError:
+            raise ValueError('invalid channel config: '
+                             + str(channel_config)) from None
+        try:
+            alure_sample_type = SAMPLE_TYPES.at(sample_type)
+        except IndexError:
+            raise ValueError(f'invalid sample type: {sample_type}') from None
+        try:
+            return self.impl.is_supported(alure_channel_config,
+                                          alure_sample_type)
         except IndexError as e:
             raise ValueError(str(e)) from None
 
@@ -837,13 +862,13 @@ cdef class Context:
         try:
             self.impl.set_distance_model(DISTANCE_MODELS.at(value))
         except IndexError:
-            raise ValueError(f'Invalid distance model: {value}') from None
+            raise ValueError(f'invalid distance model: {value}') from None
 
     def update(self) -> None:
         """Update the context and all sources belonging to this context."""
         self.impl.update()
         # source_stopped is called outside of alure::Context::update
-        # to allow application to destroy the source on this message.
+        # to allow applications to destroy the source on this message.
         handler: MessageHandler = self.message_handler
         while handler.stopped_sources:
             handler.source_stopped(handler.stopped_sources.pop())
@@ -852,7 +877,7 @@ cdef class Context:
 cdef class Listener:
     """Listener instance of the given context.
 
-    It is recommended that application access the listener via
+    It is recommended that applications access the listener via
     `Context.listener`, which avoid the overhead caused by the
     creation of the wrapper object.
 
@@ -873,8 +898,7 @@ cdef class Listener:
         if context is None: context = current_context()
         self.impl = (<Context> context).impl.get_listener()
 
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
+    def __bool__(self) -> bool: return <boolean> self.impl
 
     @setter
     def gain(self, value: float) -> None:
@@ -964,11 +988,8 @@ cdef class Buffer:
             self.impl = self.context.impl.create_buffer_from(
                 self.name, decoder.pimpl)
 
-    def __enter__(self) -> Buffer:
-        return self
-
-    def __exit__(self, *exc) -> Optional[bool]:
-        self.destroy()
+    def __enter__(self) -> Buffer: return self
+    def __exit__(self, *exc) -> Optional[bool]: self.destroy()
 
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, Buffer): return NotImplemented
@@ -994,8 +1015,7 @@ cdef class Buffer:
         if not isinstance(other, Buffer): return NotImplemented
         return self.impl >= (<Buffer> other).impl
 
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
+    def __bool__(self) -> bool: return <boolean> self.impl
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.name!r})'
@@ -1162,11 +1182,8 @@ cdef class Source:
         if context is None: context = current_context()
         self.impl = (<Context> context).impl.create_source()
 
-    def __enter__(self) -> Source:
-        return self
-
-    def __exit__(self, *exc) -> Optional[bool]:
-        self.destroy()
+    def __enter__(self) -> Source: return self
+    def __exit__(self, *exc) -> Optional[bool]: self.destroy()
 
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, Source): return NotImplemented
@@ -1192,8 +1209,7 @@ cdef class Source:
         if not isinstance(other, Source): return NotImplemented
         return self.impl >= (<Source> other).impl
 
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
+    def __bool__(self) -> bool: return <boolean> self.impl
 
     # TODO: play from future buffer
 
@@ -1526,8 +1542,8 @@ cdef class Source:
         ----------
         gain : float
             Linear gain applying to all frequencies, default to 1.
-        gainhf : float
-            Linear gainhf applying extra attenuation to high frequencies
+        gain_hf : float
+            Linear gain applying extra attenuation to high frequencies
             creating a low-pass effect, default to 1.  It has no effect
             without the `ALC_EXT_EFX` extension.
 
@@ -1541,8 +1557,8 @@ cdef class Source:
 
     @outer_cone_gains.setter
     def outer_cone_gains(self, value: Tuple[float, float]) -> None:
-        gain, gainhf = value
-        self.impl.set_outer_cone_gains(gain, gainhf)
+        gain, gain_hf = value
+        self.impl.set_outer_cone_gains(gain, gain_hf)
 
     @property
     def rolloff_factors(self) -> Tuple[float, float]:
@@ -1706,33 +1722,38 @@ cdef class Source:
         directhf, send, sendhf = value
         self.impl.set_gain_auto(directhf, send, sendhf)
 
-    @setter
-    def direct_filter(self, value: Vector3) -> None:
-        """The filter properties on the direct path signal."""
-        self.impl.set_direct_filter(make_filter_params(value))
+    @getter
+    def sends(self) -> AuxiliarySends:
+        """Collection of send path signals.
 
-    @setter
-    def send_filter(self, value: Tuple[int, Vector3]) -> None:
-        """Filter properties on the given send path signal.
+        Send paths can be retrieved using a nonnegative index, which has
+        no effect if not less than the device's `max_auxiliary_sends`.
 
-        The effect on the send path remains in place.
+        Each send path has two write-only descriptors,
+        `effect` and `filter`.
+
+        Examples
+        --------
+        >>> source.sends[0].effect = effect
+        >>> source.sends[1].filter = 1, 0.6, 0.9
         """
-        self.impl.set_send_filter(value[0], make_filter_params(value[1]))
+        return AuxiliarySends(self)
 
     @setter
-    def effect_send(self, value: Tuple[Effect, int]) -> None:
-        """Effect on the given send path signal.
+    def filter(self, value: Vector3) -> None:
+        """Linear gains on the direct path signal, clamped to [0, 1].
 
-        The filter properties on the send path remain as they were.
+        Parameters
+        ----------
+        gain : float
+            Linear gain applying to all frequencies, default to 1.
+        gain_hf : float
+            Linear gain applying to high frequencies, default to 1.
+        gain_lf : float
+            Linear gain applying to low frequencies, default to 1.
         """
-        self.impl.set_auxiliary_send((<Effect> value[0]).slot, value[1])
-
-    @setter
-    def effect_send_filter(
-        self, value: Tuple[Effect, int, Vector3]) -> None:
-        """Effect slot on the given send path, using filter parameters."""
-        self.impl.set_auxiliary_send_filter(
-            (<Effect> value[0]).slot, value[1], make_filter_params(value[2]))
+        gain, gain_hf, gain_lf = value
+        self.impl.set_direct_filter(make_filter(gain, gain_hf, gain_lf))
 
     def destroy(self) -> None:
         """Destroy the source, stop playback and release resources."""
@@ -1765,11 +1786,8 @@ cdef class SourceGroup:
         if context is None: context = current_context()
         self.impl = (<Context> context).impl.create_source_group()
 
-    def __enter__(self) -> SourceGroup:
-        return self
-
-    def __exit__(self, *exc) -> Optional[bool]:
-        self.destroy()
+    def __enter__(self) -> SourceGroup: return self
+    def __exit__(self, *exc) -> Optional[bool]: self.destroy()
 
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, SourceGroup):
@@ -1796,8 +1814,7 @@ cdef class SourceGroup:
         if not isinstance(other, SourceGroup): return NotImplemented
         return self.impl >= (<SourceGroup> other).impl
 
-    def __bool__(self) -> bool:
-        return <boolean> self.impl
+    def __bool__(self) -> bool: return <boolean> self.impl
 
     @property
     def parent_group(self) -> SourceGroup:
@@ -1916,11 +1933,8 @@ cdef class Effect:
         self.slot = alure_context.create_auxiliary_effect_slot()
         self.impl = alure_context.create_effect()
 
-    def __enter__(self) -> Effect:
-        return self
-
-    def __exit__(self, *exc) -> Optional[bool]:
-        self.destroy()
+    def __enter__(self) -> Effect: return self
+    def __exit__(self, *exc) -> Optional[bool]: self.destroy()
 
     def __lt__(self, other: Any) -> bool:
         if not isinstance(other, Effect): return NotImplemented
@@ -1999,7 +2013,7 @@ cdef class Effect:
         try:
             self.impl.set_reverb_properties(REVERB_PRESETS.at(value))
         except IndexError:
-            raise ValueError(f'Invalid preset name: {value}') from None
+            raise ValueError(f'invalid preset name: {value}') from None
         else:
             self.slot.apply_effect(self.impl)
 
@@ -2072,6 +2086,61 @@ cdef class Effect:
         """
         self.slot.destroy()
         self.impl.destroy()
+
+
+cdef class SendPath:
+    """Container of write-only descriptors of a send path signal."""
+    cdef alure.Source source
+    cdef unsigned send
+
+    def __init__(self, source: Source, send: int) -> None:
+        self.source = source.impl
+        self.send = send
+
+    @setter
+    def filter(self, value: Vector3) -> None:
+        """Linear gains on the send path signal, clamped to [0, 1].
+
+        Parameters
+        ----------
+        gain : float
+            Linear gain applying to all frequencies, default to 1.
+        gain_hf : float
+            Linear gain applying to high frequencies, default to 1.
+        gain_lf : float
+            Linear gain applying to low frequencies, default to 1.
+        """
+        gain, gain_hf, gain_lf = value
+        self.source.set_send_filter(
+            self.send, make_filter(gain, gain_hf, gain_lf))
+
+    @setter
+    def effect(self, value: Effect) -> None:
+        """Effect applied to the send path signal."""
+        self.source.set_auxiliary_send(value.slot, self.send)
+
+
+cdef class AuxiliarySends:
+    """Collection of SendPath.
+
+    It is recommended that applications access instances of
+    this class via `Source.sends`.  From there, one can get a `SendPath`
+    by indexing the object with a nonnegative integer less than
+    the device's `max_auxiliary_sends`.
+    """
+    cdef Source source
+
+    def __init__(self, source: Source) -> None:
+        self.source = source
+
+    def __getitem__(self, key: int) -> SendPath:
+        if not isinstance(key, int):
+            raise TypeError(
+                f'integer key expected, got {key.__class__.__name__}')
+        try:
+            return SendPath(self.source, key)
+        except OverflowError:
+            raise IndexError(f'index out of range: {key}') from None
 
 
 cdef class Decoder:
@@ -2183,7 +2252,7 @@ cdef class Decoder:
         cdef void* ptr = PyMem_RawMalloc(alure.frames_to_bytes(
             count, self.pimpl.get()[0].get_channel_config(),
             self.pimpl.get()[0].get_sample_type()))
-        if ptr == NULL: raise RuntimeError('Unable to allocate memory')
+        if ptr == NULL: raise RuntimeError('unable to allocate memory')
         count = self.pimpl.get()[0].read(ptr, count)
         cdef string samples = string(<const char*> ptr, alure.frames_to_bytes(
             count, self.pimpl.get()[0].get_channel_config(),
@@ -2229,7 +2298,7 @@ cdef class _BaseDecoder(Decoder):
         self.pimpl = shared_ptr[alure.Decoder](new CppDecoder(self))
 
     def __init__(self, *args, **kwargs) -> None:
-        raise TypeError("Can't instantiate class _BaseDecoder")
+        raise TypeError("cannot instantiate class _BaseDecoder")
 
 
 class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
