@@ -117,9 +117,6 @@ Environmental Effects
 
    Names of predefined reverb effect presets in lexicographical order.
 
-.. autoclass:: AuxiliaryEffectSlot
-   :members:
-
 .. autoclass:: Effect
    :members:
 

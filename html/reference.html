@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Reference &#8212; palace 0.1.2 documentation</title>
+    <title>Reference &#8212; palace 0.1.3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -462,7 +462,7 @@ also be adjusted.</p>
 <dt id="palace.Listener">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Listener</code><a class="headerlink" href="#palace.Listener" title="Permalink to this definition">¶</a></dt>
 <dd><p>Listener instance of the given context.</p>
-<p>It is recommended that application access the listener via
+<p>It is recommended that applications access the listener via
 <cite>Context.listener</cite>, which avoid the overhead caused by the
 creation of the wrapper object.</p>
 <dl class="field-list simple">
@@ -818,19 +818,6 @@ a nominal -0.05 dB per meter, with higher values simulating
 foggy air and lower values simulating dryer air; default to 0.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="palace.Source.auxiliary_send">
-<em class="property">property </em><code class="sig-name descname">auxiliary_send</code><a class="headerlink" href="#palace.Source.auxiliary_send" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect the effect slot to the given send path.</p>
-<p>Any filter properties on the send path remain as they were.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.Source.auxiliary_send_filter">
-<em class="property">property </em><code class="sig-name descname">auxiliary_send_filter</code><a class="headerlink" href="#palace.Source.auxiliary_send_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect the effect slot to the given send path, using the filter.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt id="palace.Source.cone_angles">
 <code class="sig-name descname">cone_angles</code><a class="headerlink" href="#palace.Source.cone_angles" title="Permalink to this definition">¶</a></dt>
@@ -859,12 +846,6 @@ the source is in the inner cone.</p>
 <dt id="palace.Source.destroy">
 <code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Destroy the source, stop playback and release resources.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.Source.direct_filter">
-<em class="property">property </em><code class="sig-name descname">direct_filter</code><a class="headerlink" href="#palace.Source.direct_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>The filter properties on the direct path signal.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -924,6 +905,21 @@ before the future buffer becomes ready.</p>
 <p>Fading is updated during calls to <cite>Context.update</cite>,
 which should be called regularly (30 to 50 times per second)
 for the fading to be smooth.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.filter">
+<em class="property">property </em><code class="sig-name descname">filter</code><a class="headerlink" href="#palace.Source.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear gains on the direct path signal, clamped to [0, 1].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
+<li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying to high frequencies, default to 1.</p></li>
+<li><p><strong>gain_lf</strong> (<em>float</em>) – Linear gain applying to low frequencies, default to 1.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1048,7 +1044,7 @@ comes from, this also affects the facing direction.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
-<li><p><strong>gainhf</strong> (<em>float</em>) – Linear gainhf applying extra attenuation to high frequencies
+<li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying extra attenuation to high frequencies
 creating a low-pass effect, default to 1.  It has no effect
 without the <cite>ALC_EXT_EFX</cite> extension.</p></li>
 </ul>
@@ -1171,10 +1167,18 @@ time and distance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="palace.Source.send_filter">
-<em class="property">property </em><code class="sig-name descname">send_filter</code><a class="headerlink" href="#palace.Source.send_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>The filter properties on the given send path signal.</p>
-<p>Any filter properties on the send path remain as they were.</p>
+<dt id="palace.Source.sends">
+<em class="property">property </em><code class="sig-name descname">sends</code><a class="headerlink" href="#palace.Source.sends" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection of send path signals.</p>
+<p>Send paths can be retrieved using a nonnegative index, which has
+no effect if not less than the device’s <cite>max_auxiliary_sends</cite>.</p>
+<p>Each send path has two write-only descriptors,
+<cite>effect</cite> and <cite>filter</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1311,71 +1315,11 @@ By default <cite>current_context()</cite> is used.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="palace.AuxiliaryEffectSlot">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">AuxiliaryEffectSlot</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>An effect processor.</p>
-<p>It takes the output mix of zero or more sources,
-applies DSP for the desired effect (as configured
-by a given <cite>Effect</cite> object), then adds to the output mix.</p>
-<p>This can be used as a context manager that calls <cite>destroy</cite>
-upon completion of the block, even if an error occurs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context to create the auxiliary effect slot.
-By default <cite>current_context()</cite> is used.</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="palace.AuxiliaryEffectSlot.destroy">
-<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.AuxiliaryEffectSlot.destroy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Destroy the effect slot, returning it to the system.</p>
-<p>If the effect slot is currently set on a source send,
-it will be removed first.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.AuxiliaryEffectSlot.effect">
-<em class="property">property </em><code class="sig-name descname">effect</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.effect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Effect to be held by the slot.</p>
-<p>The given effect object may be altered or destroyed without
-affecting the effect slot.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.AuxiliaryEffectSlot.gain">
-<em class="property">property </em><code class="sig-name descname">gain</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.gain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gain of the effect slot.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.AuxiliaryEffectSlot.send_auto">
-<em class="property">property </em><code class="sig-name descname">send_auto</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.send_auto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether to automatically adjust send slot gains.</p>
-<p>This only has effect on reverb effects.  Default is <cite>True</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.AuxiliaryEffectSlot.source_sends">
-<em class="property">property </em><code class="sig-name descname">source_sends</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.source_sends" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of <a href="#id1"><span class="problematic" id="id2">`</span></a>Source`s using this slot and their pairing sends.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="palace.AuxiliaryEffectSlot.use_count">
-<em class="property">property </em><code class="sig-name descname">use_count</code><a class="headerlink" href="#palace.AuxiliaryEffectSlot.use_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of source sends the effect slot is used by.</p>
-<p>This is equivalent to calling <cite>len(self.source_sends)</cite>.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="palace.Effect">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Effect</code><a class="headerlink" href="#palace.Effect" title="Permalink to this definition">¶</a></dt>
-<dd><p>A collection of settings or parameters.</p>
+<dd><p>An effect processor.</p>
+<p>It takes the output mix of zero or more sources,
+applies DSP for the desired effect, then adds to the output mix.</p>
 <p>This can be used as a context manager that calls <cite>destroy</cite>
 upon completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
@@ -1401,7 +1345,15 @@ By default <cite>current_context()</cite> is used.</p>
 <dl class="py method">
 <dt id="palace.Effect.destroy">
 <code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Effect.destroy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Destroy the effect.</p>
+<dd><p>Destroy the effect slot, returning it to the system.</p>
+<p>If the effect slot is currently set on a source send,
+it will be removed first.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Effect.gain">
+<em class="property">property </em><code class="sig-name descname">gain</code><a class="headerlink" href="#palace.Effect.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gain of the effect slot.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1428,6 +1380,26 @@ if EAXReverb effect is not supported.</p>
 </dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Effect.send_auto">
+<em class="property">property </em><code class="sig-name descname">send_auto</code><a class="headerlink" href="#palace.Effect.send_auto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to automatically adjust send slot gains.</p>
+<p>This only has effect on reverb effects.  Default is <cite>True</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Effect.source_sends">
+<em class="property">property </em><code class="sig-name descname">source_sends</code><a class="headerlink" href="#palace.Effect.source_sends" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of sources using this effect and their pairing sends.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Effect.use_count">
+<em class="property">property </em><code class="sig-name descname">use_count</code><a class="headerlink" href="#palace.Effect.use_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of source sends the effect slot is used by.</p>
+<p>This is equivalent to calling <cite>len(self.source_sends)</cite>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1482,7 +1454,10 @@ lexicographical order, then fallback to the internal ones.</p>
 <dd><p>Return the size of the given number of sample frames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>RuntimeError</strong> – If the byte size result too large.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If either channel_config or sample_type is invalid.</p></li>
+<li><p><strong>RuntimeError</strong> – If the byte size result too large.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1491,6 +1466,11 @@ lexicographical order, then fallback to the internal ones.</p>
 <dt id="palace.sample_length">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_length</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">channel_config</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sample_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#palace.sample_length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of frames stored in the given byte size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If either channel_config or sample_type is invalid.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -1711,7 +1691,7 @@ the end of the audio has been reached.</p>
 
 <dl class="py class">
 <dt id="palace.FileIO">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FileIO</code><a class="headerlink" href="#palace.FileIO" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FileIO</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#palace.FileIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>File I/O protocol.</p>
 <p>This static duck type defines methods required to be used by
 palace decoders.  Despite its name, a <cite>FileIO</cite> is not necessarily
