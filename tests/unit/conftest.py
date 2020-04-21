@@ -1,5 +1,5 @@
-# Audio source pytest module
-# Copyright (C) 2020  Ngô Ngọc Đức Huy
+# test environment
+# Copyright (C) 2020  Nguyễn Gia Phong
 #
 # This file is part of palace.
 #
@@ -16,8 +16,23 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
-from os.path import abspath, dirname, join
+"""This module provide default objects of palace classes as fixtures
+for convenient testing.
+"""
+
+from pytest import fixture
+from palace import Device, Context
 
 
-WAV = join(abspath(dirname(__file__)), 'data',
-           'Dying-Robot-SoundBible.com-1721415199.wav')
+@fixture(scope='session')
+def device():
+    """Provide the default device."""
+    with Device() as dev: yield dev
+
+
+@fixture(scope='session')
+def context(device):
+    """Provide a context creared from the default device
+    (default context).
+    """
+    with Context(device) as ctx: yield ctx

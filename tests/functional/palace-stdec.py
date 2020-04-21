@@ -1,0 +1,1 @@
+../../examples/palace-stdec.py

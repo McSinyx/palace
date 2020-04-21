@@ -1,0 +1,1 @@
+../../examples/palace-latency.py
