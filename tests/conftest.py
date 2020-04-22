@@ -1,5 +1,6 @@
 # Audio source pytest module
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
+# Copyright (C) 2020  Nguyễn Gia Phong
 #
 # This file is part of palace.
 #
@@ -18,6 +19,36 @@
 
 from os.path import abspath, dirname, join
 
+from pytest import fixture
 
-WAV = join(abspath(dirname(__file__)), 'data',
-           'Dying-Robot-SoundBible.com-1721415199.wav')
+DATA_DIR = abspath(join(dirname(__file__), 'data'))
+
+
+@fixture
+def aiff():
+    """Provide a sample AIFF file."""
+    return join(DATA_DIR, '24741__tim-kahn__b23-c1-raw.aiff')
+
+
+@fixture
+def flac():
+    """Provide a sample FLAC file."""
+    return join(DATA_DIR, '261590__kwahmah-02__little-glitch.flac')
+
+
+@fixture
+def mp3():
+    """Provide a sample MP3 file."""
+    return join(DATA_DIR, '353684__tec-studio__drip2.mp3')
+
+
+@fixture
+def ogg():
+    """Provide a sample Ogg Vorbis file."""
+    return join(DATA_DIR, '164957__zonkmachine__white-noise.ogg')
+
+
+@fixture
+def wav():
+    """Provide a sample WAVE file."""
+    return join(DATA_DIR, '99642__jobro__deconvoluted-20hz-to-20khz.wav')

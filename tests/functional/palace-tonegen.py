@@ -1,1 +1,0 @@
-../../examples/palace-tonegen.py

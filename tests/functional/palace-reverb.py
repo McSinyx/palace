@@ -1,1 +1,0 @@
-../../examples/palace-reverb.py

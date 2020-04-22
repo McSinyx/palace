@@ -1,1 +1,0 @@
-../../examples/palace-info.py

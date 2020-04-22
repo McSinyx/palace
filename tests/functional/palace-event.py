@@ -1,1 +1,0 @@
-../../examples/palace-event.py
