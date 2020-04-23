@@ -18,6 +18,7 @@
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 from os.path import abspath, dirname, join
+from platform import system
 from random import choices
 from subprocess import PIPE, run, CalledProcessError
 from sys import executable
@@ -40,12 +41,17 @@ REVERB_PRESETS = choices(reverb_preset_names, k=5)
 WAVEFORMS = ['sine', 'square', 'sawtooth',
              'triangle', 'impulse', 'white-noise']
 
+timeout = mark.timeout(timeout=5, method='signal')
+osxfail = mark.xfail(system()=='Darwin', reason='Travis CI for macOS')
+
 
 def capture(*argv):
     """Return the captured standard output of the given Python script."""
     return run([executable, *argv], stdout=PIPE).stdout.decode()
 
 
+@osxfail
+@timeout
 def test_event(aiff, flac, mp3, ogg, wav):
     """Test the event handling example."""
     event = capture(EVENT, aiff, flac, mp3, ogg, wav)
@@ -57,6 +63,8 @@ def test_event(aiff, flac, mp3, ogg, wav):
     assert f'Playing {wav}' in event
 
 
+@osxfail
+@timeout
 def test_hrtf(ogg):
     """Test the HRTF example."""
     hrtf = capture(HRTF, ogg)
@@ -71,6 +79,8 @@ def test_info():
         run([executable, INFO, MADEUP_DEVICE], check=True)
 
 
+@osxfail
+@timeout
 def test_latency(mp3):
     """Test the latency example."""
     latency = capture(LATENCY, mp3)
@@ -79,6 +89,8 @@ def test_latency(mp3):
     assert 'Offset' in latency
 
 
+@osxfail
+@timeout
 @mark.parametrize('preset', REVERB_PRESETS)
 def test_reverb(preset, flac):
     """Test the reverb example."""
@@ -88,6 +100,8 @@ def test_reverb(preset, flac):
     assert f'Loading reverb preset {preset}' in reverb
 
 
+@osxfail
+@timeout
 def test_stdec(aiff):
     """Test the stdec example."""
     stdec = capture(STDEC, aiff)
@@ -95,6 +109,8 @@ def test_stdec(aiff):
     assert f'Playing {aiff}' in stdec
 
 
+@osxfail
+@timeout
 @mark.parametrize('waveform', WAVEFORMS)
 def test_tonegen(waveform):
     """Test the tonegen example."""

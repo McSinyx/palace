@@ -26,7 +26,7 @@ from palace import Context, Device, Source, decode
 
 CHUNK_LEN: int = 12000
 QUEUE_SIZE: int = 4
-PERIOD: float = 0.01
+PERIOD: float = 0.025
 
 
 def play(files: Iterable[str], device: str) -> None:
