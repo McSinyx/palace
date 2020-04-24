@@ -1,4 +1,4 @@
-# Functional pytest module
+# Functional tests using examples
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
 # Copyright (C) 2020  Nguyễn Gia Phong
 #
@@ -109,8 +109,6 @@ def test_stdec(aiff):
     assert f'Playing {aiff}' in stdec
 
 
-@osxfail
-@timeout
 @mark.parametrize('waveform', WAVEFORMS)
 def test_tonegen(waveform):
     """Test the tonegen example."""

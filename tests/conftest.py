@@ -1,4 +1,4 @@
-# Audio source pytest module
+# Common test fixtures
 # Copyright (C) 2020  Ngô Ngọc Đức Huy
 # Copyright (C) 2020  Nguyễn Gia Phong
 #

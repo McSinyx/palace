@@ -1,4 +1,4 @@
-# test environment
+# Test fixtures for unit tests
 # Copyright (C) 2020  Nguyễn Gia Phong
 #
 # This file is part of palace.

@@ -1,4 +1,4 @@
-# single-precision floating-point math
+# Single-precision floating-point math
 # Copyright (C) 2020  Nguyễn Gia Phong
 #
 # This file is part of palace.
