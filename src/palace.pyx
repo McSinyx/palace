@@ -1211,13 +1211,8 @@ cdef class Source:
 
     def __bool__(self) -> bool: return <boolean> self.impl
 
-    # TODO: play from future buffer
-
     def stop(self) -> None:
-        """Stop playback, releasing the buffer or decoder reference.
-
-        Any pending playback from a future buffer is canceled.
-        """
+        """Stop playback, releasing the buffer or decoder reference."""
         self.impl.stop()
 
     def fade_out_to_stop(self, gain: float, ms: int) -> None:
@@ -1231,12 +1226,6 @@ cdef class Source:
         perceptually consistant over the given duration.  It will take
         just as much time to go from -6 dB to -12 dB as it will to go
         from -40 dB to -46 dB, for example.
-
-        Pending playback from a future buffer is not immediately
-        canceled, but the fade timer starts with this call.  If the
-        future buffer then becomes ready, it will start mid-fade.
-        Pending playback will be canceled if the fade out completes
-        before the future buffer becomes ready.
 
         Fading is updated during calls to `Context.update`,
         which should be called regularly (30 to 50 times per second)
@@ -1253,11 +1242,6 @@ cdef class Source:
         self.impl.resume()
 
     @getter
-    def pending(self) -> bool:
-        """Whether the source is waiting to play a future buffer."""
-        return self.impl.is_pending()
-
-    @getter
     def playing(self) -> bool:
         """Whether the source is currently playing."""
         return self.impl.is_playing()
@@ -1266,13 +1250,6 @@ cdef class Source:
     def paused(self) -> bool:
         """Whether the source is currently paused."""
         return self.impl.is_paused()
-
-    @getter
-    def playing_or_pending(self) -> bool:
-        """Whether the source is currently playing
-        or waiting to play in a future buffer.
-        """
-        return self.impl.is_playing_or_pending()
 
     @property
     def group(self) -> Optional[SourceGroup]:

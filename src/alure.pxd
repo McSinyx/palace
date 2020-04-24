@@ -25,7 +25,7 @@ from libcpp.string cimport string
 from libcpp.utility cimport pair
 from libcpp.vector cimport vector
 
-from std cimport duration, nanoseconds, milliseconds, shared_future, streambuf
+from std cimport duration, nanoseconds, milliseconds, streambuf
 
 
 # OpenAL and Alure auxiliary declarations
@@ -129,7 +129,6 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
     # String: string
     # StringView: string
     # SharedPtr: shared_ptr
-    # SharedFuture: shared_future
 
     # Structs:
     cdef cppclass AttributePair:
@@ -209,48 +208,28 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
     cdef cppclass DeviceManager:
         @staticmethod
         DeviceManager get_instance 'getInstance'() except +
-
         DeviceManager()     # nil
-        DeviceManager(const DeviceManager&)
-        DeviceManager(DeviceManager&&)
-
         boolean operator bool()
 
         boolean query_extension 'queryExtension'(const string&) except +
-
         vector[string] enumerate(DeviceEnumeration) except +
         string default_device_name 'defaultDeviceName'(DefaultDeviceType) except +
-
-        Device open_playback 'openPlayback'() except +
         Device open_playback 'openPlayback'(const string&) except +
 
     cdef cppclass Device:
-        ctypedef DeviceImpl* handle_type
-
         Device()    # nil
-        Device(DeviceImpl*)
-        Device(const Device&)
-        Device(Device&&)
-
-        Device& operator=(const Device&)
-        Device& operator=(Device&&)
-
         boolean operator==(const Device&)
         boolean operator!=(const Device&)
         boolean operator<=(const Device&)
         boolean operator>=(const Device&)
         boolean operator<(const Device&)
         boolean operator>(const Device&)
-
         boolean operator bool()
-
-        handle_type get_handle 'getHandle'()
 
         string get_name 'getName'() except +
         string get_name 'getName'(PlaybackName) except +
 
         boolean query_extension 'queryExtension'(const string&) except +
-
         Version get_alc_version 'getALCVersion'() except +
         Version get_efx_version 'getEFXVersion'() except +
 
@@ -274,26 +253,14 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         void close() except +
 
     cdef cppclass Context:
-        ctypedef ContextImpl* handle_type
-
         Context()   # nil
-        Context(ContextImpl*)
-        Context(const Context&)
-        Context(Context&&)
-
-        Context& operator=(const Context&)
-        Context& operator=(Context&&)
-
         boolean operator==(const Context&)
         boolean operator!=(const Context&)
         boolean operator<=(const Context&)
         boolean operator>=(const Context&)
         boolean operator<(const Context&)
         boolean operator>(const Context&)
-
         boolean operator bool()
-
-        handle_type get_handle 'getHandle'()
 
         @staticmethod
         void make_current 'MakeCurrent'(Context) except +
@@ -328,13 +295,8 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         int get_default_resampler_index 'getDefaultResamplerIndex'() except +
 
         void precache_buffers_async 'precacheBuffersAsync'(vector[StringView]) except +
-
         Buffer create_buffer_from 'createBufferFrom'(string, shared_ptr[Decoder]) except +
-        shared_future[Buffer] create_buffer_async_from 'createBufferAsyncFrom'(string, shared_ptr[Decoder]) except +
-
         Buffer find_buffer 'findBuffer'(string) except +
-        shared_future[Buffer] find_buffer_async 'findBufferAsync'(string) except +
-
         void remove_buffer 'removeBuffer'(string) except +
         void remove_buffer 'removeBuffer'(Buffer) except +
 
@@ -350,62 +312,24 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         void update() except +
 
     cdef cppclass Listener:
-        ctypedef ListenerImpl* handle_type
-
         Listener()  # nil
-        Listener(ListenerImpl*)
-        Listener(const Listener&)
-        Listener(Listener&&)
-
-        Listener& operator=(const Listener&)
-        Listener& operator=(Listener&&)
-
-        boolean operator==(const Listener&)
-        boolean operator!=(const Listener&)
-        boolean operator<=(const Listener&)
-        boolean operator>=(const Listener&)
-        boolean operator<(const Listener&)
-        boolean operator>(const Listener&)
-
         boolean operator bool()
 
-        handle_type get_handle 'getHandle'()
-
         float set_gain 'setGain'(float) except +
-        float set_3d_parameters 'set3DParameters'(const Vector3&, const Vector3&, const Vector3&) except +
         void set_position 'setPosition'(const Vector3 &) except +
-        void set_position 'setPosition'(const float*) except +
-
         void set_velocity 'setVelocity'(const Vector3&) except +
-        void set_velocity 'setVelocity'(const float*) except +
-
         void set_orientation 'setOrientation'(const pair[Vector3, Vector3]&) except +
-        void set_orientation 'setOrientation'(const float*, const float*) except +
-        void set_orientation 'setOrientation'(const float*) except +
-
         void set_meters_per_unit 'setMetersPerUnit'(float) except +
 
     cdef cppclass Buffer:
-        ctypedef BufferImpl* handle_type
-
         Buffer()    # nil
-        Buffer(BufferImpl*)
-        Buffer(const Buffer&)
-        Buffer(Buffer&&)
-
-        Buffer& operator=(const Buffer&)
-        Buffer& operator=(Buffer&&)
-
         boolean operator==(const Buffer&)
         boolean operator!=(const Buffer&)
         boolean operator<=(const Buffer&)
         boolean operator>=(const Buffer&)
         boolean operator<(const Buffer&)
         boolean operator>(const Buffer&)
-
         boolean operator bool()
-
-        handle_type get_handle 'getHandle'()
 
         unsigned get_length 'getLength'() except +
         unsigned get_frequency 'getFrequency'() except +
@@ -414,45 +338,29 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         unsigned get_size 'getSize'() except +
         size_t get_source_count 'getSourceCount'() except +
         vector[Source] get_sources 'getSources'() except +
-        # name is implemented as a read-only attribute in Cython
         pair[unsigned, unsigned] get_loop_points 'getLoopPoints'() except +
         void set_loop_points 'setLoopPoints'(unsigned, unsigned) except +
 
     cdef cppclass Source:
-        ctypedef SourceImpl* handle_type
-
         Source()    # nil
-        Source(SourceImpl*)
-        Source(const Source&)
-        Source(Source&&)
-
-        Source& operator=(const Source&)
-        Source& operator=(Source&&)
-
         boolean operator==(const Source&)
         boolean operator!=(const Source&)
         boolean operator<=(const Source&)
         boolean operator>=(const Source&)
         boolean operator<(const Source&)
         boolean operator>(const Source&)
-
         boolean operator bool()
-
-        handle_type get_handle 'getHandle'()
 
         void play(Buffer) except +
         void play(shared_ptr[Decoder], int, int) except +
-        void play(shared_future[Buffer]) except +
 
         void stop() except +
         void fade_out_to_stop 'fadeOutToStop'(float, milliseconds) except +
         void pause() except +
         void resume() except +
 
-        boolean is_pending 'isPending'() except +
         boolean is_playing 'isPlaying'() except +
         boolean is_paused 'isPaused'() except +
-        boolean is_playing_or_pending 'isPlayingOrPending'() except +
 
         void set_group 'setGroup'(SourceGroup) except +
         SourceGroup get_group 'getGroup'() except +
@@ -476,50 +384,30 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         float get_gain 'getGain'() except +
         void set_gain_range 'setGainRange'(float, float) except +
         pair[float, float] get_gain_range 'getGainRange'() except +
-        float get_min_gain 'getMinGain'() except +
-        float get_max_gain 'getMaxGain'() except +
 
         void set_distance_range 'setDistanceRange'(float, float) except +
         pair[float, float] get_distance_range 'getDistanceRange'() except +
-        float get_reference_distance 'getReferenceDistance'() except +
-        float get_max_distance 'getMaxDistance'() except +
-
-        void set_3d_parameters 'set3DParameters'(const Vector3&, const Vector3&, const Vector3&) except +
-        void set_3d_parameters 'set3DParameters'(const Vector3&, const Vector3&, const pair[Vector3, Vector3]&) except +
 
         void set_position 'setPosition'(const Vector3&) except +
-        void set_position 'setPosition'(const float*) except +
         Vector3 get_position 'getPosition'() except +
 
         void set_velocity 'setVelocity'(const Vector3&) except +
-        void set_velocity 'setVelocity'(const float*) except +
         Vector3 get_velocity 'getVelocity'() except +
 
         void set_direction 'setDirection'(const Vector3&) except +
-        void set_direction 'setDirection'(const float*) except +
         Vector3 get_direction 'getDirection'() except +
 
         void set_orientation 'setOrientation'(const pair[Vector3, Vector3]&) except +
-        void set_orientation 'setOrientation'(const float*, const float*) except +
-        void set_orientation 'setOrientation'(const float*) except +
         pair[Vector3, Vector3] get_orientation 'getOrientation'() except +
 
         void set_cone_angles 'setConeAngles'(float, float) except +
         pair[float, float] get_cone_angles 'getConeAngles'() except +
-        float get_inner_cone_angle 'getInnerConeAngle'() except +
-        float get_outer_cone_angle 'getOuterConeAngle'() except +
 
-        void set_outer_cone_gains 'setOuterConeGains'(float) except +
         void set_outer_cone_gains 'setOuterConeGains'(float, float) except +
         pair[float, float] get_outer_cone_gains 'getOuterConeGains'() except +
-        float get_outer_cone_gain 'getOuterConeGain'() except +
-        float get_outer_cone_gainhf 'getOuterConeGainHF'() except +
 
-        void set_rolloff_factors 'setRolloffFactors'(float) except +
         void set_rolloff_factors 'setRolloffFactors'(float, float) except +
         pair[float, float] get_rolloff_factors 'getRolloffFactors'() except +
-        float get_rolloff_factor 'getRolloffFactor'() except +
-        float get_room_rolloff_factor 'getRoomRolloffFactor'() except +
 
         void set_doppler_factor 'setDopplerFactor'(float) except +
         float get_doppler_factor 'getDopplerFactor'() except +
@@ -556,26 +444,15 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         void destroy() except +
 
     cdef cppclass SourceGroup:
-        ctypedef SourceImpl* handle_type
-
         SourceGroup()   # nil
-        SourceGroup(SourceGroupImpl*)
-        SourceGroup(const SourceGroup&)
-        SourceGroup(SourceGroup&&)
-
-        SourceGroup& operator=(const SourceGroup&)
-        SourceGroup& operator=(SourceGroup&&)
-
         boolean operator==(const SourceGroup&)
         boolean operator!=(const SourceGroup&)
         boolean operator<=(const SourceGroup&)
         boolean operator>=(const SourceGroup&)
         boolean operator<(const SourceGroup&)
         boolean operator>(const SourceGroup&)
-
         boolean operator bool()
 
-        handle_type get_handle 'getHandle'()
         void set_parent_group 'setParentGroup'(SourceGroup) except +
         SourceGroup get_parent_group 'getParentGroup'() except +
 
@@ -595,26 +472,14 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         void destroy() except +
 
     cdef cppclass AuxiliaryEffectSlot:
-        ctypedef AuxiliaryEffectSlotImpl* handle_type
-
         AuxiliaryEffectSlot()  # nil
-        AuxiliaryEffectSlot(AuxiliaryEffectSlotImpl*)
-        AuxiliaryEffectSlot(const AuxiliaryEffectSlot&)
-        AuxiliaryEffectSlot(AuxiliaryEffectSlot&&)
-
-        AuxiliaryEffectSlot& operator=(const AuxiliaryEffectSlot&)
-        AuxiliaryEffectSlot& operator=(AuxiliaryEffectSlot&&)
-
         boolean operator==(const AuxiliaryEffectSlot&)
         boolean operator!=(const AuxiliaryEffectSlot&)
         boolean operator<=(const AuxiliaryEffectSlot&)
         boolean operator>=(const AuxiliaryEffectSlot&)
         boolean operator<(const AuxiliaryEffectSlot&)
         boolean operator>(const AuxiliaryEffectSlot&)
-
         boolean operator bool()
-
-        handle_type get_handle 'getHandle'()
 
         void set_gain 'setGain'(float) except +
         void set_send_auto 'setSendAuto'(bool) except +
@@ -625,42 +490,26 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
         size_t get_use_count 'getUseCount'() except +
 
     cdef cppclass Effect:
-        ctypedef EffectImpl* handle_type
-
         Effect()    # nil
-        Effect(EffectImpl*)
-        Effect(const Effect&)
-        Effect(Effect&&)
-
-        Effect& operator=(const Effect&)
-        Effect& operator=(Effect&&)
-
         boolean operator==(const Effect&)
         boolean operator!=(const Effect&)
         boolean operator<=(const Effect&)
         boolean operator>=(const Effect&)
         boolean operator<(const Effect&)
         boolean operator>(const Effect&)
-
         boolean operator bool()
-
-        handle_type get_handle 'getHandle'()
 
         void set_reverb_properties 'setReverbProperties'(const EFXEAXREVERBPROPERTIES&) except +
         void set_chorus_properties 'setChorusProperties'(const EFXCHORUSPROPERTIES&) except +
-
         void destroy() except +
 
     cdef cppclass Decoder:
         int get_frequency 'getFrequency'()
         ChannelConfig get_channel_config 'getChannelConfig'()
         SampleType get_sample_type 'getSampleType'()
-
         uint64_t get_length 'getLength'()
         boolean seek(uint64_t)
-
         pair[uint64_t, uint64_t] get_loop_points 'getLoopPoints'()
-
         int read(void*, int)
 
     cdef cppclass DecoderFactory:

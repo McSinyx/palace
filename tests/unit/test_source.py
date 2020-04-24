@@ -18,14 +18,55 @@
 
 """This pytest module tries to test the correctness of the class Source."""
 
-from itertools import product, repeat
+from itertools import permutations, product, repeat
 from math import inf, pi
 from operator import is_
+from random import random, shuffle
 
-from palace import Source, SourceGroup
+from palace import Buffer, Effect, Source, SourceGroup
 from pytest import raises
 
 from fmath import FLT_MAX, allclose, isclose
+
+
+def test_comparison(context):
+    """Test basic comparisons."""
+    with Source() as source0, Source() as source1, Source() as source2:
+        assert source0 != source1
+        sources = [source1, source1, source0, source2]
+        sources.sort()
+        sources.remove(source2)
+        sources.remove(source0)
+        assert sources[0] == sources[1]
+
+
+def test_bool(context):
+    """Test boolean value."""
+    with Source() as source: assert source
+    assert not source
+
+
+def test_control(context, flac):
+    """Test calling control methods."""
+    with Buffer(flac) as buffer, buffer.play() as source:
+        assert source.playing
+        assert not source.paused
+        source.pause()
+        assert source.paused
+        assert not source.playing
+        source.resume()
+        assert source.playing
+        assert not source.paused
+        source.stop()
+        assert not source.playing
+        assert not source.paused
+
+
+def test_fade_out_to_stop(context, mp3):
+    """Test calling method fade_out_to_stop."""
+    with Buffer(mp3) as buffer, buffer.play() as source:
+        source.fade_out_to_stop(5/7, buffer.length>>1)
+        with raises(ValueError): source.fade_out_to_stop(0.42, -1)
 
 
 def test_group(context):
@@ -47,11 +88,15 @@ def test_priority(context):
         assert source.priority == 42
 
 
-def test_offset(context):
+def test_offset(context, ogg):
     """Test read-write property offset."""
-    with Source(context) as source:
+    with Buffer(ogg) as buffer, buffer.play() as source:
         assert source.offset == 0
-        # TODO: give the source a decoder to seek
+        length = buffer.length
+        source.offset = length >> 1
+        assert source.offset == length >> 1
+        with raises(RuntimeError): source.offset = length
+        with raises(OverflowError): source.offset = -1
 
 
 def test_looping(context):
@@ -220,8 +265,8 @@ def test_spatialize(context):
 
 def test_resampler_index(context):
     """Test read-write property resampler_index."""
-    with Source(context) as source:
-        # TODO: test initial value
+    with Source() as source:
+        assert source.resampler_index == context.default_resampler_index
         with raises(ValueError): source.resampler_index = -1
         source.resampler_index = 69
         assert source.resampler_index == 69
@@ -244,3 +289,27 @@ def test_gain_auto(context):
         for gain_auto in product(*repeat((False, True), 3)):
             source.gain_auto = gain_auto
             assert all(map(is_, source.gain_auto, gain_auto))
+
+
+def tests_sends(device, context):
+    """Test send paths assignment."""
+    with Source() as source, Effect() as effect:
+        invalid_filter = [-1, 0, 1]
+        for i in range(device.max_auxiliary_sends):
+            source.sends[i].effect = effect
+            source.sends[i].filter = random(), random(), random()
+            shuffle(invalid_filter)
+            with raises(ValueError): source.sends[i].filter = invalid_filter
+        with raises(IndexError): source.sends[-1]
+        with raises(TypeError): source.sends[4.2]
+        with raises(TypeError): source.sends['0']
+        with raises(TypeError): source.sends[6:9]
+
+
+def test_filter(context):
+    """Test write-only property filter."""
+    with Source() as source:
+        source.filter = 1, 6.9, 5/7
+        source.filter = 0, 0, 0
+        for gain, gain_hf, gain_lf in permutations([4, -2, 0]):
+            with raises(ValueError): source.filter = gain, gain_hf, gain_lf

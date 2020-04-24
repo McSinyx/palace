@@ -37,12 +37,6 @@ cdef extern from '<iostream>' namespace 'std' nogil:
         istream(streambuf*) except +
 
 
-cdef extern from '<future>' namespace 'std' nogil:
-    cdef cppclass shared_future[R]:
-        R& get() except +
-        boolean valid() const
-
-
 cdef extern from '<ratio>' namespace 'std' nogil:
     cdef cppclass nano:
         pass
