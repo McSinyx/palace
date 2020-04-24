@@ -12,8 +12,7 @@ env:
     - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
     - CIBW_BEFORE_BUILD_LINUX=.ci/before-build-manylinux2014
     - CIBW_BEFORE_BUILD_MACOS=.ci/before-build-macos
-    - CIBW_TEST_REQUIRES=tox
-    - CIBW_TEST_COMMAND_MACOS="tox -c /Users/travis/build/McSinyx/palace"
+    - CIBW_TEST_REQUIRES_LINUX=tox
     - CIBW_TEST_COMMAND_LINUX="tox -c /project"
 
 addons:
