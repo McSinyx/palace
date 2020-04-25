@@ -23,7 +23,7 @@ from math import inf, pi
 from operator import is_
 from random import random, shuffle
 
-from palace import Buffer, Effect, Source, SourceGroup
+from palace import Buffer, BaseEffect, Source, SourceGroup
 from pytest import raises
 
 from fmath import FLT_MAX, allclose, isclose
@@ -293,7 +293,7 @@ def test_gain_auto(context):
 
 def tests_sends(device, context):
     """Test send paths assignment."""
-    with Source() as source, Effect() as effect:
+    with Source() as source, BaseEffect() as effect:
         invalid_filter = [-1, 0, 1]
         for i in range(device.max_auxiliary_sends):
             source.sends[i].effect = effect

@@ -76,7 +76,8 @@ __all__ = [
     'thread_local', 'current_context', 'use_context',
     'cache', 'free', 'decode', 'sample_size', 'sample_length',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
-    'Effect', 'Decoder', 'BaseDecoder', 'FileIO', 'MessageHandler']
+    'Effect', 'ReverbEffect', 'ChorusEffect',
+    'Decoder', 'BaseDecoder', 'FileIO', 'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
 from contextlib import contextmanager
@@ -1736,6 +1737,61 @@ cdef class Source:
         """Destroy the source, stop playback and release resources."""
         self.impl.destroy()
 
+
+cdef class SendPath:
+    """Container of write-only descriptors of a send path signal."""
+    cdef alure.Source source
+    cdef unsigned send
+
+    def __init__(self, source: Source, send: int) -> None:
+        self.source = source.impl
+        self.send = send
+
+    @setter
+    def filter(self, value: Vector3) -> None:
+        """Linear gains on the send path signal, clamped to [0, 1].
+
+        Parameters
+        ----------
+        gain : float
+            Linear gain applying to all frequencies, default to 1.
+        gain_hf : float
+            Linear gain applying to high frequencies, default to 1.
+        gain_lf : float
+            Linear gain applying to low frequencies, default to 1.
+        """
+        gain, gain_hf, gain_lf = value
+        self.source.set_send_filter(
+            self.send, make_filter(gain, gain_hf, gain_lf))
+
+    @setter
+    def effect(self, value: BaseEffect) -> None:
+        """Effect applied to the send path signal."""
+        self.source.set_auxiliary_send(value.slot, self.send)
+
+
+cdef class AuxiliarySends:
+    """Collection of SendPath.
+
+    It is recommended that applications access instances of
+    this class via `Source.sends`.  From there, one can get a `SendPath`
+    by indexing the object with a nonnegative integer less than
+    the device's `max_auxiliary_sends`.
+    """
+    cdef Source source
+
+    def __init__(self, source: Source) -> None:
+        self.source = source
+
+    def __getitem__(self, key: int) -> SendPath:
+        if not isinstance(key, int):
+            raise TypeError(
+                f'integer key expected, got {key.__class__.__name__}')
+        try:
+            return SendPath(self.source, key)
+        except OverflowError:
+            raise IndexError(f'index out of range: {key}') from None
+
 
 cdef class SourceGroup:
     """A group of `Source` references.
@@ -1881,8 +1937,10 @@ cdef class SourceGroup:
         self.impl.destroy()
 
 
-cdef class Effect:
-    """An effect processor.
+cdef class BaseEffect:
+    """Base effect processor.
+
+    Instances of this class has no effect (pun intended).
 
     It takes the output mix of zero or more sources,
     applies DSP for the desired effect, then adds to the output mix.
@@ -1900,6 +1958,11 @@ cdef class Effect:
     ------
     RuntimeError
         If there is neither any context specified nor current.
+
+    See Also
+    --------
+    ReverbEffect : EAXReverb effect
+    ChorusEffect : Chorus effect
     """
     cdef alure.AuxiliaryEffectSlot slot
     cdef alure.Effect impl
@@ -1910,37 +1973,37 @@ cdef class Effect:
         self.slot = alure_context.create_auxiliary_effect_slot()
         self.impl = alure_context.create_effect()
 
-    def __enter__(self) -> Effect: return self
+    def __enter__(self) -> BaseEffect: return self
     def __exit__(self, *exc) -> Optional[bool]: self.destroy()
 
     def __lt__(self, other: Any) -> bool:
-        if not isinstance(other, Effect): return NotImplemented
-        cdef Effect fx = <Effect> other
+        if not isinstance(other, BaseEffect): return NotImplemented
+        cdef BaseEffect fx = <BaseEffect> other
         return self.slot < fx.slot and self.impl < fx.impl
 
     def __le__(self, other: Any) -> bool:
-        if not isinstance(other, Effect): return NotImplemented
-        cdef Effect fx = <Effect> other
+        if not isinstance(other, BaseEffect): return NotImplemented
+        cdef BaseEffect fx = <BaseEffect> other
         return self.slot <= fx.slot and self.impl <= fx.impl
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Effect): return NotImplemented
-        cdef Effect fx = <Effect> other
+        if not isinstance(other, BaseEffect): return NotImplemented
+        cdef BaseEffect fx = <BaseEffect> other
         return self.slot == fx.slot and self.impl == fx.impl
 
     def __ne__(self, other: Any) -> bool:
-        if not isinstance(other, Effect): return NotImplemented
-        cdef Effect fx = <Effect> other
+        if not isinstance(other, BaseEffect): return NotImplemented
+        cdef BaseEffect fx = <BaseEffect> other
         return self.slot != fx.slot and self.impl != fx.impl
 
     def __gt__(self, other: Any) -> bool:
-        if not isinstance(other, Effect): return NotImplemented
-        cdef Effect fx = <Effect> other
+        if not isinstance(other, BaseEffect): return NotImplemented
+        cdef BaseEffect fx = <BaseEffect> other
         return self.slot > fx.slot and self.impl > fx.impl
 
     def __ge__(self, other: Any) -> bool:
-        if not isinstance(other, Effect): return NotImplemented
-        cdef Effect fx = <Effect> other
+        if not isinstance(other, BaseEffect): return NotImplemented
+        cdef BaseEffect fx = <BaseEffect> other
         return self.slot >= fx.slot and self.impl >= fx.impl
 
     def __bool__(self) -> bool:
@@ -1950,14 +2013,6 @@ cdef class Effect:
     def gain(self, value: float) -> None:
         """Gain of the effect slot."""
         self.slot.set_gain(value)
-
-    @setter
-    def send_auto(self, value: bool) -> None:
-        """Whether to automatically adjust send slot gains.
-
-        This only has effect on reverb effects.  Default is `True`.
-        """
-        self.slot.set_send_auto(value)
 
     @getter
     def source_sends(self) -> List[Tuple[Source, int]]:
@@ -1978,83 +2033,6 @@ cdef class Effect:
         """
         return self.slot.get_use_count()
 
-    @setter
-    def reverb_preset(self, value: str) -> None:
-        """Pre-defined reverb effect.
-
-        Raises
-        ------
-        ValueError
-            If set to a preset cannot be found in `reverb_preset_names`.
-        """
-        try:
-            self.impl.set_reverb_properties(REVERB_PRESETS.at(value))
-        except IndexError:
-            raise ValueError(f'invalid preset name: {value}') from None
-        else:
-            self.slot.apply_effect(self.impl)
-
-    @setter
-    def reverb_properties(self, value: dict) -> None:
-        """The effect with the specified reverb properties.
-
-        It will automatically downgrade to the Standard Reverb effect
-        if EAXReverb effect is not supported.
-
-        See Also
-        --------
-        reverb_preset : Pre-defined reverb effect.
-        """
-        cdef alure.EFXEAXREVERBPROPERTIES properties
-        properties.flDensity = value['density']
-        properties.flDiffusion = value['diffusion']
-        properties.flGain = value['gain']
-        properties.flGainHF = value['gain_hf']
-        properties.flGainLF = value['gain_lf']
-        properties.flDecayTime = value['decay_time']
-        properties.flDecayHFRatio = value['decay_hf_ratio']
-        properties.flDecayLFRatio = value['decay_lf_ratio']
-        properties.flReflectionsGain = value['reflections_gain']
-        properties.flReflectionsDelay = value['reflections_delay']
-        properties.flReflectionsPan[0] = value['reflections_pan'][0]
-        properties.flReflectionsPan[1] = value['reflections_pan'][1]
-        properties.flReflectionsPan[2] = value['reflections_pan'][2]
-        properties.flLateReverbGain = value['late_reverb_gain']
-        properties.flLateReverbDelay = value['late_reverb_delay']
-        properties.flLateReverbPan[0] = value['late_reverb_pan'][0]
-        properties.flLateReverbPan[1] = value['late_reverb_pan'][1]
-        properties.flLateReverbPan[2] = value['late_reverb_pan'][2]
-        properties.flEchoTime = value['echo_time']
-        properties.flEchoDepth = value['echo_depth']
-        properties.flModulationTime = value['modulation_time']
-        properties.flModulationDepth = value['modulation_depth']
-        properties.flAirAbsorptionGainHF = value['air_absorption_gain_hf']
-        properties.flHFReference = value['hf_reference']
-        properties.flLFReference = value['lf_reference']
-        properties.flRoomRolloffFactor = value['room_rolloff_factor']
-        properties.iDecayHFLimit = value['decay_hf_limit']
-        self.impl.set_reverb_properties(properties)
-        self.slot.apply_effect(self.impl)
-
-    @setter
-    def chorus_properties(self, value: dict) -> None:
-        """The effect with the specified chorus properties.
-
-        Raises
-        ------
-        RuntimeError
-            If the chorus effect is not supported.
-        """
-        cdef alure.EFXCHORUSPROPERTIES properties
-        properties.iWaveform = value['waveform']
-        properties.iPhase = value['phase']
-        properties.flRate = value['rate']
-        properties.flDepth = value['depth']
-        properties.flFeedback = value['feedback']
-        properties.flDelay = value['delay']
-        self.impl.set_chorus_properties(properties)
-        self.slot.apply_effect(self.impl)
-
     def destroy(self) -> None:
         """Destroy the effect slot, returning it to the system.
 
@@ -2065,59 +2043,362 @@ cdef class Effect:
         self.impl.destroy()
 
 
-cdef class SendPath:
-    """Container of write-only descriptors of a send path signal."""
-    cdef alure.Source source
-    cdef unsigned send
+cdef class ReverbEffect(BaseEffect):
+    """EAXReverb effect.
 
-    def __init__(self, source: Source, send: int) -> None:
-        self.source = source.impl
-        self.send = send
+    It will automatically downgrade to the Standard Reverb effect
+    if EAXReverb effect is not supported.
 
-    @setter
-    def filter(self, value: Vector3) -> None:
-        """Linear gains on the send path signal, clamped to [0, 1].
+    Parameters
+    ----------
+    preset : str, optional
+        The initial preset to start with, falling back to GENERIC.
+    context : Optional[Context], optional
+        The context from which the effect is to be created.
+        By default `current_context()` is used.
 
-        Parameters
-        ----------
-        gain : float
-            Linear gain applying to all frequencies, default to 1.
-        gain_hf : float
-            Linear gain applying to high frequencies, default to 1.
-        gain_lf : float
-            Linear gain applying to low frequencies, default to 1.
-        """
-        gain, gain_hf, gain_lf = value
-        self.source.set_send_filter(
-            self.send, make_filter(gain, gain_hf, gain_lf))
-
-    @setter
-    def effect(self, value: Effect) -> None:
-        """Effect applied to the send path signal."""
-        self.source.set_auxiliary_send(value.slot, self.send)
-
-
-cdef class AuxiliarySends:
-    """Collection of SendPath.
-
-    It is recommended that applications access instances of
-    this class via `Source.sends`.  From there, one can get a `SendPath`
-    by indexing the object with a nonnegative integer less than
-    the device's `max_auxiliary_sends`.
+    Raises
+    ------
+    ValueError
+        If the specified preset cannot be found in `reverb_preset_names`.
+    RuntimeError
+        If there is neither any context specified nor current.
     """
-    cdef Source source
+    cdef alure.EFXEAXREVERBPROPERTIES properties
 
-    def __init__(self, source: Source) -> None:
-        self.source = source
-
-    def __getitem__(self, key: int) -> SendPath:
-        if not isinstance(key, int):
-            raise TypeError(
-                f'integer key expected, got {key.__class__.__name__}')
+    def __init__(self, preset: str = 'GENERIC',
+                 context: Optional[Context] = None) -> None:
+        super().__init__(context)
         try:
-            return SendPath(self.source, key)
-        except OverflowError:
-            raise IndexError(f'index out of range: {key}') from None
+            self.properties = REVERB_PRESETS.at(preset.upper())
+        except IndexError:
+            raise ValueError(f'invalid preset name: {preset}') from None
+        else:
+            self.impl.set_reverb_properties(self.properties)
+            self.slot.apply_effect(self.impl)
+
+    @setter
+    def send_auto(self, value: bool) -> None:
+        """Whether to automatically adjust send slot gains."""
+        self.slot.set_send_auto(value)
+
+    @property
+    def density(self) -> float:
+        return self.properties.density
+
+    @density.setter
+    def density(self, value: float) -> None:
+        self.properties.density = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def diffusion(self) -> float:
+        return self.properties.diffusion
+
+    @diffusion.setter
+    def diffusion(self, value: float) -> None:
+        self.properties.diffusion = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def gain(self) -> float:
+        return self.properties.gain
+
+    @gain.setter
+    def gain(self, value: float) -> None:
+        self.properties.gain = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def gain_hf(self) -> float:
+        return self.properties.gain_hf
+
+    @gain_hf.setter
+    def gain_hf(self, value: float) -> None:
+        self.properties.gain_hf = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def gain_lf(self) -> float:
+        return self.properties.gain_lf
+
+    @gain_lf.setter
+    def gain_lf(self, value: float) -> None:
+        self.properties.gain_lf = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def decay_time(self) -> float:
+        return self.properties.decay_time
+
+    @decay_time.setter
+    def decay_time(self, value: float) -> None:
+        self.properties.decay_time = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def decay_hf_ratio(self) -> float:
+        return self.properties.decay_hf_ratio
+
+    @decay_hf_ratio.setter
+    def decay_hf_ratio(self, value: float) -> None:
+        self.properties.decay_hf_ratio = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def decay_lf_ratio(self) -> float:
+        return self.properties.decay_lf_ratio
+
+    @decay_lf_ratio.setter
+    def decay_lf_ratio(self, value: float) -> None:
+        self.properties.decay_lf_ratio = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def reflections_gain(self) -> float:
+        return self.properties.reflections_gain
+
+    @reflections_gain.setter
+    def reflections_gain(self, value: float) -> None:
+        self.properties.reflections_gain = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def reflections_delay(self) -> float:
+        return self.properties.reflections_delay
+
+    @reflections_delay.setter
+    def reflections_delay(self, value: float) -> None:
+        self.properties.reflections_delay = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def reflections_pan(self) -> Vector3:
+        return self.properties.reflections_pan
+
+    @reflections_pan.setter
+    def reflections_pan(self, value: Vector3) -> None:
+        self.properties.reflections_pan[0] = value[0]
+        self.properties.reflections_pan[1] = value[1]
+        self.properties.reflections_pan[2] = value[2]
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def late_reverb_gain(self) -> float:
+        return self.properties.late_reverb_gain
+
+    @late_reverb_gain.setter
+    def late_reverb_gain(self, value: float) -> None:
+        self.properties.late_reverb_gain = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def late_reverb_delay(self) -> float:
+        return self.properties.late_reverb_delay
+
+    @late_reverb_delay.setter
+    def late_reverb_delay(self, value: float) -> None:
+        self.properties.late_reverb_delay = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def late_reverb_pan(self) -> Vector3:
+        return self.properties.late_reverb_pan
+
+    @late_reverb_pan.setter
+    def late_reverb_pan(self, value: Vector3) -> None:
+        self.properties.late_reverb_pan[0] = value[0]
+        self.properties.late_reverb_pan[1] = value[1]
+        self.properties.late_reverb_pan[2] = value[2]
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def echo_time(self) -> float:
+        return self.properties.echo_time
+
+    @echo_time.setter
+    def echo_time(self, value: float) -> None:
+        self.properties.echo_time = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def echo_depth(self) -> float:
+        return self.properties.echo_depth
+
+    @echo_depth.setter
+    def echo_depth(self, value: float) -> None:
+        self.properties.echo_depth = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def modulation_time(self) -> float:
+        return self.properties.modulation_time
+
+    @modulation_time.setter
+    def modulation_time(self, value: float) -> None:
+        self.properties.modulation_time = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def modulation_depth(self) -> float:
+        return self.properties.modulation_depth
+
+    @modulation_depth.setter
+    def modulation_depth(self, value: float) -> None:
+        self.properties.modulation_depth = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def air_absorption_gain_hf(self) -> float:
+        return self.properties.air_absorption_gain_hf
+
+    @air_absorption_gain_hf.setter
+    def air_absorption_gain_hf(self, value: float) -> None:
+        self.properties.air_absorption_gain_hf = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def hf_reference(self) -> float:
+        return self.properties.hf_reference
+
+    @hf_reference.setter
+    def hf_reference(self, value: float) -> None:
+        self.properties.hf_reference = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def lf_reference(self) -> float:
+        return self.properties.lf_reference
+
+    @lf_reference.setter
+    def lf_reference(self, value: float) -> None:
+        self.properties.lf_reference = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def room_rolloff_factor(self) -> float:
+        return self.properties.room_rolloff_factor
+
+    @room_rolloff_factor.setter
+    def room_rolloff_factor(self, value: float) -> None:
+        self.properties.room_rolloff_factor = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def decay_hf_limit(self) -> int:
+        return self.properties.decay_hf_limit
+
+    @decay_hf_limit.setter
+    def decay_hf_limit(self, value: int) -> None:
+        self.properties.decay_hf_limit = value
+        self.impl.set_reverb_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+
+cdef class ChorusEffect(BaseEffect):
+    """Chorus effect.
+
+    Parameters
+    ----------
+    waveform : int
+    phase : int
+    depth : float
+    feedback : float
+    delay : float
+    context : Optional[Context], optional
+        The context from which the effect is to be created.
+        By default `current_context()` is used.
+
+    Raises
+    ------
+    RuntimeError
+        If there is neither any context specified nor current.
+    """
+    cdef alure.EFXCHORUSPROPERTIES properties
+
+    def __init__(self, waveform: int, phase: int,
+                 depth: float, feedback: float, delay: float,
+                 context: Optional[Context] = None) -> None:
+        super().__init__(context)
+        self.properties.waveform = waveform
+        self.properties.phase = phase
+        self.properties.depth = depth
+        self.properties.feedback = feedback
+        self.properties.delay = delay
+        self.impl.set_chorus_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def waveform(self) -> int:
+        return self.properties.waveform
+
+    @waveform.setter
+    def waveform(self, value: int) -> None:
+        self.properties.waveform = value
+        self.impl.set_chorus_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def phase(self) -> int:
+        return self.properties.phase
+
+    @phase.setter
+    def phase(self, value: int) -> None:
+        self.properties.phase = value
+        self.impl.set_chorus_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def depth(self) -> float:
+        return self.properties.depth
+
+    @depth.setter
+    def depth(self, value: float) -> None:
+        self.properties.depth = value
+        self.impl.set_chorus_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def feedback(self) -> float:
+        return self.properties.feedback
+
+    @feedback.setter
+    def feedback(self, value: float) -> None:
+        self.properties.feedback = value
+        self.impl.set_chorus_properties(self.properties)
+        self.slot.apply_effect(self.impl)
+
+    @property
+    def delay(self) -> float:
+        return self.properties.delay
+
+    @delay.setter
+    def delay(self, value: float) -> None:
+        self.properties.delay = value
+        self.impl.set_chorus_properties(self.properties)
+        self.slot.apply_effect(self.impl)
 
 
 cdef class Decoder:

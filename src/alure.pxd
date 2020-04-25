@@ -84,37 +84,37 @@ cdef extern from 'alure2-typeviews.h' namespace 'alure' nogil:
 # Alure main module
 cdef extern from 'alure2.h' nogil:
     cdef cppclass EFXEAXREVERBPROPERTIES:
-        float flDensity
-        float flDiffusion
-        float flGain
-        float flGainHF
-        float flGainLF
-        float flDecayTime
-        float flDecayHFRatio
-        float flDecayLFRatio
-        float flReflectionsGain
-        float flReflectionsDelay
-        float flReflectionsPan[3]
-        float flLateReverbGain
-        float flLateReverbDelay
-        float flLateReverbPan[3]
-        float flEchoTime
-        float flEchoDepth
-        float flModulationTime
-        float flModulationDepth
-        float flAirAbsorptionGainHF
-        float flHFReference
-        float flLFReference
-        float flRoomRolloffFactor
-        int   iDecayHFLimit
+        float density 'flDensity'
+        float diffusion 'flDiffusion'
+        float gain 'flGain'
+        float gain_hf 'flGainHF'
+        float gain_lf 'flGainLF'
+        float decay_time 'flDecayTime'
+        float decay_hf_ratio 'flDecayHFRatio'
+        float decay_lf_ratio 'flDecayLFRatio'
+        float reflections_gain 'flReflectionsGain'
+        float reflections_delay 'flReflectionsDelay'
+        float reflections_pan 'flReflectionsPan'[3]
+        float late_reverb_gain 'flLateReverbGain'
+        float late_reverb_delay 'flLateReverbDelay'
+        float late_reverb_pan 'flLateReverbPan'[3]
+        float echo_time 'flEchoTime'
+        float echo_depth 'flEchoDepth'
+        float modulation_time 'flModulationTime'
+        float modulation_depth 'flModulationDepth'
+        float air_absorption_gain_hf 'flAirAbsorptionGainHF'
+        float hf_reference 'flHFReference'
+        float lf_reference 'flLFReference'
+        float room_rolloff_factor 'flRoomRolloffFactor'
+        int decay_hf_limit 'iDecayHFLimit'
 
     cdef cppclass EFXCHORUSPROPERTIES:
-        int iWaveform
-        int iPhase
-        float flRate
-        float flDepth
-        float flFeedback
-        float flDelay
+        int waveform 'iWaveform'
+        int phase 'iPhase'
+        float rate 'flRate'
+        float depth 'flDepth'
+        float feedback 'flFeedback'
+        float delay 'flDelay'
 
 
 cdef extern from 'alure2.h' namespace 'alure' nogil:
