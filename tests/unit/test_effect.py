@@ -23,14 +23,14 @@ from palace import BaseEffect, ReverbEffect, Source
 from pytest import raises
 
 
-def test_gain(context):
-    """Test write-only property gain."""
+def test_slot_gain(context):
+    """Test write-only property slot_gain."""
     with BaseEffect() as fx:
-        fx.gain = 0
-        fx.gain = 1
-        fx.gain = 5/7
-        with raises(ValueError): fx.gain = 7/5
-        with raises(ValueError): fx.gain = -1
+        fx.slot_gain = 0
+        fx.slot_gain = 1
+        fx.slot_gain = 5/7
+        with raises(ValueError): fx.slot_gain = 7/5
+        with raises(ValueError): fx.slot_gain = -1
 
 
 def test_source_sends(context):

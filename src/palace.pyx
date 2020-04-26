@@ -76,7 +76,7 @@ __all__ = [
     'thread_local', 'current_context', 'use_context',
     'cache', 'free', 'decode', 'sample_size', 'sample_length',
     'Device', 'Context', 'Listener', 'Buffer', 'Source', 'SourceGroup',
-    'Effect', 'ReverbEffect', 'ChorusEffect',
+    'BaseEffect', 'ReverbEffect', 'ChorusEffect',
     'Decoder', 'BaseDecoder', 'FileIO', 'MessageHandler']
 
 from abc import abstractmethod, ABCMeta
@@ -2010,7 +2010,7 @@ cdef class BaseEffect:
         return <boolean> self.slot and <boolean> self.impl
 
     @setter
-    def gain(self, value: float) -> None:
+    def slot_gain(self, value: float) -> None:
         """Gain of the effect slot."""
         self.slot.set_gain(value)
 
