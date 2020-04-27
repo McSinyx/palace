@@ -8,6 +8,7 @@ Welcome to our palace!
    installation
    reference
    design
+   copying
 
 
 Indices and tables

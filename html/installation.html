@@ -36,27 +36,24 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
-<p>Palace requires Python 3.6 for runtime and pip for installation.</p>
+<p>Palace requires Python 3.6 for runtime and <a class="reference external" href="https://pip.pypa.io/en/latest/">pip</a> for installation.</p>
 </div>
 <div class="section" id="via-pypi">
 <h2>Via PyPI<a class="headerlink" href="#via-pypi" title="Permalink to this headline">¶</a></h2>
 <p>Palace can be installed from PyPI:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install palace
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">palace</span>
 </pre></div>
 </div>
-<p>Wheel distributions are only built for GNU/Linux and macOS on amd64
-at the time of writing.</p>
-<p>However, the wheels for macOS does <em>not</em> include shared libraries like alure,
-which are expected to be installed either from source or from Homebrew.
-This is because we cannot (yet) get <code class="docutils literal notranslate"><span class="pre">delocate</span></code> to worked with alure
-compiled from source, which showed up to be inside of <code class="docutils literal notranslate"><span class="pre">&#64;rpath</span></code>.</p>
+<p>Wheel distributions are built exclusively for amd64.  Currently, only GNU/Linux
+is properly supported.  If you want to help packaging for Windows and macOS,
+see <a class="reference external" href="https://github.com/McSinyx/palace/issues/1">GH-1</a> and <a class="reference external" href="https://github.com/McSinyx/palace/issues/63">GH-63</a> respectively on our issues tracker on GitHub.</p>
 </div>
 <div class="section" id="from-source">
 <h2>From source<a class="headerlink" href="#from-source" title="Permalink to this headline">¶</a></h2>
 <p>Aside from the build dependencies listed in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>,
-one will additionally need compatible Python headers, alure, a C++14 compiler,
-CMake 2.6+ (and git for fetching the source).  Palace can then be compiled
-and installed by running:</p>
+one will additionally need compatible Python headers, <a class="reference external" href="https://github.com/kcat/alure">alure</a>,
+a C++14 compiler, CMake 2.6+ (and probably <code class="docutils literal notranslate"><span class="pre">git</span></code> for fetching the source).
+Palace can then be compiled and installed by running:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/McSinyx/palace.git
 pip install palace/
 </pre></div>
