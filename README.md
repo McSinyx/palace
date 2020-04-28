@@ -50,6 +50,9 @@ under the terms of the [GNU Lesser General Public License][LGPLv3+]
 as published by the Free Software Foundation, either version 3
 of the License, or (at your option) any later version.
 
+Credits to the works bundled with palace can be found in our user
+documentation.
+
 [alure]: https://github.com/kcat/alure
 [OpenAL Soft]: https://kcat.strangesoft.net/openal.html
 [ModernGL]: https://github.com/moderngl/moderngl
