@@ -2307,11 +2307,11 @@ cdef class ReverbEffect(BaseEffect):
         self.slot.apply_effect(self.impl)
 
     @property
-    def decay_hf_limit(self) -> int:
+    def decay_hf_limit(self) -> bool:
         return self.properties.decay_hf_limit
 
     @decay_hf_limit.setter
-    def decay_hf_limit(self, value: int) -> None:
+    def decay_hf_limit(self, value: bool) -> None:
         self.properties.decay_hf_limit = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
@@ -2322,11 +2322,16 @@ cdef class ChorusEffect(BaseEffect):
 
     Parameters
     ----------
-    waveform : int
+    waveform : str
+        Either 'sine' or 'triangle'.
     phase : int
+        From -180 to 180.
     depth : float
+        From 0.0 to 1.0.
     feedback : float
+        From -1.0 to 1.0.
     delay : float
+        From 0.0 to 0.016.
     context : Optional[Context], optional
         The context from which the effect is to be created.
         By default `current_context()` is used.
@@ -2338,30 +2343,38 @@ cdef class ChorusEffect(BaseEffect):
     """
     cdef alure.EFXCHORUSPROPERTIES properties
 
-    def __init__(self, waveform: int, phase: int,
-                 depth: float, feedback: float, delay: float,
+    def __init__(self, waveform: str = 'triangle',
+                 phase: int = 90, depth: float = 0.1,
+                 feedback: float = 0.25, delay: float = 0.016,
                  context: Optional[Context] = None) -> None:
         super().__init__(context)
-        self.properties.waveform = waveform
-        self.properties.phase = phase
-        self.properties.depth = depth
-        self.properties.feedback = feedback
-        self.properties.delay = delay
+        self.waveform = waveform
+        self.phase = phase
+        self.depth = depth
+        self.feedback = feedback
+        self.delay = delay
         self.impl.set_chorus_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
-    def waveform(self) -> int:
-        return self.properties.waveform
+    def waveform(self) -> str:
+        """Waveform, either 'sine' or 'triangle'."""
+        return 'triangle' if self.properties.waveform else 'sine'
 
     @waveform.setter
-    def waveform(self, value: int) -> None:
-        self.properties.waveform = value
+    def waveform(self, value: str) -> None:
+        if value == 'triangle':
+            self.properties.waveform = 1
+        elif value == 'sine':
+            self.properties.waveform = 0
+        else:
+            raise ValueError(f'invalid waveform: {value}')
         self.impl.set_chorus_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def phase(self) -> int:
+        """Phase, from -180 to 180."""
         return self.properties.phase
 
     @phase.setter
@@ -2372,6 +2385,7 @@ cdef class ChorusEffect(BaseEffect):
 
     @property
     def depth(self) -> float:
+        """Depth, from 0.0 to 1.0."""
         return self.properties.depth
 
     @depth.setter
@@ -2382,6 +2396,7 @@ cdef class ChorusEffect(BaseEffect):
 
     @property
     def feedback(self) -> float:
+        """Feedback, from -1.0 to 1.0."""
         return self.properties.feedback
 
     @feedback.setter
@@ -2392,6 +2407,7 @@ cdef class ChorusEffect(BaseEffect):
 
     @property
     def delay(self) -> float:
+        """Delay, from 0.0 to 0.016."""
         return self.properties.delay
 
     @delay.setter
