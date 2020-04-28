@@ -117,7 +117,14 @@ Environmental Effects
 
    Names of predefined reverb effect presets in lexicographical order.
 
-.. autoclass:: Effect
+.. autoclass:: BaseEffect
+   :members:
+
+.. autoclass:: ReverbEffect
+   :members:
+   :undoc-members:
+
+.. autoclass:: ChorusEffect
    :members:
 
 Decoder Interface
