@@ -50,18 +50,6 @@ under the terms of the [GNU Lesser General Public License][LGPLv3+]
 as published by the Free Software Foundation, either version 3
 of the License, or (at your option) any later version.
 
-To ensure that palace can run without any dependencies outside of the [pip]
-toolchain, the wheels are bundled with dynamically linked libraries from
-the build machine, which is similar to static linking:
-
-| Library        | License      |
-| -------------- | ------------ |
-| [Alure][alure] | ZLib         |
-| [OpenAL Soft]  | GNU LGPLv2+  |
-| [Vorbis]       | 3-clause BSD |
-| [Opus]         | 3-clause BSD |
-| [libsndfile]   | GNU LGPL2.1+ |
-
 [alure]: https://github.com/kcat/alure
 [OpenAL Soft]: https://kcat.strangesoft.net/openal.html
 [ModernGL]: https://github.com/moderngl/moderngl
