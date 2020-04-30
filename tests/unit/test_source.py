@@ -60,6 +60,8 @@ def test_control(context, flac):
         source.stop()
         assert not source.playing
         assert not source.paused
+        with raises(AttributeError): source.playing = True
+        with raises(AttributeError): source.paused = True
 
 
 def test_fade_out_to_stop(context, mp3):
@@ -97,6 +99,30 @@ def test_offset(context, ogg):
         assert source.offset == length >> 1
         with raises(RuntimeError): source.offset = length
         with raises(OverflowError): source.offset = -1
+
+
+def test_offset_seconds(context, flac):
+    """Test read-only property offset_seconds."""
+    with Buffer(flac) as buffer, buffer.play() as source:
+        assert isinstance(source.offset_seconds, float)
+        with raises(AttributeError):
+            source.offset_seconds = buffer.length_seconds / 2
+
+
+def test_latency(context, aiff):
+    """Test read-only property latency."""
+    with Buffer(aiff) as buffer, buffer.play() as source:
+        assert isinstance(source.latency, int)
+        with raises(AttributeError):
+            source.latency = 42
+
+
+def test_latency_seconds(context, mp3):
+    """Test read-only property latency_seconds."""
+    with Buffer(mp3) as buffer, buffer.play() as source:
+        assert isinstance(source.latency_seconds, float)
+        with raises(AttributeError):
+            source.latency_seconds = buffer.length_seconds / 2
 
 
 def test_looping(context):
@@ -300,15 +326,19 @@ def tests_sends(device, context):
             source.sends[i].filter = random(), random(), random()
             shuffle(invalid_filter)
             with raises(ValueError): source.sends[i].filter = invalid_filter
+            with raises(AttributeError): source.sends[i].effect
+            with raises(AttributeError): source.sends[i].filter
         with raises(IndexError): source.sends[-1]
         with raises(TypeError): source.sends[4.2]
         with raises(TypeError): source.sends['0']
         with raises(TypeError): source.sends[6:9]
+        with raises(AttributeError): source.sends = ...
 
 
 def test_filter(context):
     """Test write-only property filter."""
     with Source() as source:
+        with raises(AttributeError): source.filter
         source.filter = 1, 6.9, 5/7
         source.filter = 0, 0, 0
         for gain, gain_hf, gain_lf in permutations([4, -2, 0]):

@@ -276,16 +276,17 @@ def use_context(context: Optional[Context],
                 thread: Optional[bool] = None) -> None:
     """Make the specified context current for OpenAL operations.
 
-    If `thread` is set to `True`, make the context current
+    This fails silently if the given context has been destroyed.
+    In case `thread` is not specified, fallback to preference made by
+    `thread_local`.
+
+    If `thread` is `True`, make the context current
     for OpenAL operations on the calling thread only.
     This requires the non-device-specific as well as the context's
     device `ALC_EXT_thread_local_context` extension to be available.
-
-    In case `thread` is not specified, fallback to preference made by
-    `thread_local`.
     """
     cdef alure.Context alure_context = <alure.Context> nullptr
-    if context is not None: alure_context = (<Context> context).impl
+    if context: alure_context = (<Context> context).impl
     if thread is None: thread = _thread
     if thread:
         alure.Context.make_thread_current(alure_context)
@@ -322,6 +323,7 @@ def cache(names: Iterable[str], context: Optional[Context] = None) -> None:
     cdef vector[alure.StringView] alure_names
     for name in std_names: alure_names.push_back(<alure.StringView> name)
     if context is None: context = current_context()
+    if not context: raise RuntimeError('there is no context current')
     (<Context> context).impl.precache_buffers_async(alure_names)
 
 
@@ -336,6 +338,7 @@ def free(names: Iterable[str], context: Optional[Context] = None) -> None:
         If there is neither any context specified nor current.
     """
     if context is None: context = current_context()
+    if not context: raise RuntimeError('there is no context current')
     cdef alure.Context alure_context = (<Context> context).impl
     # Cython cannot infer collection types yet.
     cdef vector[string] std_names = list(names)
@@ -368,6 +371,7 @@ def decode(name: str, context: Optional[Context] = None) -> Decoder:
             return find_resource(subst(name), subst)
 
     if context is None: context = current_context()
+    if not context: raise RuntimeError('there is no context current')
     resource = find_resource(
         name, context.message_handler.resource_not_found)
     for decoder_factory in decoder_factories:
@@ -788,11 +792,7 @@ cdef class Context:
             alure_sample_type = SAMPLE_TYPES.at(sample_type)
         except IndexError:
             raise ValueError(f'invalid sample type: {sample_type}') from None
-        try:
-            return self.impl.is_supported(alure_channel_config,
-                                          alure_sample_type)
-        except IndexError as e:
-            raise ValueError(str(e)) from None
+        return self.impl.is_supported(alure_channel_config, alure_sample_type)
 
     @getter
     def available_resamplers(self) -> List[str]:
@@ -982,6 +982,7 @@ cdef class Buffer:
 
     def __init__(self, name: str, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
+        if not context: raise RuntimeError('there is no context current')
         self.context, self.name = context, name
         self.impl = self.context.impl.find_buffer(self.name)
         if not self:
@@ -1181,6 +1182,7 @@ cdef class Source:
 
     def __init__(self, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
+        if not context: raise RuntimeError('there is no context current')
         self.impl = (<Context> context).impl.create_source()
 
     def __enter__(self) -> Source: return self
@@ -1817,6 +1819,7 @@ cdef class SourceGroup:
 
     def __init__(self, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
+        if not context: raise RuntimeError('there is no context current')
         self.impl = (<Context> context).impl.create_source_group()
 
     def __enter__(self) -> SourceGroup: return self
@@ -1969,6 +1972,7 @@ cdef class BaseEffect:
 
     def __init__(self, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
+        if not context: raise RuntimeError('there is no context current')
         cdef alure.Context alure_context = (<Context> context).impl
         self.slot = alure_context.create_auxiliary_effect_slot()
         self.impl = alure_context.create_effect()
@@ -2449,6 +2453,7 @@ cdef class Decoder:
 
     def __init__(self, name: str, context: Optional[Context] = None) -> None:
         if context is None: context = current_context()
+        if not context: raise RuntimeError('there is no context current')
         self.pimpl = (<Context> context).impl.create_decoder(name)
 
     @getter
