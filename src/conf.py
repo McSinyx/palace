@@ -22,7 +22,7 @@ copyright = '2019, 2020  Nguyễn Gia Phong et al'
 author = 'Nguyễn Gia Phong et al.'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.5'
+release = '0.2.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -50,6 +50,9 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = 'alabaster'
+
+html_sidebars = {
+   '**': ['globaltoc.html', 'quicknav.html', 'searchbox.html']}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Welcome to our palace! &#8212; palace 0.1.5 documentation</title>
+    <title>Welcome to our palace! &#8212; palace 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -33,8 +33,13 @@
             
   <div class="section" id="welcome-to-our-palace">
 <h1>Welcome to our palace!<a class="headerlink" href="#welcome-to-our-palace" title="Permalink to this headline">¶</a></h1>
+<p>Pythonic Audio Library and Codecs Environment provides common higher-level API
+for audio rendering using OpenAL.  It wraps around the C++ interface <a class="reference external" href="https://github.com/kcat/alure">alure</a>
+for 3D positional rendering, environmental effects and out-of-the-box
+codec support, while using Cython to provide a modern interface with
+type hinting, data descriptors, context managers and <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>
+for a safe, convenient and pleasurable experience.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
@@ -56,6 +61,14 @@
 <li class="toctree-l2"><a class="reference internal" href="design.html#the-impl-idiom">The Impl Idiom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design.html#the-modern-python">The Modern Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design.html#the-double-reference">The Double Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Getting Involved</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#reporting-a-bug">Reporting a Bug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#requesting-a-feature">Requesting a Feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#submitting-a-patch">Submitting a Patch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#making-a-release">Making a Release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#style-guidelines">Style Guidelines</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="copying.html">Copying</a><ul>
@@ -82,32 +95,39 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="#">palace</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<h3><a href="#">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Getting Involved</a></li>
 <li class="toctree-l1"><a class="reference internal" href="copying.html">Copying</a></li>
 </ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
+<h3>Quick Navigation</h3>
 <ul>
-  <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="installation.html" title="next chapter">Installation</a></li>
-  </ul></li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
 </ul>
-</div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -118,14 +138,6 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -134,7 +146,7 @@
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

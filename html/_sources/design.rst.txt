@@ -8,8 +8,6 @@ by wrapping existing functionalities from the C++ API alure_.
 This part of the documentation assumes its reader are at least familiar with
 Cython, Python and C++11.
 
-.. _alure: https://github.com/kcat/alure
-
 .. _impl-idiom:
 
 The Impl Idiom
@@ -48,8 +46,6 @@ The Cython extension type can then be declared as follows
        def meth(self, crack: int) -> float:
            return self.impl.meth(crack)
 
-.. _`the pimpl idiom`: https://wiki.c2.com/?PimplIdiom
-
 The Modern Python
 -----------------
 
@@ -80,8 +76,6 @@ cases, it is recommended to alias the call to ``property`` as follows
 Then ``@getter`` and ``@setter`` can be used to decorate read-only and
 write-only properties, respectively, without any trouble even if other
 decorators are used for the same extension type method.
-
-.. _property:  https://docs.python.org/3/library/functions.html#property
 
 Context Managers
 ^^^^^^^^^^^^^^^^
@@ -183,3 +177,7 @@ In practice, :py:class:`palace.BaseDecoder` will also need to take into account
 other guarding mechanisms like :py:class:`abc.ABC`.  Due to Cython limitations,
 implementation as a pure Python class and :ref:`aliasing <getter-setter>` of
 ``@getter``/``@setter`` should be considered.
+
+.. _alure: https://github.com/kcat/alure
+.. _`the pimpl idiom`: https://wiki.c2.com/?PimplIdiom
+.. _property:  https://docs.python.org/3/library/functions.html#property
