@@ -1,6 +1,12 @@
 Copying
 =======
 
+This listing is our best-faith, hard-work effort at accurate attribution,
+sources, and licenses for everything in palace.  If you discover
+an asset/contribution that is incorrectly attributed or licensed,
+please contact us immediately.  We are happy to do everything we can
+to fix or remove the issue.
+
 License
 -------
 Palace is free software: you can redistribute it and/or modify it
@@ -42,7 +48,7 @@ the developers of Alure_ and Cython_ who promptly gave detail answers
 and made quick fixes to all of our problems.
 
 The wheels are build using cibuildwheel_, which made building wheels for
-extension modules much less of a pain in the ass.  `Travis CI`_ and AppVoyer_
+extension modules much less of a pain in the ass.  `Travis CI`_ and AppVeyor_
 kindly provides there services free of charge for automated CI/CD.
 
 This documentation is generated using Sphinx_, whose maintainer responses
@@ -65,4 +71,4 @@ extreamly quickly to obsolete Cython-related issues.
 .. _cibuildwheel: https://cibuildwheel.readthedocs.io/en/stable/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _Travis CI: https://travis-ci.com/
-.. _AppVoyer: https://www.appveyor.com/
+.. _AppVeyor: https://www.appveyor.com/

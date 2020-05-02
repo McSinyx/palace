@@ -47,9 +47,9 @@ requested by someone who requires them.
 Submitting a Patch
 ------------------
 
-We except all kinds of patches, from documentation and CI/CD setup
+We accept all kinds of patches, from documentation and CI/CD setup
 to bug fixes, feature implementations and tests.  Except for documentation
-located in the ``gh-pages`` branch, others are should be filed against
+located in the ``gh-pages`` branch, others should be filed against
 the development branch ``master``.  These are hosted on GitHub and
 one may create a local repository by running::
 
@@ -59,7 +59,7 @@ While the patch can be submitted via email, it is preferable to file
 a pull request on GitHub to allow more people to review it, since we do not
 have any mail list.  Either way, contributors must have legal permission
 to distribute the code and it must be available under `LGPLv3+`_.  Furthermore,
-each contributor retain the copyrights of their patch, to ensure that
+each contributor retains the copyrights of their patch, to ensure that
 the licence can never be revoked even if others wants to.  It is advisable
 that the author list per legal name under the copyright header
 of each source file they modify, like so::
@@ -88,6 +88,11 @@ Using GitHub
    copyright holders need to be properly documented.
 #. Add_, commit_ with `a great message`_ then push_ the result.
 #. Finally, `create a pull request`_.  We will then review and merge it.
+
+It is recommended to create a new branch in your fork
+(``git checkout -c what-you-are-working-on``) instead of working directly
+on ``master``.  This way one can still sync per fork with our ``master`` branch
+and ``git pull --rebase upstream master`` to avoid integration issues.
 
 Via Email
 ^^^^^^^^^
@@ -142,12 +147,12 @@ reStructuredText
 
 In order for reStructuredText to be rendered correctly, the body of
 constructs beginning with a marker (lists, hyperlink targets, comments, etc.)
-must be aligned relative to the marker.  For this reason, it's is convenient
+must be aligned relative to the marker.  For this reason, it is convenient
 to set your editor indentation level to 3 spaces, since most constructs
 starts with two dots and a space.  However, be aware of that bullet items
 require 2-space alignment and other exceptions.
 
-Limits all lines to a maximum of 79 characters.  Similar to comments
+Limit all lines to a maximum of 79 characters.  Similar to comments
 and docstrings, phrases should not be broken in the middle.
 The source code of this guide itself is a good example on how line breaks
 should be handled.  Additionally, two spaces should also be used
