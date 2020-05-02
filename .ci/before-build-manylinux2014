@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ev
+set -ex
 yum install -y git cmake pulseaudio \
   alsa-lib-devel pulseaudio-libs-devel jack-audio-connection-kit-devel \
   libvorbis-devel opusfile-devel libsndfile-devel
