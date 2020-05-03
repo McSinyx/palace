@@ -9,13 +9,12 @@ env:
   global:
     - TWINE_USERNAME=__token__
     - MACOSX_DEPLOYMENT_TARGET=10.9
-    - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
-    - CIBW_BEFORE_BUILD_LINUX=.ci/before-build-manylinux2014
     - CIBW_BEFORE_BUILD_MACOS=.ci/before-build-macos
+    - CIBW_BEFORE_BUILD_LINUX=.ci/before-build-manylinux2014
+    - CIBW_MANYLINUX_X86_64_IMAGE=manylinux2014
     - CIBW_REPAIR_WHEEL_COMMAND_MACOS=".ci/repair-whl-macos {wheel} {dest_dir}"
     - CIBW_TEST_REQUIRES=tox
-    # CIBW_TEST_COMMAND_MACOS="tox -c /Users/travis/build/McSinyx/palace"
-    - CIBW_TEST_COMMAND_LINUX="tox -c /project"
+    - CIBW_TEST_COMMAND="tox -c {project}"
 
 addons:
   homebrew:
@@ -36,11 +35,11 @@ jobs:
     - os: osx
       osx_image: xcode11.3
       language: shell
-      env: CIBW_BUILD=cp37-macosx_x86_64
+      env: CIBW_BUILD=cp37-macosx_x86_64 CIBW_TEST_COMMAND="true"
     - os: osx
       osx_image: xcode11.3
       language: shell
-      env: CIBW_BUILD=cp38-macosx_x86_64
+      env: CIBW_BUILD=cp38-macosx_x86_64 CIBW_TEST_COMMAND="true"
     - services: docker
       env: CIBW_BUILD=cp36-manylinux_x86_64
     - services: docker

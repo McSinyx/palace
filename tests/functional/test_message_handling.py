@@ -17,12 +17,18 @@
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
 import aifc
+from os import environ
+from platform import system
 from unittest.mock import Mock
 from uuid import uuid4
 
 from palace import (channel_configs, sample_types, decode,
                     Device, Context, Buffer, SourceGroup, MessageHandler)
 from pytest import mark
+
+
+travis_macos = bool(environ.get('TRAVIS')) and system() == 'Darwin'
+skipif_travis_macos = mark.skipif(travis_macos, reason='Travis CI for macOS')
 
 
 def mock(message):
@@ -36,6 +42,7 @@ def test_device_diconnected():
     """Test the handling of device disconnected message."""
 
 
+@skipif_travis_macos
 def test_source_stopped(wav):
     """Test the handling of source stopped message."""
     with Device() as device, Context(device) as context, Buffer(wav) as buffer:
@@ -46,6 +53,7 @@ def test_source_stopped(wav):
             context.message_handler.source_stopped.assert_called_with(source)
 
 
+@skipif_travis_macos
 def test_source_force_stopped(ogg):
     """Test the handling of source force stopped message."""
     with Device() as device, Context(device) as context:
@@ -61,6 +69,7 @@ def test_source_force_stopped(ogg):
         source.destroy()
 
 
+@skipif_travis_macos
 def test_buffer_loading(aiff):
     """Test the handling of buffer loading message."""
     with Device() as device, Context(device) as context:

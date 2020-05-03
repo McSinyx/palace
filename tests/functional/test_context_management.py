@@ -62,18 +62,20 @@ def test_init_others(cls):
         with cls(): pass
 
 
+def test_nested_context_manager():
+    """Test if the context manager returns to the previous context."""
+    with Device() as device, Context(device) as context:
+        with Context(device): pass
+        assert current_context() == context
+
+
 @mark.parametrize('data', [
     'air_absorption_factor', 'cone_angles', 'distance_range', 'doppler_factor',
     'gain', 'gain_auto', 'gain_range', 'group', 'looping', 'offset',
     'orientation', 'outer_cone_gains', 'pitch', 'position', 'radius',
     'relative', 'rolloff_factors', 'spatialize', 'stereo_angles', 'velocity'])
 def test_source_setter(data):
-    with Device() as device, Context(device): source = Source()
-    with raises(RuntimeError): setattr(source, data, getattr(source, data))
-
-
-def test_nested_context_manager():
-    """Test if the context manager returns to the previous context."""
-    with Device() as device, Context(device) as context:
-        with Context(device): pass
-        assert current_context() == context
+    """Test setters of a Source when its context is not current."""
+    with Device() as device, Context(device), Source() as source:
+        with raises(RuntimeError), Context(device):
+            setattr(source, data, getattr(source, data))
