@@ -10,7 +10,7 @@ Getting Involved
 First of all, thank you for using and contributing to palace!  We welcome
 all forms of contribution, and `the mo the merier`_.  By saying this, we also
 mean that we much prefer receiving many small and self-contained bug reports,
-feature requests and patches then one giant one.  There is no limit for
+feature requests and patches than a giant one.  There is no limit for
 the number of contributions one may or should make.  While it may seem
 appealing to be able to dump all thoughts and feelings into one ticket,
 it would be more difficult for us to keep track of the progress.

@@ -47,9 +47,9 @@ Palace would never have seen the light of day without the help from
 the developers of Alure_ and Cython_ who promptly gave detail answers
 and made quick fixes to all of our problems.
 
-The wheels are build using cibuildwheel_, which made building wheels for
-extension modules much less of a pain in the ass.  `Travis CI`_ and AppVeyor_
-kindly provides there services free of charge for automated CI/CD.
+The wheels are build using cibuildwheel_, which made building extension modules
+much less of a painful experience.  `Travis CI`_ and AppVeyor_ kindly provides
+their services free of charge for automated CI/CD.
 
 This documentation is generated using Sphinx_, whose maintainer responses
 extreamly quickly to obsolete Cython-related issues.
