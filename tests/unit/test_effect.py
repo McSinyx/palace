@@ -413,7 +413,6 @@ def test_chorus_waveform(context):
         with raises(ValueError): fx.waveform = 'ABC'
 
 
-@mark.xfail
 def test_chorus_phase(context):
     """Test ChorusEffect's property phase."""
     with ChorusEffect() as fx:
@@ -439,7 +438,6 @@ def test_chorus_rate(context):
         with raises(ValueError): fx.rate = -1
 
 
-@mark.xfail
 def test_chorus_depth(context):
     """Test ChorusEffect's property depth."""
     with ChorusEffect() as fx:
@@ -452,7 +450,6 @@ def test_chorus_depth(context):
         with raises(ValueError): fx.depth = -1
 
 
-@mark.xfail
 def test_chorus_feedback(context):
     """Test ChorusEffect's property feedback."""
     with ChorusEffect() as fx:
@@ -465,7 +462,6 @@ def test_chorus_feedback(context):
         with raises(ValueError): fx.feedback = -7/5
 
 
-@mark.xfail
 def test_chorus_delay(context):
     """Test ChorusEffect's property delay."""
     with ChorusEffect() as fx:
