@@ -2088,235 +2088,306 @@ cdef class ReverbEffect(BaseEffect):
 
     @property
     def density(self) -> float:
+        """Density, from 0.0 to 1.0."""
         return self.properties.density
 
     @density.setter
     def density(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid density: {value}')
         self.properties.density = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def diffusion(self) -> float:
+        """Diffusion, from 0.0 to 1.0."""
         return self.properties.diffusion
 
     @diffusion.setter
     def diffusion(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid diffusion: {value}')
         self.properties.diffusion = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def gain(self) -> float:
+        """Gain, from 0.0 to 1.0."""
         return self.properties.gain
 
     @gain.setter
     def gain(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid gain: {value}')
         self.properties.gain = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def gain_hf(self) -> float:
+        """High frequency gain, from 0.0 to 1.0."""
         return self.properties.gain_hf
 
     @gain_hf.setter
     def gain_hf(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid high frequency gain : {value}')
         self.properties.gain_hf = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def gain_lf(self) -> float:
+        """Low frequency gain, from 0.0 to 1.0."""
         return self.properties.gain_lf
 
     @gain_lf.setter
     def gain_lf(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid low frequency gain: {value}')
         self.properties.gain_lf = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def decay_time(self) -> float:
+        """Decay time, from 0.1 to 20.0."""
         return self.properties.decay_time
 
     @decay_time.setter
     def decay_time(self, value: float) -> None:
+        if value < 0.1 or value > 20.0:
+            raise ValueError(f'invalid decay time: {value}')
         self.properties.decay_time = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def decay_hf_ratio(self) -> float:
+        """High frequency decay ratio, from 0.1 to 20.0."""
         return self.properties.decay_hf_ratio
 
     @decay_hf_ratio.setter
     def decay_hf_ratio(self, value: float) -> None:
+        if value < 0.1 or value > 20.0:
+            raise ValueError(f'invalid high frequency decay ratio: {value}')
         self.properties.decay_hf_ratio = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def decay_lf_ratio(self) -> float:
+        """Low frequency decay ratio, from 0.1 to 20.0."""
         return self.properties.decay_lf_ratio
 
     @decay_lf_ratio.setter
     def decay_lf_ratio(self, value: float) -> None:
+        if value < 0.1 or value > 20.0:
+            raise ValueError(f'invalid low frequency decay ratio: {value}')
         self.properties.decay_lf_ratio = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def reflections_gain(self) -> float:
+        """Reflections gain, from 0.0 to 3.16."""
         return self.properties.reflections_gain
 
     @reflections_gain.setter
     def reflections_gain(self, value: float) -> None:
+        if value < 0.0 or value > 3.16:
+            raise ValueError(f'invalid reflections gain: {value}')
         self.properties.reflections_gain = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def reflections_delay(self) -> float:
+        """Reflections delay, from 0.0 to 0.3."""
         return self.properties.reflections_delay
 
     @reflections_delay.setter
     def reflections_delay(self, value: float) -> None:
+        if value < 0.0 or value > 0.3:
+            raise ValueError(f'invalid reflections delay: {value}')
         self.properties.reflections_delay = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def reflections_pan(self) -> Vector3:
+        """Reflections as 3D vector of magnitude between 0 and 1."""
         return self.properties.reflections_pan
 
     @reflections_pan.setter
     def reflections_pan(self, value: Vector3) -> None:
-        self.properties.reflections_pan[0] = value[0]
-        self.properties.reflections_pan[1] = value[1]
-        self.properties.reflections_pan[2] = value[2]
+        x, y, z = value
+        magnitude = x*x + y*y + z*z
+        if magnitude < 0 or magnitude > 1:
+            raise ValueError(f'invalid reflections pan: {value}')
+        self.properties.reflections_pan[0] = x
+        self.properties.reflections_pan[1] = y
+        self.properties.reflections_pan[2] = z
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def late_reverb_gain(self) -> float:
+        """Late reverb gain, from 0.0 to 10.0."""
         return self.properties.late_reverb_gain
 
     @late_reverb_gain.setter
     def late_reverb_gain(self, value: float) -> None:
+        if value < 0.0 or value > 10.0:
+            raise ValueError(f'invalid late reverb gain: {value}')
         self.properties.late_reverb_gain = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def late_reverb_delay(self) -> float:
+        """Late reverb delay, from 0.0 to 0.1."""
         return self.properties.late_reverb_delay
 
     @late_reverb_delay.setter
     def late_reverb_delay(self, value: float) -> None:
+        if value < 0.0 or value > 0.1:
+            raise ValueError(f'invalid late reverb delay: {value}')
         self.properties.late_reverb_delay = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def late_reverb_pan(self) -> Vector3:
+        """Late reverb as 3D vector of magnitude between 0 and 1."""
         return self.properties.late_reverb_pan
 
     @late_reverb_pan.setter
     def late_reverb_pan(self, value: Vector3) -> None:
-        self.properties.late_reverb_pan[0] = value[0]
-        self.properties.late_reverb_pan[1] = value[1]
-        self.properties.late_reverb_pan[2] = value[2]
+        x, y, z = value
+        magnitude = x*x + y*y + z*z
+        if magnitude < 0 or magnitude > 1:
+            raise ValueError(f'invalid late reverb pan: {value}')
+        self.properties.late_reverb_pan[0] = x
+        self.properties.late_reverb_pan[1] = y
+        self.properties.late_reverb_pan[2] = z
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def echo_time(self) -> float:
+        """Echo time, from 0.075 to 0.25."""
         return self.properties.echo_time
 
     @echo_time.setter
     def echo_time(self, value: float) -> None:
+        if value < 0.075 or value > 0.25:
+            raise ValueError(f'invalid echo time: {value}')
         self.properties.echo_time = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def echo_depth(self) -> float:
+        """Echo depth, from 0.0 to 1.0."""
         return self.properties.echo_depth
 
     @echo_depth.setter
     def echo_depth(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid echo depth: {value}')
         self.properties.echo_depth = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def modulation_time(self) -> float:
+        """Modulation time, from 0.004 to 4.0."""
         return self.properties.modulation_time
 
     @modulation_time.setter
     def modulation_time(self, value: float) -> None:
+        if value < 0.004 or value > 4.0:
+            raise ValueError(f'invalid modulation time: {value}')
         self.properties.modulation_time = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def modulation_depth(self) -> float:
+        """Modulation depth, from 0.0 to 1.0."""
         return self.properties.modulation_depth
 
     @modulation_depth.setter
     def modulation_depth(self, value: float) -> None:
+        if value < 0.0 or value > 1.0:
+            raise ValueError(f'invalid modulation depth: {value}')
         self.properties.modulation_depth = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def air_absorption_gain_hf(self) -> float:
+        """High frequency air absorption gain, from 0.892 to 1.0."""
         return self.properties.air_absorption_gain_hf
 
     @air_absorption_gain_hf.setter
     def air_absorption_gain_hf(self, value: float) -> None:
+        if value < 0.892 or value > 1.0:
+            raise ValueError(f'invalid high frequency air absorption gain: {value}')
         self.properties.air_absorption_gain_hf = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def hf_reference(self) -> float:
+        """High frequency reference, from 1000.0 to 20000.0."""
         return self.properties.hf_reference
 
     @hf_reference.setter
     def hf_reference(self, value: float) -> None:
+        if value < 1000.0 or value > 20000.0:
+            raise ValueError(f'invalid high frequency reference: {value}')
         self.properties.hf_reference = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def lf_reference(self) -> float:
+        """Low frequency reference, from 20.0 to 1000.0."""
         return self.properties.lf_reference
 
     @lf_reference.setter
     def lf_reference(self, value: float) -> None:
+        if value < 20.0 or value > 1000.0:
+            raise ValueError(f'invalid low frequency reference: {value}')
         self.properties.lf_reference = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def room_rolloff_factor(self) -> float:
+        """Room rolloff factor, from 0.0 to 10.0."""
         return self.properties.room_rolloff_factor
 
     @room_rolloff_factor.setter
     def room_rolloff_factor(self, value: float) -> None:
+        if value < 0.0 or value > 10.0:
+            raise ValueError(f'invalid room rolloff factor: {value}')
         self.properties.room_rolloff_factor = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
     @property
     def decay_hf_limit(self) -> bool:
-        return self.properties.decay_hf_limit
+        """High frequency decay limit."""
+        return bool(self.properties.decay_hf_limit)
 
     @decay_hf_limit.setter
     def decay_hf_limit(self, value: bool) -> None:
-        self.properties.decay_hf_limit = value
+        self.properties.decay_hf_limit = bool(value)
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
