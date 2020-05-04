@@ -10,12 +10,12 @@ To quote alure's README,
 In some sense, what palace aimes to be to [OpenAL Soft] is what [ModernGL]
 is to OpenGL (except that all the heavy-lifting are taken are by alure):
 
-* 3D sound rendering
-* Environmental audio effects: reverb, atmospheric air absorption,
+* 3D positional sound rendering
+* Environmental effects: reverb, atmospheric air absorption,
   sound occlusion and obstruction
 * Binaural (HRTF) rendering
 * Out-of-the-box audio decoding of FLAC, MP3, Ogg Vorbis, Opus, WAV, AIFF, etc.
-* Modern Pythonic API: snake_case, `@property`, `with` context manager,
+* Modern Pythonic API: `snake_case`, `@property`, `with` context manager,
   type annotation
 
 ## Installation
