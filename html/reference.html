@@ -299,12 +299,13 @@ extension to be available.</p>
 <dt id="palace.use_context">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">thread</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make the specified context current for OpenAL operations.</p>
-<p>If <cite>thread</cite> is set to <cite>True</cite>, make the context current
+<p>This fails silently if the given context has been destroyed.
+In case <cite>thread</cite> is not specified, fallback to preference made by
+<cite>thread_local</cite>.</p>
+<p>If <cite>thread</cite> is <cite>True</cite>, make the context current
 for OpenAL operations on the calling thread only.
 This requires the non-device-specific as well as the context’s
 device <cite>ALC_EXT_thread_local_context</cite> extension to be available.</p>
-<p>In case <cite>thread</cite> is not specified, fallback to preference made by
-<cite>thread_local</cite>.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1289,6 +1290,9 @@ By default <cite>current_context()</cite> is used.</p>
 </div>
 <div class="section" id="environmental-effects">
 <h2>Environmental Effects<a class="headerlink" href="#environmental-effects" title="Permalink to this headline">¶</a></h2>
+<p>For the sake of brevity, we only document the constraints of each effect’s
+properties.  Further details can be found at OpenAL’s <a class="reference external" href="https://kcat.strangesoft.net/misc-downloads/Effects%20Extension%20Guide.pdf">Effect Extension Guide</a>
+which specifies the purpose and usage of each value.</p>
 <dl class="py data">
 <dt id="palace.reverb_preset_names">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">reverb_preset_names</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.reverb_preset_names" title="Permalink to this definition">¶</a></dt>
@@ -1375,117 +1379,140 @@ By default <cite>current_context()</cite> is used.</p></li>
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.air_absorption_gain_hf">
 <code class="sig-name descname">air_absorption_gain_hf</code><a class="headerlink" href="#palace.ReverbEffect.air_absorption_gain_hf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>High frequency air absorption gain, from 0.892 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.decay_hf_limit">
 <code class="sig-name descname">decay_hf_limit</code><a class="headerlink" href="#palace.ReverbEffect.decay_hf_limit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>High frequency decay limit.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.decay_hf_ratio">
 <code class="sig-name descname">decay_hf_ratio</code><a class="headerlink" href="#palace.ReverbEffect.decay_hf_ratio" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>High frequency decay ratio, from 0.1 to 20.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.decay_lf_ratio">
 <code class="sig-name descname">decay_lf_ratio</code><a class="headerlink" href="#palace.ReverbEffect.decay_lf_ratio" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Low frequency decay ratio, from 0.1 to 20.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.decay_time">
 <code class="sig-name descname">decay_time</code><a class="headerlink" href="#palace.ReverbEffect.decay_time" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Decay time, from 0.1 to 20.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.density">
 <code class="sig-name descname">density</code><a class="headerlink" href="#palace.ReverbEffect.density" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Density, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.diffusion">
 <code class="sig-name descname">diffusion</code><a class="headerlink" href="#palace.ReverbEffect.diffusion" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Diffusion, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.echo_depth">
 <code class="sig-name descname">echo_depth</code><a class="headerlink" href="#palace.ReverbEffect.echo_depth" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Echo depth, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.echo_time">
 <code class="sig-name descname">echo_time</code><a class="headerlink" href="#palace.ReverbEffect.echo_time" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Echo time, from 0.075 to 0.25.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.gain">
 <code class="sig-name descname">gain</code><a class="headerlink" href="#palace.ReverbEffect.gain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Gain, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.gain_hf">
 <code class="sig-name descname">gain_hf</code><a class="headerlink" href="#palace.ReverbEffect.gain_hf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>High frequency gain, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.gain_lf">
 <code class="sig-name descname">gain_lf</code><a class="headerlink" href="#palace.ReverbEffect.gain_lf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Low frequency gain, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.hf_reference">
 <code class="sig-name descname">hf_reference</code><a class="headerlink" href="#palace.ReverbEffect.hf_reference" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>High frequency reference, from 1000.0 to 20000.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.late_reverb_delay">
 <code class="sig-name descname">late_reverb_delay</code><a class="headerlink" href="#palace.ReverbEffect.late_reverb_delay" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Late reverb delay, from 0.0 to 0.1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.late_reverb_gain">
 <code class="sig-name descname">late_reverb_gain</code><a class="headerlink" href="#palace.ReverbEffect.late_reverb_gain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Late reverb gain, from 0.0 to 10.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.late_reverb_pan">
 <code class="sig-name descname">late_reverb_pan</code><a class="headerlink" href="#palace.ReverbEffect.late_reverb_pan" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Late reverb as 3D vector of magnitude between 0 and 1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.lf_reference">
 <code class="sig-name descname">lf_reference</code><a class="headerlink" href="#palace.ReverbEffect.lf_reference" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Low frequency reference, from 20.0 to 1000.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.modulation_depth">
 <code class="sig-name descname">modulation_depth</code><a class="headerlink" href="#palace.ReverbEffect.modulation_depth" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Modulation depth, from 0.0 to 1.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.modulation_time">
 <code class="sig-name descname">modulation_time</code><a class="headerlink" href="#palace.ReverbEffect.modulation_time" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Modulation time, from 0.004 to 4.0.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.reflections_delay">
 <code class="sig-name descname">reflections_delay</code><a class="headerlink" href="#palace.ReverbEffect.reflections_delay" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reflections delay, from 0.0 to 0.3.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.reflections_gain">
 <code class="sig-name descname">reflections_gain</code><a class="headerlink" href="#palace.ReverbEffect.reflections_gain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reflections gain, from 0.0 to 3.16.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.reflections_pan">
 <code class="sig-name descname">reflections_pan</code><a class="headerlink" href="#palace.ReverbEffect.reflections_pan" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reflections as 3D vector of magnitude between 0 and 1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.room_rolloff_factor">
 <code class="sig-name descname">room_rolloff_factor</code><a class="headerlink" href="#palace.ReverbEffect.room_rolloff_factor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Room rolloff factor, from 0.0 to 10.0.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="palace.ReverbEffect.send_auto">
