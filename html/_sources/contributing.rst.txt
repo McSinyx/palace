@@ -104,8 +104,8 @@ Via Email
 
 #. Work on your patch with tests and copyright notice included
    as described above.
-#. Create a patch from the output of ``git diff`` and send it to
-   one of the maintainers (our emails addresses are available in ``git log``).
+#. `git-format-patch`_ and send it to one of the maintainers
+   (our emails addresses are available under ``git log``).
    We will then review and merge it.
 
 In any case, thank you very much for your contributions!
@@ -126,6 +126,8 @@ to improve the CI/CD may find it helpful.
    In the release note, make sure to include all user-facing changes
    since the previous release.  This will trigger the CD services
    to build the wheels and publish them to PyPI.
+#. Wait for the wheel for your platform to arrive to PyPI and install it.
+   Play around with it for a little to make sure that everything is OK.
 #. Under the local repository, checkout the ``gh-pages`` branch.
    Often, is it necessary to update the credits under the :doc:`copying`
    section and review if the :doc:`reference` section needs any change
@@ -195,6 +197,7 @@ except after the final sentence.
 .. _push: https://git-scm.com/docs/git-push
 .. _create a pull request:
    https://help.github.com/articles/creating-a-pull-request
+.. _git-format-patch: https://git-scm.com/docs/git-format-patch
 .. _twine: https://twine.readthedocs.io/en/latest/
 .. _numpydoc: https://numpydoc.readthedocs.io/en/latest/format.html
 .. _Octave: https://wiki.octave.org/C%2B%2B_style_guide
