@@ -106,10 +106,10 @@ cdef extern from 'alure2.h' nogil:
         float hf_reference 'flHFReference'
         float lf_reference 'flLFReference'
         float room_rolloff_factor 'flRoomRolloffFactor'
-        int decay_hf_limit 'iDecayHFLimit'
+        bint decay_hf_limit 'iDecayHFLimit'
 
     cdef cppclass EFXCHORUSPROPERTIES:
-        int waveform 'iWaveform'
+        bint waveform 'iWaveform'
         int phase 'iPhase'
         float rate 'flRate'
         float depth 'flDepth'

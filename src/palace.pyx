@@ -925,7 +925,7 @@ cdef class Listener:
     def orientation(self, value: Tuple[Vector3, Vector3]) -> None:
         """3D orientation of the listener.
 
-        Parameters
+        Attributes
         ----------
         at : Tuple[float, float, float]
             Relative position.
@@ -1110,7 +1110,7 @@ cdef class Buffer:
         current context, `start = 0` and `end = length` respectively.
         Otherwise, `start < end <= length`.
 
-        Parameters
+        Attributes
         ----------
         start : int
             Starting point, in sample frames (inclusive).
@@ -1382,7 +1382,7 @@ cdef class Source:
         This is used after distance and cone attenuation are applied
         to the gain base and before the adjustments of the filter gain.
 
-        Parameters
+        Attributes
         ----------
         mingain : float
             Minimum gain, default to 0.
@@ -1410,7 +1410,7 @@ cdef class Source:
         distance is clamped to the specified range before applying
         distance-related attenuation.
 
-        Parameters
+        Attributes
         ----------
         refdist : float
             The distance at which the source's volume will not have
@@ -1461,7 +1461,7 @@ cdef class Source:
     def orientation(self) -> Tuple[Vector3, Vector3]:
         """3D orientation of the source.
 
-        Parameters
+        Attributes
         ----------
         at : Tuple[float, float, float]
             Relative position.
@@ -1486,7 +1486,7 @@ cdef class Source:
     def cone_angles(self) -> Tuple[float, float]:
         """Cone inner and outer angles in degrees.
 
-        Parameters
+        Attributes
         ----------
         inner : float
             The area within which the listener will hear the source
@@ -1518,7 +1518,7 @@ cdef class Source:
     def outer_cone_gains(self) -> Tuple[float, float]:
         """Gain when listener is out of the source's outer cone area.
 
-        Parameters
+        Attributes
         ----------
         gain : float
             Linear gain applying to all frequencies, default to 1.
@@ -1542,22 +1542,25 @@ cdef class Source:
 
     @property
     def rolloff_factors(self) -> Tuple[float, float]:
-        """Rolloff factor and room factor for the direct and send paths.
+        """Rolloff factors for the direct and send paths.
 
         This is effectively a distance scaling relative to
         the reference distance.
+
+        Attributes
+        ----------
+        factor : float
+            Rolloff factor.
+        room_factor : float
+            Room rolloff factor, default to 0 which disables
+            distance attenuation for send paths.  This is because
+            the reverb engine will, by default, apply a more realistic
+            room decay based on the reverb decay time and distance.
 
         Raises
         ------
         ValueError
             If either of rolloff factors is set to a negative value.
-
-        Notes
-        -----
-        To disable distance attenuation for send paths,
-        set room factor to 0.  The reverb engine will, by default,
-        apply a more realistic room decay based on the reverb decay
-        time and distance.
         """
         return self.impl.get_rolloff_factors()
 
@@ -1689,9 +1692,14 @@ cdef class Source:
     def gain_auto(self) -> Tuple[bool, bool, bool]:
         """Whether automatically adjust gains.
 
-        Respectively for direct path's high frequency gain,
-        send paths' gain and send paths' high-frequency gain are
-        automatically adjusted.  The default is `True` for all.
+        Attributes
+        ----------
+        direct_hf : bool
+            Direct path's high frequency gain, default to `True`.
+        send : bool
+            Send paths' gain, default to `True`.
+        send_hf : bool
+            Send paths' high-frequency, default to `True`.
         """
         return (self.impl.get_direct_gain_hf_auto(),
                 self.impl.get_send_gain_auto(),
@@ -1699,8 +1707,8 @@ cdef class Source:
 
     @gain_auto.setter
     def gain_auto(self, value: Tuple[bool, bool, bool]) -> None:
-        directhf, send, sendhf = value
-        self.impl.set_gain_auto(directhf, send, sendhf)
+        direct_hf, send, send_hf = value
+        self.impl.set_gain_auto(direct_hf, send, send_hf)
 
     @getter
     def sends(self) -> AuxiliarySends:
@@ -1964,7 +1972,7 @@ cdef class BaseEffect:
 
     See Also
     --------
-    ReverbEffect : EAXReverb effect
+    ReverbEffect : Environmental reverberation effect
     ChorusEffect : Chorus effect
     """
     cdef alure.AuxiliaryEffectSlot slot
@@ -2048,10 +2056,7 @@ cdef class BaseEffect:
 
 
 cdef class ReverbEffect(BaseEffect):
-    """EAXReverb effect.
-
-    It will automatically downgrade to the Standard Reverb effect
-    if EAXReverb effect is not supported.
+    """Environmental reverberation effect.
 
     Parameters
     ----------
@@ -2336,7 +2341,8 @@ cdef class ReverbEffect(BaseEffect):
     @air_absorption_gain_hf.setter
     def air_absorption_gain_hf(self, value: float) -> None:
         if value < 0.892 or value > 1.0:
-            raise ValueError(f'invalid high frequency air absorption gain: {value}')
+            raise ValueError(
+                f'invalid high frequency air absorption gain: {value}')
         self.properties.air_absorption_gain_hf = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
@@ -2382,18 +2388,24 @@ cdef class ReverbEffect(BaseEffect):
 
     @property
     def decay_hf_limit(self) -> bool:
-        """High frequency decay limit."""
-        return bool(self.properties.decay_hf_limit)
+        """Whether to limit high frequency decay."""
+        return self.properties.decay_hf_limit
 
     @decay_hf_limit.setter
     def decay_hf_limit(self, value: bool) -> None:
-        self.properties.decay_hf_limit = bool(value)
+        self.properties.decay_hf_limit = value
         self.impl.set_reverb_properties(self.properties)
         self.slot.apply_effect(self.impl)
 
 
 cdef class ChorusEffect(BaseEffect):
     """Chorus effect.
+
+    The chorus effect essentially replays the input audio accompanied
+    by another slightly delayed version of the signal, creating
+    a "doubling" effect. This was originally intended to emulate
+    the effect of several musicians playing the same notes
+    simultaneously, to create a thicker, more satisfying sound.
 
     Parameters
     ----------
@@ -2439,9 +2451,9 @@ cdef class ChorusEffect(BaseEffect):
     @waveform.setter
     def waveform(self, value: str) -> None:
         if value == 'triangle':
-            self.properties.waveform = 1
+            self.properties.waveform = True
         elif value == 'sine':
-            self.properties.waveform = 0
+            self.properties.waveform = False
         else:
             raise ValueError(f'invalid waveform: {value}')
         self.impl.set_chorus_properties(self.properties)
@@ -2583,8 +2595,8 @@ cdef class Decoder:
     def loop_points(self) -> Tuple[int, int]:
         """Loop points in sample frames.
 
-        Parameters
-        ----------
+        Returns
+        -------
         start : int
             Inclusive starting loop point.
         end : int
@@ -2707,8 +2719,8 @@ class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
     def loop_points(self) -> Tuple[int, int]:
         """Loop points in sample frames.
 
-        Parameters
-        ----------
+        Returns
+        -------
         start : int
             Inclusive starting loop point.
         end : int
