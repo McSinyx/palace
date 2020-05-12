@@ -264,11 +264,13 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
 
         @staticmethod
         void make_current 'MakeCurrent'(Context) except +
+
         @staticmethod
         Context get_current 'GetCurrent'() except +
 
         @staticmethod
         void make_thread_current 'MakeThreadCurrent'(Context) except +
+
         @staticmethod
         Context get_thread_current 'GetThreadCurrent'() except +
 
@@ -518,6 +520,7 @@ cdef extern from 'alure2.h' namespace 'alure' nogil:
     cdef cppclass FileIOFactory:
         @staticmethod
         unique_ptr[FileIOFactory] set(unique_ptr[FileIOFactory])
+
         @staticmethod
         FileIOFactory& get()
 

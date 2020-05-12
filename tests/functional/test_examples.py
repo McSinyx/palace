@@ -47,7 +47,7 @@ skipif_travis_macos = mark.skipif(travis_macos, reason='Travis CI for macOS')
 
 
 def capture(*argv):
-    """Return the captured standard output of the given Python script."""
+    """Return the captured standard output of given Python script."""
     return run([executable, *argv], stdout=PIPE).stdout.decode()
 
 
