@@ -12,6 +12,7 @@ for a safe, convenient and pleasurable experience.
    :maxdepth: 2
 
    installation
+   tutorial/index
    reference
    design
    contributing
