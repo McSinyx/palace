@@ -32,14 +32,6 @@ jobs:
       osx_image: xcode11.3
       language: shell
       env: CIBW_BUILD=cp36-macosx_x86_64
-    - os: osx
-      osx_image: xcode11.3
-      language: shell
-      env: CIBW_BUILD=cp37-macosx_x86_64 CIBW_TEST_COMMAND="true"
-    - os: osx
-      osx_image: xcode11.3
-      language: shell
-      env: CIBW_BUILD=cp38-macosx_x86_64 CIBW_TEST_COMMAND="true"
     - services: docker
       env: CIBW_BUILD=cp36-manylinux_x86_64
     - services: docker
