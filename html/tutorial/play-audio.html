@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Play an Audio &#8212; palace 0.2.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference.html" />
+    <link rel="prev" title="Context Creation" href="context.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="context.html">Context Creation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Play an Audio</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<h3>Quick Navigation</h3>
+<ul>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="context.html" title="Previous document">Context Creation</a>
+        </li>
+        <li>
+          <a href="../reference.html" title="Next document">Reference</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="play-an-audio">
+<h1>Play an Audio<a class="headerlink" href="#play-an-audio" title="Permalink to this headline">¶</a></h1>
+<p>Now that you know how to create a context,
+let’s get into the most essential use case: playing audio.</p>
+<div class="section" id="creating-a-source">
+<h2>Creating a Source<a class="headerlink" href="#creating-a-source" title="Permalink to this headline">¶</a></h2>
+<p>To play an audio, you have to create a source.  This source
+is an imaginary sound broadcaster, whose positions and properties
+can be changed to create desired effects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Source</span>
+
+<span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">dev</span><span class="p">,</span> <span class="n">Context</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Source</span><span class="p">()</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="c1"># to be written</span>
+</pre></div>
+</div>
+<p>Just like for the case of <a class="reference internal" href="../reference.html#palace.Context" title="palace.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code></a>, <a class="reference internal" href="../reference.html#palace.Source" title="palace.Source"><code class="xref py py-class docutils literal notranslate"><span class="pre">Source</span></code></a> creation
+requires a context, but here the context is passed implicitly.</p>
+</div>
+<div class="section" id="decode-the-audio-file">
+<h2>Decode the Audio File<a class="headerlink" href="#decode-the-audio-file" title="Permalink to this headline">¶</a></h2>
+<p>Palace has a module level function <a class="reference internal" href="../reference.html#palace.decode" title="palace.decode"><code class="xref py py-func docutils literal notranslate"><span class="pre">decode()</span></code></a>, which decodes audio file
+automatically, and this decoded file is a <a class="reference internal" href="../reference.html#palace.Decoder" title="palace.Decoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decoder</span></code></a> object.  This object
+can be played by a simple <a class="reference internal" href="../reference.html#palace.Decoder.play" title="palace.Decoder.play"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Decoder.play()</span></code></a> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">decode</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;some_audio.ogg&#39;</span>
+<span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">dev</span><span class="p">,</span> <span class="n">Context</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Source</span><span class="p">()</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We are almost there.  Now, let’s look at the document for <a class="reference internal" href="../reference.html#palace.Decoder.play" title="palace.Decoder.play"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Decoder.play()</span></code></a>.
+The method takes 3 parameters: <code class="docutils literal notranslate"><span class="pre">chunk_len</span></code>, <code class="docutils literal notranslate"><span class="pre">queue_size</span></code>, and <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p>
+<p>The source object is optional, because if you don’t have it, a new source
+will be generated by default.</p>
+<p>The audio is divided into chunks, each of which is of length <code class="docutils literal notranslate"><span class="pre">chunk_len</span></code>.
+Then <code class="docutils literal notranslate"><span class="pre">queue_size</span></code> is the number of these chunks that it will play.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">decode</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;some_audio.ogg&#39;</span>
+<span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">dev</span><span class="p">,</span> <span class="n">Context</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Source</span><span class="p">()</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">dec</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>But we don’t want it to play only a small part of the audio.  We want it to
+play all of it.  How do we do that? The answer is a loop.</p>
+<p>There is a method, <a class="reference internal" href="../reference.html#palace.Context.update" title="palace.Context.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Context.update()</span></code></a>, which update the context and the source.
+When the source is updated, it will be filled with new chunks of data from
+the decoder.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">decode</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;some_audio.ogg&#39;</span>
+<span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">dev</span><span class="p">,</span> <span class="n">Context</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Source</span><span class="p">()</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">dec</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">src</span><span class="o">.</span><span class="n">playing</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you tried this code for a song, you will find that it’s a bit rush.
+That is because the source is renewed too fast.  So, a simple solution
+is to <code class="docutils literal notranslate"><span class="pre">sleep</span></code> for a while.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">decode</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;some_audio.ogg&#39;</span>
+<span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">dev</span><span class="p">,</span> <span class="n">Context</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Source</span><span class="p">()</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">dec</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">src</span><span class="o">.</span><span class="n">playing</span><span class="p">:</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mf">0.025</span><span class="p">)</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Congratulation!  Enjoy your music before we get to the next part of this tutorial.</p>
+</div>
+</div>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="context.html" title="Previous document">Context Creation</a>
+        </li>
+        <li>
+          <a href="../reference.html" title="Next document">Reference</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/tutorial/play-audio.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
