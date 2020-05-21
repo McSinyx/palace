@@ -1,7 +1,7 @@
-.. py:currentmodule:: palace
-
 Context Creation
 ================
+
+.. currentmodule:: palace
 
 A context is an object that allows palace to access OpenAL,
 which is essential when you work with palace.  Context maintains

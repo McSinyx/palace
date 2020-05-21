@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Resource Caching &#8212; palace 0.2.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sources &amp; Source Groups" href="source.html" />
+    <link rel="prev" title="Audio Library Contexts" href="context.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="device.html">Audio Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context.html">Audio Library Contexts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Resource Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Audio Streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<h3>Quick Navigation</h3>
+<ul>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
+    </a>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="context.html" title="Previous document">Audio Library Contexts</a>
+        </li>
+        <li>
+          <a href="source.html" title="Next document">Sources &amp; Source Groups</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="resource-caching">
+<h1>Resource Caching<a class="headerlink" href="#resource-caching" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="audio-buffers">
+<h2>Audio Buffers<a class="headerlink" href="#audio-buffers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="palace.Buffer">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Buffer</code><a class="headerlink" href="#palace.Buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Buffer of preloaded PCM samples coming from a <cite>Decoder</cite>.</p>
+<p>Cached buffers must be freed using <cite>destroy</cite> before destroying
+<cite>context</cite>.  Alternatively, this can be used as a context manager
+that calls <cite>destroy</cite> upon completion of the block,
+even if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.  Multiple calls with the same name
+will return the same buffer.</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the buffer is to be created and cached.
+By default <cite>current_context()</cite> is used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="palace.Buffer.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#palace.Buffer.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Audio file or resource name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="palace.Buffer.channel_config">
+<em class="property">property </em><code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Buffer.channel_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Buffer’s sample configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Buffer.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Free the buffer’s cache.</p>
+<p>This invalidates all other <cite>Buffer</cite> objects with the same name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.frequency">
+<em class="property">property </em><code class="sig-name descname">frequency</code><a class="headerlink" href="#palace.Buffer.frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Buffer’s frequency in hertz.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.from_decoder">
+<em class="property">static </em><code class="sig-name descname">from_decoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decoder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="decoder.html#palace.Decoder" title="palace.Decoder">palace.Decoder</a></span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#palace.Buffer" title="palace.Buffer">palace.Buffer</a><a class="headerlink" href="#palace.Buffer.from_decoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a buffer created by reading the given decoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decoder</strong> (<a class="reference internal" href="decoder.html#palace.Decoder" title="palace.Decoder"><em>Decoder</em></a>) – The decoder from which the buffer is to be cached.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name to give to the buffer.  It may alias an audio file,
+but it must not currently exist in the buffer cache.</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the buffer is to be created.
+By default <cite>current_context()</cite> is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current;
+    or if <cite>name</cite> is already used for another buffer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.length">
+<em class="property">property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.Buffer.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of the buffer in sample frames.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.length_seconds">
+<em class="property">property </em><code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Buffer.length_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of the buffer in seconds.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Buffer.loop_points">
+<code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.Buffer.loop_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop points for looping sources.</p>
+<p>If the <cite>AL_SOFT_loop_points</cite> extension is not supported by the
+current context, <cite>start = 0</cite> and <cite>end = length</cite> respectively.
+Otherwise, <cite>start &lt; end &lt;= length</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>int</em>) – Starting point, in sample frames (inclusive).</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – Ending point, in sample frames (exclusive).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The buffer must not be in use when this property is set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a><a class="headerlink" href="#palace.Buffer.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Play <cite>source</cite> using the buffer.</p>
+<p>Return the source used for playing.  If <cite>None</cite> is given,
+create a new one.</p>
+<p>One buffer may be played from multiple sources simultaneously.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.sample_type">
+<em class="property">property </em><code class="sig-name descname">sample_type</code><a class="headerlink" href="#palace.Buffer.sample_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Buffer’s sample type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#palace.Buffer.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Storage size used by the buffer, in bytes.</p>
+<p class="rubric">Notes</p>
+<p>The size in bytes may not be what you expect from the length,
+as it may take more space internally than the <cite>channel_config</cite>
+and <cite>sample_type</cite> suggest.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.source_count">
+<em class="property">property </em><code class="sig-name descname">source_count</code><a class="headerlink" href="#palace.Buffer.source_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of sources currently using the buffer.</p>
+<p class="rubric">Notes</p>
+<p><cite>Context.update</cite> needs to be called to reliably ensure the count
+is kept updated for when sources reach their end.  This is
+equivalent to calling <cite>len(self.sources)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Buffer.sources">
+<em class="property">property </em><code class="sig-name descname">sources</code><a class="headerlink" href="#palace.Buffer.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Source</cite> objects currently playing the buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="loading-freeing-in-batch">
+<h2>Loading &amp; Freeing in Batch<a class="headerlink" href="#loading-freeing-in-batch" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="palace.cache">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cache given audio resources asynchronously.</p>
+<p>Duplicate names and buffers already cached are ignored.
+Cached buffers must be freed before destroying the context.</p>
+<p>The resources will be scheduled for caching asynchronously,
+and should be retrieved later when needed by initializing
+<cite>Buffer</cite> corresponding objects.  Resources that cannot be
+loaded, for example due to an unsupported format, will be
+ignored and a later <cite>Buffer</cite> initialization will raise
+an exception.</p>
+<p>If <cite>context</cite> is not given, <cite>current_context()</cite> will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#palace.free" title="palace.free"><code class="xref py py-func docutils literal notranslate"><span class="pre">free()</span></code></a></dt><dd><p>Free cached audio resources given their names</p>
+</dd>
+<dt><a class="reference internal" href="#palace.Buffer.destroy" title="palace.Buffer.destroy"><code class="xref py py-func docutils literal notranslate"><span class="pre">Buffer.destroy()</span></code></a></dt><dd><p>Free the buffer’s cache</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="palace.free">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">free</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.free" title="Permalink to this definition">¶</a></dt>
+<dd><p>Free cached audio resources given their names.</p>
+<p>If <cite>context</cite> is not given, <cite>current_context()</cite> will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="context.html" title="Previous document">Audio Library Contexts</a>
+        </li>
+        <li>
+          <a href="source.html" title="Next document">Sources &amp; Source Groups</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/buffer.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

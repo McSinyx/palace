@@ -1,6 +1,8 @@
 Design Principles
 =================
 
+.. currentmodule:: palace
+
 In this section, we will discuss a few design principles in order to write
 a safe, efficient, easy-to-use and extendable 3D audio library for Python,
 by wrapping existing functionalities from the C++ API alure_.
@@ -128,7 +130,7 @@ as it is equivalent to
 
 Other than closure/destruction of objects, typical uses of `context managers`__
 also include saving and restoring various kinds of global state (as seen in
-:py:class:`palace.Context`), locking and unlocking resources, etc.
+:py:class:`Context`), locking and unlocking resources, etc.
 
 __ https://docs.python.org/3/reference/datamodel.html#context-managers
 
@@ -173,7 +175,7 @@ from ``BaseDecoder`` will be exposed to C++ as an attribute of ``CppDecoder``.
 Effectively, this means the users can have the alure API calling their
 inherited Python object as naturally as if palace is implemented in pure Python.
 
-In practice, :py:class:`palace.BaseDecoder` will also need to take into account
+In practice, :py:class:`BaseDecoder` will also need to take into account
 other guarding mechanisms like :py:class:`abc.ABC`.  Due to Cython limitations,
 implementation as a pure Python class and :ref:`aliasing <getter-setter>` of
 ``@getter``/``@setter`` should be considered.

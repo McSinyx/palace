@@ -130,7 +130,7 @@ to improve the CI/CD may find it helpful.
    Play around with it for a little to make sure that everything is OK.
 #. Under the local repository, checkout the ``gh-pages`` branch.
    Often, is it necessary to update the credits under the :doc:`copying`
-   section and review if the :doc:`reference` section needs any change
+   section and review if the :doc:`reference/index` section needs any change
    before running ``make html`` to rebuild to documentation.
 #. View the documentation locally then push it to GitHub.
 

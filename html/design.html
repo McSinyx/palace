@@ -15,7 +15,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Getting Involved" href="contributing.html" />
-    <link rel="prev" title="Reference" href="reference.html" />
+    <link rel="prev" title="File I/O Interface" href="reference/file-io.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -31,7 +31,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Design Principles</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-impl-idiom">The Impl Idiom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-modern-python">The Modern Python</a></li>
@@ -65,6 +65,12 @@
       GitHub Repository
     </a>
   </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
+    </a>
+  </li>
 </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
@@ -86,7 +92,7 @@
     <ul>
         <li>
           &larr;
-          <a href="reference.html" title="Previous document">Reference</a>
+          <a href="reference/file-io.html" title="Previous document">File I/O Interface</a>
         </li>
         <li>
           <a href="contributing.html" title="Next document">Getting Involved</a>
@@ -206,7 +212,7 @@ will be closed, regardless of whatever may happen within the inner block</p>
 </div>
 <p>Other than closure/destruction of objects, typical uses of <a class="reference external" href="https://docs.python.org/3/reference/datamodel.html#context-managers">context managers</a>
 also include saving and restoring various kinds of global state (as seen in
-<a class="reference internal" href="reference.html#palace.Context" title="palace.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.Context</span></code></a>), locking and unlocking resources, etc.</p>
+<a class="reference internal" href="reference/context.html#palace.Context" title="palace.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code></a>), locking and unlocking resources, etc.</p>
 </div>
 </div>
 <div class="section" id="the-double-reference">
@@ -244,7 +250,7 @@ although we’ll need to handle the reference count ourselves, e.g.</p>
 from <code class="docutils literal notranslate"><span class="pre">BaseDecoder</span></code> will be exposed to C++ as an attribute of <code class="docutils literal notranslate"><span class="pre">CppDecoder</span></code>.
 Effectively, this means the users can have the alure API calling their
 inherited Python object as naturally as if palace is implemented in pure Python.</p>
-<p>In practice, <a class="reference internal" href="reference.html#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">palace.BaseDecoder</span></code></a> will also need to take into account
+<p>In practice, <a class="reference internal" href="reference/decoder.html#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDecoder</span></code></a> will also need to take into account
 other guarding mechanisms like <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>.  Due to Cython limitations,
 implementation as a pure Python class and <a class="reference internal" href="#getter-setter"><span class="std std-ref">aliasing</span></a> of
 <code class="docutils literal notranslate"><span class="pre">&#64;getter</span></code>/<code class="docutils literal notranslate"><span class="pre">&#64;setter</span></code> should be considered.</p>
@@ -259,7 +265,7 @@ implementation as a pure Python class and <a class="reference internal" href="#g
     <ul>
         <li>
           &larr;
-          <a href="reference.html" title="Previous document">Reference</a>
+          <a href="reference/file-io.html" title="Previous document">File I/O Interface</a>
         </li>
         <li>
           <a href="contributing.html" title="Next document">Getting Involved</a>
