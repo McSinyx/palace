@@ -1,0 +1,642 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Sources &amp; Source Groups &#8212; palace 0.2.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Environmental Effects" href="effect.html" />
+    <link rel="prev" title="Resource Caching" href="buffer.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="device.html">Audio Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context.html">Audio Library Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sources &amp; Source Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<h3>Quick Navigation</h3>
+<ul>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="buffer.html" title="Previous document">Resource Caching</a>
+        </li>
+        <li>
+          <a href="effect.html" title="Next document">Environmental Effects</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="sources-source-groups">
+<h1>Sources &amp; Source Groups<a class="headerlink" href="#sources-source-groups" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="palace.Source">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sound source for playing audio.</p>
+<p>There is no practical limit to the number of sources one may create.</p>
+<p>When the source is no longer needed, <cite>destroy</cite> must be called,
+unless the context manager is used, which guarantees the source’s
+destructioni upon completion of the block, even if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the source is to be created.
+By default <cite>current_context()</cite> is used.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="palace.Source.air_absorption_factor">
+<code class="sig-name descname">air_absorption_factor</code><a class="headerlink" href="#palace.Source.air_absorption_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplier for atmospheric high-frequency absorption</p>
+<p>Its value ranging from 0 to 10.  A factor of 1 results in
+a nominal -0.05 dB per meter, with higher values simulating
+foggy air and lower values simulating dryer air; default to 0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.cone_angles">
+<code class="sig-name descname">cone_angles</code><a class="headerlink" href="#palace.Source.cone_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cone inner and outer angles in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inner</strong> (<em>float</em>) – The area within which the listener will hear the source
+without extra attenuation, default to 360.</p></li>
+<li><p><strong>outer</strong> (<em>float</em>) – The area outside of which the listener will hear the source
+attenuated according to <cite>outer_cone_gains</cite>, default to 360.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <cite>inner</cite> is greater than <cite>outer</cite>
+    or either of them is outside of the [0, 360] interval.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The areas follow the facing direction, so for example
+an inner angle of 180 means the entire front face of
+the source is in the inner cone.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the source, stop playback and release resources.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.distance_range">
+<code class="sig-name descname">distance_range</code><a class="headerlink" href="#palace.Source.distance_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reference and maximum distance for current distance model.</p>
+<p>For Clamped distance models, the source’s calculated
+distance is clamped to the specified range before applying
+distance-related attenuation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>refdist</strong> (<em>float</em>) – The distance at which the source’s volume will not have
+any extra attenuation (an effective gain multiplier of 1),
+default to 0.</p></li>
+<li><p><strong>maxdist</strong> (<em>float</em>) – The maximum distance, default to FLT_MAX, which is the
+maximum value of a single-precision floating-point variable
+(2**128 - 2**104).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <cite>refdist</cite> is greater than <cite>maxdist</cite>
+    or either of them is outside of the [0, FLT_MAX] interval.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.doppler_factor">
+<code class="sig-name descname">doppler_factor</code><a class="headerlink" href="#palace.Source.doppler_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>The doppler factor for the doppler effect’s pitch shift.</p>
+<p>This effectively scales the source and listener velocities
+for the doppler calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If set to a value outside of the [0, 1] interval.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.fade_out_to_stop">
+<code class="sig-name descname">fade_out_to_stop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gain</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ms</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.fade_out_to_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fade the source to <cite>gain</cite> over <cite>ms</cite> milliseconds.</p>
+<p><cite>gain</cite> is in addition to the base gain and must be within
+the [0, 1] interval.  <cite>ms</cite> must be positive.</p>
+<p>The fading is logarithmic.  As a result, the initial drop-off
+may happen faster than expected but the fading is more
+perceptually consistant over the given duration.  It will take
+just as much time to go from -6 dB to -12 dB as it will to go
+from -40 dB to -46 dB, for example.</p>
+<p>Fading is updated during calls to <cite>Context.update</cite>,
+which should be called regularly (30 to 50 times per second)
+for the fading to be smooth.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.filter">
+<em class="property">property </em><code class="sig-name descname">filter</code><a class="headerlink" href="#palace.Source.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear gains on the direct path signal, clamped to [0, 1].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
+<li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying to high frequencies, default to 1.</p></li>
+<li><p><strong>gain_lf</strong> (<em>float</em>) – Linear gain applying to low frequencies, default to 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.gain">
+<code class="sig-name descname">gain</code><a class="headerlink" href="#palace.Source.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base linear volume gain, default to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If set to a negative value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.gain_auto">
+<code class="sig-name descname">gain_auto</code><a class="headerlink" href="#palace.Source.gain_auto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether automatically adjust gains.</p>
+<p>Respectively for direct path’s high frequency gain,
+send paths’ gain and send paths’ high-frequency gain are
+automatically adjusted.  The default is <cite>True</cite> for all.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.gain_range">
+<code class="sig-name descname">gain_range</code><a class="headerlink" href="#palace.Source.gain_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>The range which the source’s gain is clamped to.</p>
+<p>This is used after distance and cone attenuation are applied
+to the gain base and before the adjustments of the filter gain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mingain</strong> (<em>float</em>) – Minimum gain, default to 0.</p></li>
+<li><p><strong>maxgain</strong> (<em>float</em>) – Maximum gain, default to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <cite>mingain</cite> is greater than <cite>maxgain</cite>
+    or either of them is outside of the [0, 1] interval.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.group">
+<code class="sig-name descname">group</code><a class="headerlink" href="#palace.Source.group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent group of this source.</p>
+<p>The parent group influences all sources that belong to it.
+A source may only be the child of one <cite>SourceGroup</cite> at a time,
+although that source group may belong to another source group.</p>
+<p>This is <cite>None</cite> when the source does not belong to any group.
+On the other hand, setting it to <cite>None</cite> removes the source
+from its current group.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#palace.SourceGroup" title="palace.SourceGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup</span></code></a></dt><dd><p>A group of <cite>Source</cite> references</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.latency">
+<em class="property">property </em><code class="sig-name descname">latency</code><a class="headerlink" href="#palace.Source.latency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source latency in nanoseconds.</p>
+<p>If the <cite>AL_SOFT_source_latency</cite> extension is unsupported,
+the latency will be 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.latency_seconds">
+<em class="property">property </em><code class="sig-name descname">latency_seconds</code><a class="headerlink" href="#palace.Source.latency_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source latency in seconds.</p>
+<p>If the <cite>AL_SOFT_source_latency</cite> extension is unsupported,
+the latency will be 0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.looping">
+<code class="sig-name descname">looping</code><a class="headerlink" href="#palace.Source.looping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the source should loop.</p>
+<p>The loop points are determined by the playing buffer or decoder.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.offset">
+<code class="sig-name descname">offset</code><a class="headerlink" href="#palace.Source.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source offset in sample frames.  For streaming sources
+this will be the offset based on the decoder’s read position.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.offset_seconds">
+<em class="property">property </em><code class="sig-name descname">offset_seconds</code><a class="headerlink" href="#palace.Source.offset_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source offset in seconds.</p>
+<p>For streaming sources this will be the offset based on
+the decoder’s read position.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.orientation">
+<code class="sig-name descname">orientation</code><a class="headerlink" href="#palace.Source.orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>3D orientation of the source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>at</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative position.</p></li>
+<li><p><strong>up</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative direction.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Unlike the <cite>AL_EXT_BFORMAT</cite> extension this property
+comes from, this also affects the facing direction.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.outer_cone_gains">
+<code class="sig-name descname">outer_cone_gains</code><a class="headerlink" href="#palace.Source.outer_cone_gains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gain when listener is out of the source’s outer cone area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
+<li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying extra attenuation to high frequencies
+creating a low-pass effect, default to 1.  It has no effect
+without the <cite>ALC_EXT_EFX</cite> extension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If either of the gains is set to a value
+    outside of the [0, 1] interval.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.pause">
+<code class="sig-name descname">pause</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pause the source if it is playing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.paused">
+<em class="property">property </em><code class="sig-name descname">paused</code><a class="headerlink" href="#palace.Source.paused" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the source is currently paused.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.pitch">
+<code class="sig-name descname">pitch</code><a class="headerlink" href="#palace.Source.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear pitch shift base, default to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If set to a nonpositive value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.playing">
+<em class="property">property </em><code class="sig-name descname">playing</code><a class="headerlink" href="#palace.Source.playing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the source is currently playing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.position">
+<code class="sig-name descname">position</code><a class="headerlink" href="#palace.Source.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>3D position of the source.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.priority">
+<code class="sig-name descname">priority</code><a class="headerlink" href="#palace.Source.priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Playback priority (natural number).</p>
+<p>The lowest priority sources will be forcefully stopped
+when no more mixing sources are available and higher priority
+sources are played.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.radius">
+<code class="sig-name descname">radius</code><a class="headerlink" href="#palace.Source.radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radius of the source, as if it is a sound-emitting sphere.</p>
+<p>This has no effect without the <cite>AL_EXT_SOURCE_RADIUS</cite> extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If set to a negative value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.relative">
+<code class="sig-name descname">relative</code><a class="headerlink" href="#palace.Source.relative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the source’s 3D parameters are relative to listener.</p>
+<p>The affected parameters includes <cite>position</cite>, <cite>velocity</cite>,
+and <cite>orientation</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.resampler_index">
+<code class="sig-name descname">resampler_index</code><a class="headerlink" href="#palace.Source.resampler_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the resampler to use for this source.</p>
+<p>The index must be nonnegative, from the resamplers returned
+by <cite>Context.get_available_resamplers</cite>, and has no effect
+without the <cite>AL_SOFT_source_resampler</cite> extension.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.resume">
+<code class="sig-name descname">resume</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resume the source if it is paused.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.rolloff_factors">
+<code class="sig-name descname">rolloff_factors</code><a class="headerlink" href="#palace.Source.rolloff_factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rolloff factor and room factor for the direct and send paths.</p>
+<p>This is effectively a distance scaling relative to
+the reference distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If either of rolloff factors is set to a negative value.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>To disable distance attenuation for send paths,
+set room factor to 0.  The reverb engine will, by default,
+apply a more realistic room decay based on the reverb decay
+time and distance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.sends">
+<em class="property">property </em><code class="sig-name descname">sends</code><a class="headerlink" href="#palace.Source.sends" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection of send path signals.</p>
+<p>Send paths can be retrieved using a nonnegative index, which has
+no effect if not less than the device’s <cite>max_auxiliary_sends</cite>.</p>
+<p>Each send path has two write-only descriptors,
+<cite>effect</cite> and <cite>filter</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.spatialize">
+<code class="sig-name descname">spatialize</code><a class="headerlink" href="#palace.Source.spatialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to enable 3D spatialization.</p>
+<p>Either <cite>True</cite> (the source always has 3D spatialization
+features), <cite>False</cite> (never has 3D spatialization features),
+or <cite>None</cite> (spatialization is enabled based on playing
+a mono sound or not, default).</p>
+<p>This has no effect without
+the <cite>AL_SOFT_source_spatialize</cite> extension.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.stereo_angles">
+<code class="sig-name descname">stereo_angles</code><a class="headerlink" href="#palace.Source.stereo_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Left and right channel angles, in radians.</p>
+<p>The angles go counter-clockwise, with 0 being in front
+and positive values going left.</p>
+<p>This is only used for stereo playback and has no effect
+without the <cite>AL_EXT_STEREO_ANGLES</cite> extension.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Source.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop playback, releasing the buffer or decoder reference.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Source.velocity">
+<code class="sig-name descname">velocity</code><a class="headerlink" href="#palace.Source.velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>3D velocity in units per second.</p>
+<p>As with OpenAL, this does not actually alter the source’s
+position, and instead just alters the pitch as determined
+by the doppler effect.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="palace.SourceGroup">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SourceGroup</code><a class="headerlink" href="#palace.SourceGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group of <cite>Source</cite> references.</p>
+<p>For instance, setting <cite>SourceGroup.gain</cite> to 0.5 will halve the gain
+of all sources in the group.</p>
+<p>This can be used as a context manager that calls <cite>destroy</cite> upon
+completion of the block, even if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the source group is to be created.
+By default <cite>current_context()</cite> is used.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="palace.SourceGroup.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the source group, remove and free all sources.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.SourceGroup.gain">
+<code class="sig-name descname">gain</code><a class="headerlink" href="#palace.SourceGroup.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source group gain.</p>
+<p>This accumulates with its sources’ and sub-groups’ gain.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.SourceGroup.parent_group">
+<code class="sig-name descname">parent_group</code><a class="headerlink" href="#palace.SourceGroup.parent_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>The source group this source group is a child of.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeException</strong> – If this group is being added to its sub-group
+    (i.e. it would create a circular sub-group chain).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.SourceGroup.pause_all">
+<code class="sig-name descname">pause_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.pause_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pause all currently-playing sources under this group.</p>
+<p>This is done recursively, including sub-groups.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.SourceGroup.pitch">
+<code class="sig-name descname">pitch</code><a class="headerlink" href="#palace.SourceGroup.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source group pitch.</p>
+<p>This accumulates with its sources’ and sub-groups’ pitch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.SourceGroup.resume_all">
+<code class="sig-name descname">resume_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.resume_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resume all currently-playing sources under this group.</p>
+<p>This is done recursively, including sub-groups.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.SourceGroup.sources">
+<em class="property">property </em><code class="sig-name descname">sources</code><a class="headerlink" href="#palace.SourceGroup.sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sources under this group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.SourceGroup.stop_all">
+<code class="sig-name descname">stop_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.SourceGroup.stop_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop all currently-playing sources under this group.</p>
+<p>This is done recursively, including sub-groups.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.SourceGroup.sub_groups">
+<em class="property">property </em><code class="sig-name descname">sub_groups</code><a class="headerlink" href="#palace.SourceGroup.sub_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source groups under this group.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="buffer.html" title="Previous document">Resource Caching</a>
+        </li>
+        <li>
+          <a href="effect.html" title="Next document">Environmental Effects</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/source.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,565 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Audio Library Contexts &#8212; palace 0.2.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Resource Caching" href="buffer.html" />
+    <link rel="prev" title="Audio Devices" href="device.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="device.html">Audio Devices</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Audio Library Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<h3>Quick Navigation</h3>
+<ul>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="device.html" title="Previous document">Audio Devices</a>
+        </li>
+        <li>
+          <a href="buffer.html" title="Next document">Resource Caching</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="audio-library-contexts">
+<h1>Audio Library Contexts<a class="headerlink" href="#audio-library-contexts" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="palace.thread_local">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">thread_local</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; Iterator[None]<a class="headerlink" href="#palace.thread_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a context manager controlling preference of local thread.</p>
+<p>Effectively, it sets the fallback value for the <cite>thread</cite> argument
+for <cite>current_context</cite> and <cite>use_context</cite>.</p>
+<p>Initially, globally current <cite>Context</cite> is preferred.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="palace.current_context">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">current_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thread</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span><a class="headerlink" href="#palace.current_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the context that is currently used.</p>
+<p>If <cite>thread</cite> is set to <cite>True</cite>, return the thread-specific context
+used for OpenAL operations.  This requires the non-device-specific
+as well as the context’s device <cite>ALC_EXT_thread_local_context</cite>
+extension to be available.</p>
+<p>In case <cite>thread</cite> is not specified, fallback to preference made by
+<cite>thread_local</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="palace.use_context">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">thread</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the specified context current for OpenAL operations.</p>
+<p>This fails silently if the given context has been destroyed.
+In case <cite>thread</cite> is not specified, fallback to preference made by
+<cite>thread_local</cite>.</p>
+<p>If <cite>thread</cite> is <cite>True</cite>, make the context current
+for OpenAL operations on the calling thread only.
+This requires the non-device-specific as well as the context’s
+device <cite>ALC_EXT_thread_local_context</cite> extension to be available.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="palace.Context">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Context</code><a class="headerlink" href="#palace.Context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container maintaining the audio environment.</p>
+<p>Context contains the environment’s settings and components
+such as sources, buffers and effects.</p>
+<p>This can be used as a context manager, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">context</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>is equivalent to</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">previous</span> <span class="o">=</span> <span class="n">current_context</span><span class="p">()</span>
+<span class="n">use_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="o">...</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">use_context</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><em>Device</em></a>) – The <cite>device</cite> on which the context is to be created.</p></li>
+<li><p><strong>attrs</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – Attributes specified for the context to be created.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="palace.Context.device">
+<code class="sig-name descname">device</code><a class="headerlink" href="#palace.Context.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>The device this context was created from.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="device.html#palace.Device" title="palace.Device">Device</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Context.listener">
+<code class="sig-name descname">listener</code><a class="headerlink" href="#palace.Context.listener" title="Permalink to this definition">¶</a></dt>
+<dd><p>The listener instance of this context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#palace.Listener" title="palace.Listener">Listener</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If context creation fails.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="palace.Context.async_wake_interval">
+<code class="sig-name descname">async_wake_interval</code><a class="headerlink" href="#palace.Context.async_wake_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current interval used for waking up the background thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.available_resamplers">
+<em class="property">property </em><code class="sig-name descname">available_resamplers</code><a class="headerlink" href="#palace.Context.available_resamplers" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of resamplers supported by the context.</p>
+<p>If the <cite>AL_SOFT_source_resampler</cite> extension is unsupported
+this will be an empty list, otherwise there would be
+at least one entry.</p>
+<p>This method require the context to be current.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.default_resampler_index">
+<em class="property">property </em><code class="sig-name descname">default_resampler_index</code><a class="headerlink" href="#palace.Context.default_resampler_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The context’s default resampler index.</p>
+<p>If the <cite>AL_SOFT_source_resampler</cite> extension is unsupported
+the resampler list will be empty and this will return 0.</p>
+<p>If you try to access the resampler list with this index
+without extension, undefined behavior will occur
+(accessing an out of bounds array index).</p>
+<p>This method require the context to be current.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the context.</p>
+<p>The context must not be current when this is called.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.distance_model">
+<em class="property">property </em><code class="sig-name descname">distance_model</code><a class="headerlink" href="#palace.Context.distance_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The model for source attenuation based on distance.</p>
+<p>The default, ‘inverse clamped’, provides a realistic l/r
+reduction in volume (that is, every doubling of distance
+cause the gain to reduce by half).</p>
+<p>The clamped distance models restrict the source distance for
+the purpose of distance attenuation, so a source won’t sound
+closer than its reference distance or farther than its max
+distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If set to a preset cannot be found in <cite>distance_models</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.doppler_factor">
+<em class="property">property </em><code class="sig-name descname">doppler_factor</code><a class="headerlink" href="#palace.Context.doppler_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factor to apply to all source’s doppler calculations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.end_batch">
+<code class="sig-name descname">end_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.end_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Continue processing the context and end batching.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.is_supported">
+<code class="sig-name descname">is_supported</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel_config</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sample_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#palace.Context.is_supported" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return if the channel config and sample type is supported.</p>
+<p>This method require the context to be current.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="decoder.html#palace.sample_types" title="palace.sample_types"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_types()</span></code></a></dt><dd><p>Set of sample types</p>
+</dd>
+<dt><a class="reference internal" href="decoder.html#palace.channel_configs" title="palace.channel_configs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">channel_configs()</span></code></a></dt><dd><p>Set of channel configurations</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.Context.message_handler">
+<code class="sig-name descname">message_handler</code><a class="headerlink" href="#palace.Context.message_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of some certain events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.speed_of_sound">
+<em class="property">property </em><code class="sig-name descname">speed_of_sound</code><a class="headerlink" href="#palace.Context.speed_of_sound" title="Permalink to this definition">¶</a></dt>
+<dd><p>The speed of sound propagation in units per second.</p>
+<p>It is used to calculate the doppler effect along with other
+distance-related time effects.</p>
+<p>The default is 343.3 units per second (a realistic speed
+assuming 1 meter per unit). If this is adjusted for a
+different unit scale, <cite>Listener.meters_per_unit</cite> should
+also be adjusted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.start_batch">
+<code class="sig-name descname">start_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.start_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suspend the context to start batching.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Context.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Context.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the context and all sources belonging to this context.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.CHANNEL_CONFIG">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">CHANNEL_CONFIG</code><em class="property">: int</em><a class="headerlink" href="#palace.CHANNEL_CONFIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the channel configuration
+(either <code class="docutils literal notranslate"><span class="pre">MONO</span></code>, <code class="docutils literal notranslate"><span class="pre">STEREO</span></code>, <code class="docutils literal notranslate"><span class="pre">QUAD</span></code>, <code class="docutils literal notranslate"><span class="pre">X51</span></code>, <code class="docutils literal notranslate"><span class="pre">X61</span></code> or <code class="docutils literal notranslate"><span class="pre">X71</span></code>).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.SAMPLE_TYPE">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SAMPLE_TYPE</code><em class="property">: int</em><a class="headerlink" href="#palace.SAMPLE_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the sample type
+(either <code class="docutils literal notranslate"><span class="pre">[UNSIGNED_]{BYTE,SHORT,INT}</span></code> or <code class="docutils literal notranslate"><span class="pre">FLOAT</span></code>).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.FREQUENCY">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FREQUENCY</code><em class="property">: int</em><a class="headerlink" href="#palace.FREQUENCY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the frequency in hertz.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.MONO_SOURCES">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MONO_SOURCES</code><em class="property">: int</em><a class="headerlink" href="#palace.MONO_SOURCES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the number of mono (3D) sources.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.STEREO_SOURCES">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">STEREO_SOURCES</code><em class="property">: int</em><a class="headerlink" href="#palace.STEREO_SOURCES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the number of stereo sources.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.MAX_AUXILIARY_SENDS">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MAX_AUXILIARY_SENDS</code><em class="property">: int</em><a class="headerlink" href="#palace.MAX_AUXILIARY_SENDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the maximum number of
+auxiliary source sends.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.HRTF">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">HRTF</code><em class="property">: int</em><a class="headerlink" href="#palace.HRTF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify whether to enable HRTF
+(either <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>, <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> or <code class="docutils literal notranslate"><span class="pre">DONT_CARE</span></code>).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.HRTF_ID">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">HRTF_ID</code><em class="property">: int</em><a class="headerlink" href="#palace.HRTF_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify the HRTF to be used.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.OUTPUT_LIMITER">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">OUTPUT_LIMITER</code><em class="property">: int</em><a class="headerlink" href="#palace.OUTPUT_LIMITER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context creation key to specify whether to use a gain limiter
+(either <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>, <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> or <code class="docutils literal notranslate"><span class="pre">DONT_CARE</span></code>).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.distance_models">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">distance_models</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.distance_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Names of available distance models.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="palace.Listener">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Listener</code><a class="headerlink" href="#palace.Listener" title="Permalink to this definition">¶</a></dt>
+<dd><p>Listener instance of the given context.</p>
+<p>It is recommended that applications access the listener via
+<cite>Context.listener</cite>, which avoid the overhead caused by the
+creation of the wrapper object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context on which the listener instance is to be created.
+By default <cite>current_context()</cite> is used.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="palace.Listener.gain">
+<em class="property">property </em><code class="sig-name descname">gain</code><a class="headerlink" href="#palace.Listener.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Master gain for all context output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Listener.meters_per_unit">
+<em class="property">property </em><code class="sig-name descname">meters_per_unit</code><a class="headerlink" href="#palace.Listener.meters_per_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of meters per unit.</p>
+<p>This is used for various effects relying on the distance
+in meters including air absorption and initial reverb decay.
+If this is changed, so should the speed of sound
+(e.g. <cite>context.speed_of_sound = 343.3 / meters_per_unit</cite>
+to maintain a realistic 343.3 m/s for sound propagation).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Listener.orientation">
+<em class="property">property </em><code class="sig-name descname">orientation</code><a class="headerlink" href="#palace.Listener.orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>3D orientation of the listener.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>at</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative position.</p></li>
+<li><p><strong>up</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative direction.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Listener.position">
+<em class="property">property </em><code class="sig-name descname">position</code><a class="headerlink" href="#palace.Listener.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>3D position of the listener.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.Listener.velocity">
+<em class="property">property </em><code class="sig-name descname">velocity</code><a class="headerlink" href="#palace.Listener.velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>3D velocity of the listener, in units per second.</p>
+<p>As with OpenAL, this does not actually alter the listener’s
+position, and instead just alters the pitch as determined by
+the doppler effect.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="palace.MessageHandler">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">MessageHandler</code><a class="headerlink" href="#palace.MessageHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Message handler interface.</p>
+<p>Applications may derive from this and set an instance on a context
+to receive messages.  The base methods are no-ops, so subclasses
+only need to implement methods for relevant messages.</p>
+<p>Exceptions raised from <cite>MessageHandler</cite> instances are ignored.</p>
+<dl class="py method">
+<dt id="palace.MessageHandler.buffer_loading">
+<code class="sig-name descname">buffer_loading</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">channel_config</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sample_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sample_rate</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.buffer_loading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle messages from Buffer initialization.</p>
+<p>This is called when a new buffer is about to be created
+and loaded. which may be called asynchronously for buffers
+being loaded asynchronously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Resource name passed to <cite>Buffer</cite>.</p></li>
+<li><p><strong>channel_config</strong> (<em>str</em>) – Channel configuration of the given audio data.</p></li>
+<li><p><strong>sample_type</strong> (<em>str</em>) – Sample type of the given audio data.</p></li>
+<li><p><strong>sample_rate</strong> (<em>int</em>) – Sample rate of the given audio data.</p></li>
+<li><p><strong>data</strong> (<em>MutableSequence</em><em>[</em><em>int</em><em>]</em>) – <p>The audio data that is about to be fed to the OpenAL buffer.</p>
+<p>It is a mutable memory array of signed 8-bit integers,
+following Python buffer protocol.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.MessageHandler.device_disconnected">
+<code class="sig-name descname">device_disconnected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n"><a class="reference internal" href="device.html#palace.Device" title="palace.Device">palace.Device</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.device_disconnected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle disconnected device messages.</p>
+<p>This is called when the given device has been disconnected and
+is no longer usable for output.  As per the <cite>ALC_EXT_disconnect</cite>
+specification, disconnected devices remain valid, however all
+playing sources are automatically stopped, any sources that are
+attempted to play will immediately stop, and new contexts may
+not be created on the device.</p>
+<p class="rubric">Notes</p>
+<p>Connection status is checked during <cite>Context.update</cite> calls, so
+method must be called regularly to be notified when a device is
+disconnected.  This method may not be called if the device lacks
+support for the <cite>ALC_EXT_disconnect</cite> extension.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.MessageHandler.resource_not_found">
+<code class="sig-name descname">resource_not_found</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#palace.MessageHandler.resource_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the fallback resource for the one of the given name.</p>
+<p>This is called when <cite>name</cite> is not found, allowing substitution
+of a different resource until the returned string either points
+to a valid resource or is empty (default).</p>
+<p>For buffers being cached, the original name will still be used
+for the cache entry so one does not have to keep track of
+substituted resource names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.MessageHandler.source_force_stopped">
+<code class="sig-name descname">source_force_stopped</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.source_force_stopped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle forcefully stopped sources.</p>
+<p>This is called when the given source was forced to stop,
+because of one of the following reasons:</p>
+<ul class="simple">
+<li><p>There were no more mixing sources and a higher-priority source
+preempted it.</p></li>
+<li><p><cite>source</cite> is part of a <cite>SourceGroup</cite> (or sub-group thereof)
+that had its <cite>SourceGroup.stop_all</cite> method called.</p></li>
+<li><p><cite>source</cite> was playing a buffer that’s getting removed.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.MessageHandler.source_stopped">
+<code class="sig-name descname">source_stopped</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.source_stopped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle end-of-buffer/stream messages.</p>
+<p>This is called when the given source reaches the end of buffer
+or stream, which is detected upon a call to <cite>Context.update</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="device.html" title="Previous document">Audio Devices</a>
+        </li>
+        <li>
+          <a href="buffer.html" title="Next document">Resource Caching</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/context.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

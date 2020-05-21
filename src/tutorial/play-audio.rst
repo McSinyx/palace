@@ -1,7 +1,7 @@
-.. py:currentmodule:: palace
-
 Play an Audio
 =============
+
+.. currentmodule:: palace
 
 Now that you know how to create a context,
 let's get into the most essential use case: playing audio.

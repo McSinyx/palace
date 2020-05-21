@@ -35,7 +35,7 @@
 <li class="toctree-l2"><a class="reference internal" href="play-audio.html">Play an Audio</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
@@ -109,16 +109,16 @@ such as sources, buffers, and effects.</p>
 <p>To create a context, we must first create a device,
 since it’s a parameter of the context object.</p>
 <p>To create an object, well, you just have to instantiate
-the <a class="reference internal" href="../reference.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class.</p>
+the <a class="reference internal" href="../reference/device.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span>
 
 <span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">dev</span><span class="p">:</span>
     <span class="c1"># Your code goes here</span>
 </pre></div>
 </div>
-<p>This is how you declare a <a class="reference internal" href="../reference.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> object with the default device.
+<p>This is how you declare a <a class="reference internal" href="../reference/device.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> object with the default device.
 There can be several devices available, which can be found
-in <a class="reference internal" href="../reference.html#palace.device_names" title="palace.device_names"><code class="xref py py-data docutils literal notranslate"><span class="pre">device_names</span></code></a>.</p>
+in <a class="reference internal" href="../reference/device.html#palace.device_names" title="palace.device_names"><code class="xref py py-data docutils literal notranslate"><span class="pre">device_names</span></code></a>.</p>
 </div>
 <div class="section" id="creating-a-context">
 <h2>Creating a Context<a class="headerlink" href="#creating-a-context" title="Permalink to this headline">¶</a></h2>

@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Environmental Effects &#8212; palace 0.2.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Decoder Interface" href="decoder.html" />
+    <link rel="prev" title="Sources &amp; Source Groups" href="source.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="device.html">Audio Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context.html">Audio Library Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Environmental Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<h3>Quick Navigation</h3>
+<ul>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="source.html" title="Previous document">Sources &amp; Source Groups</a>
+        </li>
+        <li>
+          <a href="decoder.html" title="Next document">Decoder Interface</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="environmental-effects">
+<h1>Environmental Effects<a class="headerlink" href="#environmental-effects" title="Permalink to this headline">¶</a></h1>
+<p>For the sake of brevity, we only document the constraints of each effect’s
+properties.  Further details can be found at OpenAL’s <a class="reference external" href="https://kcat.strangesoft.net/misc-downloads/Effects%20Extension%20Guide.pdf">Effect Extension Guide</a>
+which specifies the purpose and usage of each value.</p>
+<dl class="py class">
+<dt id="palace.BaseEffect">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">BaseEffect</code><a class="headerlink" href="#palace.BaseEffect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base effect processor.</p>
+<p>Instances of this class has no effect (pun intended).</p>
+<p>It takes the output mix of zero or more sources,
+applies DSP for the desired effect, then adds to the output mix.</p>
+<p>This can be used as a context manager that calls <cite>destroy</cite>
+upon completion of the block, even if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the effect is to be created.
+By default <cite>current_context()</cite> is used.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a></dt><dd><p>EAXReverb effect</p>
+</dd>
+<dt><a class="reference internal" href="#palace.ChorusEffect" title="palace.ChorusEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChorusEffect</span></code></a></dt><dd><p>Chorus effect</p>
+</dd>
+</dl>
+</div>
+<dl class="py method">
+<dt id="palace.BaseEffect.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.BaseEffect.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the effect slot, returning it to the system.</p>
+<p>If the effect slot is currently set on a source send,
+it will be removed first.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.BaseEffect.slot_gain">
+<em class="property">property </em><code class="sig-name descname">slot_gain</code><a class="headerlink" href="#palace.BaseEffect.slot_gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gain of the effect slot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.BaseEffect.source_sends">
+<em class="property">property </em><code class="sig-name descname">source_sends</code><a class="headerlink" href="#palace.BaseEffect.source_sends" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of sources using this effect and their pairing sends.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.BaseEffect.use_count">
+<em class="property">property </em><code class="sig-name descname">use_count</code><a class="headerlink" href="#palace.BaseEffect.use_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of source sends the effect slot is used by.</p>
+<p>This is equivalent to calling <cite>len(self.source_sends)</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="palace.ChorusEffect">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">ChorusEffect</code><a class="headerlink" href="#palace.ChorusEffect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chorus effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>waveform</strong> (<em>str</em>) – Either ‘sine’ or ‘triangle’.</p></li>
+<li><p><strong>phase</strong> (<em>int</em>) – From -180 to 180.</p></li>
+<li><p><strong>depth</strong> (<em>float</em>) – From 0.0 to 1.0.</p></li>
+<li><p><strong>feedback</strong> (<em>float</em>) – From -1.0 to 1.0.</p></li>
+<li><p><strong>delay</strong> (<em>float</em>) – From 0.0 to 0.016.</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the effect is to be created.
+By default <cite>current_context()</cite> is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="palace.ChorusEffect.delay">
+<code class="sig-name descname">delay</code><a class="headerlink" href="#palace.ChorusEffect.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delay, from 0.0 to 0.016.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ChorusEffect.depth">
+<code class="sig-name descname">depth</code><a class="headerlink" href="#palace.ChorusEffect.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Depth, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ChorusEffect.feedback">
+<code class="sig-name descname">feedback</code><a class="headerlink" href="#palace.ChorusEffect.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feedback, from -1.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ChorusEffect.phase">
+<code class="sig-name descname">phase</code><a class="headerlink" href="#palace.ChorusEffect.phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase, from -180 to 180.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ChorusEffect.waveform">
+<code class="sig-name descname">waveform</code><a class="headerlink" href="#palace.ChorusEffect.waveform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waveform, either ‘sine’ or ‘triangle’.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="palace.ReverbEffect">
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">ReverbEffect</code><a class="headerlink" href="#palace.ReverbEffect" title="Permalink to this definition">¶</a></dt>
+<dd><p>EAXReverb effect.</p>
+<p>It will automatically downgrade to the Standard Reverb effect
+if EAXReverb effect is not supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preset</strong> (<em>str</em><em>, </em><em>optional</em>) – The initial preset to start with, falling back to GENERIC.</p></li>
+<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the effect is to be created.
+By default <cite>current_context()</cite> is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the specified preset cannot be found in <cite>reverb_preset_names</cite>.</p></li>
+<li><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.air_absorption_gain_hf">
+<code class="sig-name descname">air_absorption_gain_hf</code><a class="headerlink" href="#palace.ReverbEffect.air_absorption_gain_hf" title="Permalink to this definition">¶</a></dt>
+<dd><p>High frequency air absorption gain, from 0.892 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.decay_hf_limit">
+<code class="sig-name descname">decay_hf_limit</code><a class="headerlink" href="#palace.ReverbEffect.decay_hf_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>High frequency decay limit.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.decay_hf_ratio">
+<code class="sig-name descname">decay_hf_ratio</code><a class="headerlink" href="#palace.ReverbEffect.decay_hf_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>High frequency decay ratio, from 0.1 to 20.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.decay_lf_ratio">
+<code class="sig-name descname">decay_lf_ratio</code><a class="headerlink" href="#palace.ReverbEffect.decay_lf_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Low frequency decay ratio, from 0.1 to 20.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.decay_time">
+<code class="sig-name descname">decay_time</code><a class="headerlink" href="#palace.ReverbEffect.decay_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decay time, from 0.1 to 20.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.density">
+<code class="sig-name descname">density</code><a class="headerlink" href="#palace.ReverbEffect.density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Density, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.diffusion">
+<code class="sig-name descname">diffusion</code><a class="headerlink" href="#palace.ReverbEffect.diffusion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Diffusion, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.echo_depth">
+<code class="sig-name descname">echo_depth</code><a class="headerlink" href="#palace.ReverbEffect.echo_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Echo depth, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.echo_time">
+<code class="sig-name descname">echo_time</code><a class="headerlink" href="#palace.ReverbEffect.echo_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Echo time, from 0.075 to 0.25.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.gain">
+<code class="sig-name descname">gain</code><a class="headerlink" href="#palace.ReverbEffect.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gain, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.gain_hf">
+<code class="sig-name descname">gain_hf</code><a class="headerlink" href="#palace.ReverbEffect.gain_hf" title="Permalink to this definition">¶</a></dt>
+<dd><p>High frequency gain, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.gain_lf">
+<code class="sig-name descname">gain_lf</code><a class="headerlink" href="#palace.ReverbEffect.gain_lf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Low frequency gain, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.hf_reference">
+<code class="sig-name descname">hf_reference</code><a class="headerlink" href="#palace.ReverbEffect.hf_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>High frequency reference, from 1000.0 to 20000.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.late_reverb_delay">
+<code class="sig-name descname">late_reverb_delay</code><a class="headerlink" href="#palace.ReverbEffect.late_reverb_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Late reverb delay, from 0.0 to 0.1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.late_reverb_gain">
+<code class="sig-name descname">late_reverb_gain</code><a class="headerlink" href="#palace.ReverbEffect.late_reverb_gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Late reverb gain, from 0.0 to 10.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.late_reverb_pan">
+<code class="sig-name descname">late_reverb_pan</code><a class="headerlink" href="#palace.ReverbEffect.late_reverb_pan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Late reverb as 3D vector of magnitude between 0 and 1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.lf_reference">
+<code class="sig-name descname">lf_reference</code><a class="headerlink" href="#palace.ReverbEffect.lf_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Low frequency reference, from 20.0 to 1000.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.modulation_depth">
+<code class="sig-name descname">modulation_depth</code><a class="headerlink" href="#palace.ReverbEffect.modulation_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modulation depth, from 0.0 to 1.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.modulation_time">
+<code class="sig-name descname">modulation_time</code><a class="headerlink" href="#palace.ReverbEffect.modulation_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modulation time, from 0.004 to 4.0.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.reflections_delay">
+<code class="sig-name descname">reflections_delay</code><a class="headerlink" href="#palace.ReverbEffect.reflections_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflections delay, from 0.0 to 0.3.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.reflections_gain">
+<code class="sig-name descname">reflections_gain</code><a class="headerlink" href="#palace.ReverbEffect.reflections_gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflections gain, from 0.0 to 3.16.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.reflections_pan">
+<code class="sig-name descname">reflections_pan</code><a class="headerlink" href="#palace.ReverbEffect.reflections_pan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflections as 3D vector of magnitude between 0 and 1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="palace.ReverbEffect.room_rolloff_factor">
+<code class="sig-name descname">room_rolloff_factor</code><a class="headerlink" href="#palace.ReverbEffect.room_rolloff_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Room rolloff factor, from 0.0 to 10.0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="palace.ReverbEffect.send_auto">
+<em class="property">property </em><code class="sig-name descname">send_auto</code><a class="headerlink" href="#palace.ReverbEffect.send_auto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to automatically adjust send slot gains.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt id="palace.reverb_preset_names">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">reverb_preset_names</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.reverb_preset_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Names of predefined reverb effect presets in lexicographical order.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="source.html" title="Previous document">Sources &amp; Source Groups</a>
+        </li>
+        <li>
+          <a href="decoder.html" title="Next document">Decoder Interface</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/effect.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
