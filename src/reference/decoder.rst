@@ -1,15 +1,16 @@
-Decoder Interface
-=================
+Audio Streams
+=============
 
 .. currentmodule:: palace
 
-.. autofunction:: decode
+Builtin Decoders
+----------------
 
 .. autoclass:: Decoder
    :members:
 
-.. autoclass:: BaseDecoder
-   :members:
+Decoder Interface
+-----------------
 
 .. data:: decoder_factories
    :type: DecoderNamespace
@@ -19,6 +20,14 @@ Decoder Interface
    User-registered factories are tried one after another
    if :py:exc:`RuntimeError` is raised, in lexicographical order.
    Internal decoder factories are always used after registered ones.
+
+.. autofunction:: decode
+
+.. autoclass:: BaseDecoder
+   :members:
+
+Miscellaneous
+-------------
 
 .. data:: sample_types
    :type: Tuple[str, ...]

@@ -37,7 +37,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Resource Caching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Audio Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
 </ul>
 </li>
@@ -67,6 +67,12 @@
   <li class="toctree-l1">
     <a class="reference external" href="https://github.com/McSinyx/palace">
       GitHub Repository
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
     </a>
   </li>
 </ul>
@@ -105,47 +111,8 @@
             
   <div class="section" id="resource-caching">
 <h1>Resource Caching<a class="headerlink" href="#resource-caching" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="palace.cache">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cache given audio resources asynchronously.</p>
-<p>Duplicate names and buffers already cached are ignored.
-Cached buffers must be freed before destroying the context.</p>
-<p>The resources will be scheduled for caching asynchronously,
-and should be retrieved later when needed by initializing
-<cite>Buffer</cite> corresponding objects.  Resources that cannot be
-loaded, for example due to an unsupported format, will be
-ignored and a later <cite>Buffer</cite> initialization will raise
-an exception.</p>
-<p>If <cite>context</cite> is not given, <cite>current_context()</cite> will be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#palace.free" title="palace.free"><code class="xref py py-func docutils literal notranslate"><span class="pre">free()</span></code></a></dt><dd><p>Free cached audio resources given their names</p>
-</dd>
-<dt><a class="reference internal" href="#palace.Buffer.destroy" title="palace.Buffer.destroy"><code class="xref py py-func docutils literal notranslate"><span class="pre">Buffer.destroy()</span></code></a></dt><dd><p>Free the buffer’s cache</p>
-</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="palace.free">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">free</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.free" title="Permalink to this definition">¶</a></dt>
-<dd><p>Free cached audio resources given their names.</p>
-<p>If <cite>context</cite> is not given, <cite>current_context()</cite> will be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="audio-buffers">
+<h2>Audio Buffers<a class="headerlink" href="#audio-buffers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="palace.Buffer">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Buffer</code><a class="headerlink" href="#palace.Buffer" title="Permalink to this definition">¶</a></dt>
@@ -294,6 +261,51 @@ equivalent to calling <cite>len(self.sources)</cite>.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="loading-freeing-in-batch">
+<h2>Loading &amp; Freeing in Batch<a class="headerlink" href="#loading-freeing-in-batch" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="palace.cache">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cache given audio resources asynchronously.</p>
+<p>Duplicate names and buffers already cached are ignored.
+Cached buffers must be freed before destroying the context.</p>
+<p>The resources will be scheduled for caching asynchronously,
+and should be retrieved later when needed by initializing
+<cite>Buffer</cite> corresponding objects.  Resources that cannot be
+loaded, for example due to an unsupported format, will be
+ignored and a later <cite>Buffer</cite> initialization will raise
+an exception.</p>
+<p>If <cite>context</cite> is not given, <cite>current_context()</cite> will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#palace.free" title="palace.free"><code class="xref py py-func docutils literal notranslate"><span class="pre">free()</span></code></a></dt><dd><p>Free cached audio resources given their names</p>
+</dd>
+<dt><a class="reference internal" href="#palace.Buffer.destroy" title="palace.Buffer.destroy"><code class="xref py py-func docutils literal notranslate"><span class="pre">Buffer.destroy()</span></code></a></dt><dd><p>Free the buffer’s cache</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="palace.free">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">free</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.free" title="Permalink to this definition">¶</a></dt>
+<dd><p>Free cached audio resources given their names.</p>
+<p>If <cite>context</cite> is not given, <cite>current_context()</cite> will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 

@@ -3,14 +3,29 @@ Audio Library Contexts
 
 .. currentmodule:: palace
 
-.. autofunction:: thread_local
-
-.. autofunction:: current_context
-
-.. autofunction:: use_context
+Context and Auxiliary Classes
+-----------------------------
 
 .. autoclass:: Context
    :members:
+
+.. autoclass:: Listener
+   :members:
+
+.. autoclass:: MessageHandler
+   :members:
+
+Using Contexts
+--------------
+
+.. autofunction:: use_context
+
+.. autofunction:: current_context
+
+.. autofunction:: thread_local
+
+Context Creation Attributes
+---------------------------
 
 .. data:: CHANNEL_CONFIG
    :type: int
@@ -66,9 +81,3 @@ Audio Library Contexts
    :type: Tuple[str, ...]
 
    Names of available distance models.
-
-.. autoclass:: Listener
-   :members:
-
-.. autoclass:: MessageHandler
-   :members:

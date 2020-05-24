@@ -59,6 +59,12 @@
       GitHub Repository
     </a>
   </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
+    </a>
+  </li>
 </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
@@ -92,11 +98,16 @@
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
 <p>Pythonic Audio Library and Codecs Environment provides common higher-level API
-for audio rendering using OpenAL.  It wraps around the C++ interface <a class="reference external" href="https://github.com/kcat/alure">alure</a>
-for 3D positional rendering, environmental effects and out-of-the-box
-codec support, while using Cython to provide a modern interface with
-type hinting, data descriptors, context managers and <code class="docutils literal notranslate"><span class="pre">snake_case</span></code>
-for a safe, convenient and pleasurable experience.</p>
+for audio rendering using OpenAL:</p>
+<ul class="simple">
+<li><p>3D positional rendering, with <a class="reference external" href="https://en.wikipedia.org/wiki/Head-related_transfer_function">HRTF</a> support for stereo systems</p></li>
+<li><p>Environmental effects: reverb, atmospheric air absorption,
+sound occlusion and obstruction</p></li>
+<li><p>Out-of-the-box codec support:</p></li>
+</ul>
+<p>Palace wraps around the C++ interface <a class="reference external" href="https://github.com/kcat/alure">alure</a> using <a class="reference external" href="https://cython.org">Cython</a> for a safe and
+convenient interface with type hinting, data descriptors and context managers,
+following <span class="target" id="index-0"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0008#naming-conventions"><strong>PEP 8#naming-conventions</strong></a> (<code class="docutils literal notranslate"><span class="pre">PascalCase.snake_case</span></code>).</p>
 <div class="section" id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -118,7 +129,7 @@ for a safe, convenient and pleasurable experience.</p>
 <li class="toctree-l2"><a class="reference internal" href="reference/buffer.html">Resource Caching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/source.html">Sources &amp; Source Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/effect.html">Environmental Effects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/decoder.html">Audio Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/file-io.html">File I/O Interface</a></li>
 </ul>
 </li>

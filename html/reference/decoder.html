@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Decoder Interface &#8212; palace 0.2.0 documentation</title>
+    <title>Audio Streams &#8212; palace 0.2.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
 <li class="toctree-l2"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Decoder Interface</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Audio Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
 </ul>
 </li>
@@ -67,6 +67,12 @@
   <li class="toctree-l1">
     <a class="reference external" href="https://github.com/McSinyx/palace">
       GitHub Repository
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
     </a>
   </li>
 </ul>
@@ -103,28 +109,10 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="decoder-interface">
-<h1>Decoder Interface<a class="headerlink" href="#decoder-interface" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="palace.decode">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">decode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#palace.Decoder" title="palace.Decoder">palace.Decoder</a><a class="headerlink" href="#palace.decode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the decoder created from the given resource name.</p>
-<p>This first tries user-registered decoder factories in
-lexicographical order, then fallback to the internal ones.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#palace.decoder_factories" title="palace.decoder_factories"><code class="xref py py-func docutils literal notranslate"><span class="pre">decoder_factories()</span></code></a></dt><dd><p>Simple object for storing decoder factories</p>
-</dd>
-</dl>
-</div>
-</dd></dl>
-
+  <div class="section" id="audio-streams">
+<h1>Audio Streams<a class="headerlink" href="#audio-streams" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="builtin-decoders">
+<h2>Builtin Decoders<a class="headerlink" href="#builtin-decoders" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="palace.Decoder">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Decoder</code><a class="headerlink" href="#palace.Decoder" title="Permalink to this definition">¶</a></dt>
@@ -257,6 +245,38 @@ the end of the audio has been reached.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="decoder-interface">
+<h2>Decoder Interface<a class="headerlink" href="#decoder-interface" title="Permalink to this headline">¶</a></h2>
+<dl class="py data">
+<dt id="palace.decoder_factories">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">decoder_factories</code><em class="property">: DecoderNamespace</em><a class="headerlink" href="#palace.decoder_factories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple object for storing decoder factories.</p>
+<p>User-registered factories are tried one after another
+if <code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code> is raised, in lexicographical order.
+Internal decoder factories are always used after registered ones.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="palace.decode">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">decode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="context.html#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#palace.Decoder" title="palace.Decoder">palace.Decoder</a><a class="headerlink" href="#palace.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the decoder created from the given resource name.</p>
+<p>This first tries user-registered decoder factories in
+lexicographical order, then fallback to the internal ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#palace.decoder_factories" title="palace.decoder_factories"><code class="xref py py-func docutils literal notranslate"><span class="pre">decoder_factories()</span></code></a></dt><dd><p>Simple object for storing decoder factories</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
 <dl class="py class">
 <dt id="palace.BaseDecoder">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">BaseDecoder</code><a class="headerlink" href="#palace.BaseDecoder" title="Permalink to this definition">¶</a></dt>
@@ -324,15 +344,9 @@ the end of the audio has been reached.</p>
 
 </dd></dl>
 
-<dl class="py data">
-<dt id="palace.decoder_factories">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">decoder_factories</code><em class="property">: DecoderNamespace</em><a class="headerlink" href="#palace.decoder_factories" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simple object for storing decoder factories.</p>
-<p>User-registered factories are tried one after another
-if <code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code> is raised, in lexicographical order.
-Internal decoder factories are always used after registered ones.</p>
-</dd></dl>
-
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="palace.sample_types">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_types</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.sample_types" title="Permalink to this definition">¶</a></dt>
@@ -370,6 +384,7 @@ Internal decoder factories are always used after registered ones.</p>
 </dl>
 </dd></dl>
 
+</div>
 </div>
 
 

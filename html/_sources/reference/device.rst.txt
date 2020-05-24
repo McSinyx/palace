@@ -3,8 +3,14 @@ Audio Devices
 
 .. currentmodule:: palace
 
+Device-Dependent Utilities
+--------------------------
+
 .. autoclass:: Device
    :members:
+
+Device-Independent Utilities
+----------------------------
 
 .. data:: device_names
    :type: DeviceNames

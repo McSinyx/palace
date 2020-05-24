@@ -14,7 +14,7 @@
     <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Decoder Interface" href="decoder.html" />
+    <link rel="next" title="Audio Streams" href="decoder.html" />
     <link rel="prev" title="Sources &amp; Source Groups" href="source.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +37,7 @@
 <li class="toctree-l2"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Environmental Effects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Audio Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
 </ul>
 </li>
@@ -69,6 +69,12 @@
       GitHub Repository
     </a>
   </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
+    </a>
+  </li>
 </ul>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
@@ -93,7 +99,7 @@
           <a href="source.html" title="Previous document">Sources &amp; Source Groups</a>
         </li>
         <li>
-          <a href="decoder.html" title="Next document">Decoder Interface</a>
+          <a href="decoder.html" title="Next document">Audio Streams</a>
           &rarr;
         </li>
     </ul>
@@ -108,6 +114,8 @@
 <p>For the sake of brevity, we only document the constraints of each effect’s
 properties.  Further details can be found at OpenAL’s <a class="reference external" href="https://kcat.strangesoft.net/misc-downloads/Effects%20Extension%20Guide.pdf">Effect Extension Guide</a>
 which specifies the purpose and usage of each value.</p>
+<div class="section" id="base-effect">
+<h2>Base Effect<a class="headerlink" href="#base-effect" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="palace.BaseEffect">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">BaseEffect</code><a class="headerlink" href="#palace.BaseEffect" title="Permalink to this definition">¶</a></dt>
@@ -164,6 +172,9 @@ it will be removed first.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="chorus-effect">
+<h2>Chorus Effect<a class="headerlink" href="#chorus-effect" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="palace.ChorusEffect">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">ChorusEffect</code><a class="headerlink" href="#palace.ChorusEffect" title="Permalink to this definition">¶</a></dt>
@@ -214,6 +225,15 @@ By default <cite>current_context()</cite> is used.</p></li>
 <dd><p>Waveform, either ‘sine’ or ‘triangle’.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="reverb-effect">
+<h2>Reverb Effect<a class="headerlink" href="#reverb-effect" title="Permalink to this headline">¶</a></h2>
+<dl class="py data">
+<dt id="palace.reverb_preset_names">
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">reverb_preset_names</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.reverb_preset_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Names of predefined reverb effect presets in lexicographical order.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -383,12 +403,7 @@ By default <cite>current_context()</cite> is used.</p></li>
 
 </dd></dl>
 
-<dl class="py data">
-<dt id="palace.reverb_preset_names">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">reverb_preset_names</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.reverb_preset_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Names of predefined reverb effect presets in lexicographical order.</p>
-</dd></dl>
-
+</div>
 </div>
 
 
@@ -402,7 +417,7 @@ By default <cite>current_context()</cite> is used.</p></li>
           <a href="source.html" title="Previous document">Sources &amp; Source Groups</a>
         </li>
         <li>
-          <a href="decoder.html" title="Next document">Decoder Interface</a>
+          <a href="decoder.html" title="Next document">Audio Streams</a>
           &rarr;
         </li>
     </ul>

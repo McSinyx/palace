@@ -37,7 +37,7 @@
 <li class="toctree-l2"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html">Audio Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
 </ul>
 </li>
@@ -67,6 +67,12 @@
   <li class="toctree-l1">
     <a class="reference external" href="https://github.com/McSinyx/palace">
       GitHub Repository
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
     </a>
   </li>
 </ul>
@@ -108,12 +114,39 @@
 <p>API reference is divided into the following sections:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="device.html">Audio Devices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="context.html">Audio Library Contexts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="buffer.html">Resource Caching</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a></li>
-<li class="toctree-l1"><a class="reference internal" href="effect.html">Environmental Effects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="decoder.html">Decoder Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">Audio Devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="device.html#device-dependent-utilities">Device-Dependent Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="device.html#device-independent-utilities">Device-Independent Utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="context.html">Audio Library Contexts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="context.html#context-and-auxiliary-classes">Context and Auxiliary Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context.html#using-contexts">Using Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="context.html#context-creation-attributes">Context Creation Attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="buffer.html">Resource Caching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="buffer.html#audio-buffers">Audio Buffers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buffer.html#loading-freeing-in-batch">Loading &amp; Freeing in Batch</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="source.html">Sources &amp; Source Groups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source.html#sources">Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source.html#source-groups">Source Groups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="effect.html">Environmental Effects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="effect.html#base-effect">Base Effect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect.html#chorus-effect">Chorus Effect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect.html#reverb-effect">Reverb Effect</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="decoder.html">Audio Streams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html#builtin-decoders">Builtin Decoders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html#decoder-interface">Decoder Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decoder.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="file-io.html">File I/O Interface</a></li>
 </ul>
 </div>
