@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Source Manipulation &#8212; palace 0.2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Play an Audio" href="play-audio.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="context.html">Context Creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="play-audio.html">Play an Audio</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Source Manipulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<h3>Quick Navigation</h3>
+<ul>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://pypi.org/project/palace/">
+      Python Package Index
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://travis-ci.com/github/McSinyx/palace">
+      Travis CI Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://ci.appveyor.com/project/McSinyx/palace">
+      AppVeyor Build
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external" href="https://github.com/McSinyx/palace">
+      GitHub Repository
+    </a>
+  </li>
+  <li class="toctree-l1">
+    <a class="reference external"
+       href="https://matrix.to/#/#palace-dev:matrix.org">
+      Matrix Chat Room
+    </a>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="play-audio.html" title="Previous document">Play an Audio</a>
+        </li>
+        <li>
+          <a href="../reference/index.html" title="Next document">Reference</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="source-manipulation">
+<h1>Source Manipulation<a class="headerlink" href="#source-manipulation" title="Permalink to this headline">¶</a></h1>
+<p>We have created a source in the last section.
+As said previously, its properties can be manipulated to create wanted effects.</p>
+<div class="section" id="moving-the-source">
+<h2>Moving the Source<a class="headerlink" href="#moving-the-source" title="Permalink to this headline">¶</a></h2>
+<p>Changing <a class="reference internal" href="../reference/source.html#palace.Source.position" title="palace.Source.position"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Source.position</span></code></a> is one of the most noticeable,
+but first, we have to enable spatialization via <a class="reference internal" href="../reference/source.html#palace.Source.spatialize" title="palace.Source.spatialize"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Source.spatialize</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">palace</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">decode</span>
+
+<span class="k">with</span> <span class="n">Device</span><span class="p">()</span> <span class="k">as</span> <span class="n">device</span><span class="p">,</span> <span class="n">Context</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">as</span> <span class="n">context</span><span class="p">,</span> <span class="n">Source</span><span class="p">()</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">spatialize</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">decoder</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="s1">&#39;some_audio.ogg&#39;</span><span class="p">)</span>
+    <span class="n">decoder</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">source</span><span class="o">.</span><span class="n">playing</span><span class="p">:</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mf">0.025</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now, we can set the position of the source in this virtual 3D space.
+The position is a 3-tuple indicating the coordinate of the source.
+The axes are aligned according to the normal coordinate system:</p>
+<ul class="simple">
+<li><p>The x-axis goes from left to right</p></li>
+<li><p>The y-axis goes from below to above</p></li>
+<li><p>The z-axis goes from front to back</p></li>
+</ul>
+<p>For example, this will set the source above the listener:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">src</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For this too work for stereo, you have to have HRTF enabled.
+You can check that via <a class="reference internal" href="../reference/device.html#palace.Device.current_hrtf" title="palace.Device.current_hrtf"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.current_hrtf</span></code></a>.</p>
+</div>
+<p>You can as well use a function to move the source automatically by writing
+a function that generate positions.  A simple example is circular motion.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">takewhile</span><span class="p">,</span> <span class="n">count</span>
+<span class="o">...</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">takewhile</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">playing</span><span class="p">,</span> <span class="n">count</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mf">0.025</span><span class="p">)):</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">)</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>A more well-written example of this can be found <a class="reference external" href="https://github.com/McSinyx/palace/blob/master/examples/palace-hrtf.py">in our repository</a>.</p>
+</div>
+<div class="section" id="speed-and-pitch">
+<h2>Speed and Pitch<a class="headerlink" href="#speed-and-pitch" title="Permalink to this headline">¶</a></h2>
+<p>Modifying <code class="xref py py-attr docutils literal notranslate"><span class="pre">pitch</span></code> changes the playing speed, effectively changing
+pitch.  Pitch can be any positive number.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">src</span><span class="o">.</span><span class="n">pitch</span> <span class="o">=</span> <span class="mi">2</span>    <span class="c1"># high pitch</span>
+<span class="n">src</span><span class="o">.</span><span class="n">pitch</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># low pitch</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="air-absorption-factor">
+<h2>Air Absorption Factor<a class="headerlink" href="#air-absorption-factor" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/source.html#palace.Source.air_absorption_factor" title="palace.Source.air_absorption_factor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Source.air_absorption_factor</span></code></a> simulates atmospheric high-frequency
+air absorption. Higher values simulate foggy air and lower values simulate
+drier air.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">src</span><span class="o">.</span><span class="n">air_absorption_factor</span> <span class="o">=</span> <span class="mi">9</span>  <span class="c1"># very high humidity</span>
+<span class="n">src</span><span class="o">.</span><span class="n">air_absorption_factor</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># dry air (default)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="play-audio.html" title="Previous document">Play an Audio</a>
+        </li>
+        <li>
+          <a href="../reference/index.html" title="Next document">Reference</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, 2020  Nguyễn Gia Phong et al.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/tutorial/source.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

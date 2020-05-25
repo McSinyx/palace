@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Environmental Effects &#8212; palace 0.2.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Environmental Effects &#8212; palace 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -137,7 +138,7 @@ By default <cite>current_context()</cite> is used.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a></dt><dd><p>EAXReverb effect</p>
+<dt><a class="reference internal" href="#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a></dt><dd><p>Environmental reverberation effect</p>
 </dd>
 <dt><a class="reference internal" href="#palace.ChorusEffect" title="palace.ChorusEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChorusEffect</span></code></a></dt><dd><p>Chorus effect</p>
 </dd>
@@ -179,6 +180,11 @@ it will be removed first.</p>
 <dt id="palace.ChorusEffect">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">ChorusEffect</code><a class="headerlink" href="#palace.ChorusEffect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Chorus effect.</p>
+<p>The chorus effect essentially replays the input audio accompanied
+by another slightly delayed version of the signal, creating
+a “doubling” effect. This was originally intended to emulate
+the effect of several musicians playing the same notes
+simultaneously, to create a thicker, more satisfying sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -232,16 +238,14 @@ By default <cite>current_context()</cite> is used.</p></li>
 <h2>Reverb Effect<a class="headerlink" href="#reverb-effect" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="palace.reverb_preset_names">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">reverb_preset_names</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.reverb_preset_names" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">reverb_preset_names</code><em class="property">: Tuple<span class="p">[</span>str<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#palace.reverb_preset_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of predefined reverb effect presets in lexicographical order.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="palace.ReverbEffect">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">ReverbEffect</code><a class="headerlink" href="#palace.ReverbEffect" title="Permalink to this definition">¶</a></dt>
-<dd><p>EAXReverb effect.</p>
-<p>It will automatically downgrade to the Standard Reverb effect
-if EAXReverb effect is not supported.</p>
+<dd><p>Environmental reverberation effect.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -266,7 +270,7 @@ By default <cite>current_context()</cite> is used.</p></li>
 <dl class="py attribute">
 <dt id="palace.ReverbEffect.decay_hf_limit">
 <code class="sig-name descname">decay_hf_limit</code><a class="headerlink" href="#palace.ReverbEffect.decay_hf_limit" title="Permalink to this definition">¶</a></dt>
-<dd><p>High frequency decay limit.</p>
+<dd><p>Whether to limit high frequency decay.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -432,7 +436,7 @@ By default <cite>current_context()</cite> is used.</p></li>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

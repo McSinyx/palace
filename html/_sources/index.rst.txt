@@ -7,7 +7,7 @@ for audio rendering using OpenAL:
 * 3D positional rendering, with HRTF_ support for stereo systems
 * Environmental effects: reverb, atmospheric air absorption,
   sound occlusion and obstruction
-* Out-of-the-box codec support:
+* Out-of-the-box codec support: FLAC, MP3, Ogg Vorbis, Opus, WAV, AIFF, etc.
 
 Palace wraps around the C++ interface alure_ using Cython_ for a safe and
 convenient interface with type hinting, data descriptors and context managers,

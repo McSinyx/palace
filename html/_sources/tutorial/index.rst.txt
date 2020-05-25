@@ -8,8 +8,8 @@ This tutorial will guide you on:
 
    context
    play-audio
+   source
 .. comment these to add later
-   Moving sources
    Adding effects
    Customize decoder
    Generate sounds

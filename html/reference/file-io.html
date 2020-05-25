@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>File I/O Interface &#8212; palace 0.2.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File I/O Interface &#8212; palace 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -120,14 +121,14 @@
 
 <dl class="py function">
 <dt id="palace.use_fileio">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_fileio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>str<span class="p">]</span><span class="p">, </span>FileIO<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">buffer_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">8192</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_fileio" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_fileio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>str<span class="p">]</span><span class="p">, </span><a class="reference internal" href="#palace.FileIO" title="palace.FileIO">FileIO</a><span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">buffer_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">8192</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_fileio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the file I/O factory instance to be used by audio decoders.</p>
 <p>If <cite>factory=None</cite> is provided, revert to the default.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="palace.FileIO">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FileIO</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#palace.FileIO" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FileIO</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#palace.FileIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>File I/O protocol.</p>
 <p>This static duck type defines methods required to be used by
 palace decoders.  Despite its name, a <cite>FileIO</cite> is not necessarily
@@ -195,7 +196,7 @@ or 2 (move relative to end of file).</p></li>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
