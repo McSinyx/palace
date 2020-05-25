@@ -4,6 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Streams &#8212; palace 0.2.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -279,7 +280,7 @@ lexicographical order, then fallback to the internal ones.</p>
 
 <dl class="py class">
 <dt id="palace.BaseDecoder">
-<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">BaseDecoder</code><a class="headerlink" href="#palace.BaseDecoder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">BaseDecoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#palace.BaseDecoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio decoder interface.</p>
 <p>Applications may derive from this, implement necessary methods,
 and use it in places the API wants a <cite>BaseDecoder</cite> object.</p>
@@ -349,13 +350,13 @@ the end of the audio has been reached.</p>
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="palace.sample_types">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_types</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.sample_types" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_types</code><em class="property">: Tuple[str, …]</em><a class="headerlink" href="#palace.sample_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of available sample types.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="palace.channel_configs">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">channel_configs</code><em class="property">: Tuple[str, ...]</em><a class="headerlink" href="#palace.channel_configs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">channel_configs</code><em class="property">: Tuple[str, …]</em><a class="headerlink" href="#palace.channel_configs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of available channel configurations.</p>
 </dd></dl>
 
@@ -413,7 +414,7 @@ the end of the audio has been reached.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
