@@ -200,9 +200,9 @@ def test_velocity(context):
 def test_orientation(context):
     """Test read-write property orientation."""
     with Source(context) as source:
-        assert all(map(allclose, source.orientation, ((0, 0, -1), (0, 1, 0))))
+        assert allclose(source.orientation, ((0, 0, -1), (0, 1, 0)), allclose)
         source.orientation = (1, 1, -2), (3, -5, 8)
-        assert all(map(allclose, source.orientation, ((1, 1, -2), (3, -5, 8))))
+        assert allclose(source.orientation, ((1, 1, -2), (3, -5, 8)), allclose)
 
 
 def test_cone_angles(context):

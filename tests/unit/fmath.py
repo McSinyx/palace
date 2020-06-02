@@ -22,7 +22,7 @@ for single-precision floating-point numbers.
 __all__ = ['FLT_MAX', 'allclose', 'isclose']
 
 from math import isclose as _isclose
-from typing import Sequence
+from typing import Any, Callable, Sequence
 
 FLT_EPSILON: float = 2.0 ** -23
 FLT_MAX: float = 2.0**128 - 2.0**104
@@ -42,7 +42,8 @@ def isclose(a: float, b: float) -> bool:
     return _isclose(a, b, rel_tol=FLT_EPSILON)
 
 
-def allclose(a: Sequence[float], b: Sequence[float]) -> bool:
+def allclose(a: Sequence[float], b: Sequence[float],
+             close: Callable[[Any, Any], bool] = isclose) -> bool:
     """Determine whether two sequences of single-precision
     floating-point numbers are close in value.
 
@@ -53,4 +54,4 @@ def allclose(a: Sequence[float], b: Sequence[float]) -> bool:
     That is, NaN is not close to anything, even itself.
     inf and -inf are only close to themselves.
     """
-    return all(map(isclose, a, b))
+    return type(a) is type(b) and all(map(close, a, b))

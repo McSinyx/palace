@@ -1444,7 +1444,7 @@ cdef class Source:
     @property
     def position(self) -> Vector3:
         """3D position of the source."""
-        return from_vector3(self.impl.get_position())
+        return tuple(from_vector3(self.impl.get_position()))
 
     @position.setter
     def position(self, value: Vector3) -> None:
@@ -1458,7 +1458,7 @@ cdef class Source:
         position, and instead just alters the pitch as determined
         by the doppler effect.
         """
-        return from_vector3(self.impl.get_velocity())
+        return tuple(from_vector3(self.impl.get_velocity()))
 
     @velocity.setter
     def velocity(self, value: Vector3) -> None:
@@ -1481,7 +1481,7 @@ cdef class Source:
         comes from, this also affects the facing direction.
         """
         cdef pair[alure.Vector3, alure.Vector3] o = self.impl.get_orientation()
-        return from_vector3(o.first), from_vector3(o.second)
+        return tuple(from_vector3(o.first)), tuple(from_vector3(o.second))
 
     @orientation.setter
     def orientation(self, value: Tuple[Vector3, Vector3]) -> None:
@@ -2234,7 +2234,7 @@ cdef class ReverbEffect(BaseEffect):
     @property
     def reflections_pan(self) -> Vector3:
         """Reflections as 3D vector of magnitude between 0 and 1."""
-        return self.properties.reflections_pan
+        return tuple(self.properties.reflections_pan)
 
     @reflections_pan.setter
     def reflections_pan(self, value: Vector3) -> None:
@@ -2277,7 +2277,7 @@ cdef class ReverbEffect(BaseEffect):
     @property
     def late_reverb_pan(self) -> Vector3:
         """Late reverb as 3D vector of magnitude between 0 and 1."""
-        return self.properties.late_reverb_pan
+        return tuple(self.properties.late_reverb_pan)
 
     @late_reverb_pan.setter
     def late_reverb_pan(self, value: Vector3) -> None:
