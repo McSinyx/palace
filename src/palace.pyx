@@ -2607,8 +2607,8 @@ cdef class Decoder:
     def loop_points(self) -> Tuple[int, int]:
         """Loop points in sample frames.
 
-        Returns
-        -------
+        Return
+        ------
         start : int
             Inclusive starting loop point.
         end : int
@@ -2663,8 +2663,8 @@ cdef class Decoder:
             The source object to play audio.  If `None` is given,
             a new one will be created from the current context.
 
-        Returns
-        -------
+        Return
+        ------
         The source used for playing.
         """
         if source is None: source = Source()
@@ -2732,8 +2732,8 @@ class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
     def loop_points(self) -> Tuple[int, int]:
         """Loop points in sample frames.
 
-        Returns
-        -------
+        Return
+        ------
         start : int
             Inclusive starting loop point.
         end : int
