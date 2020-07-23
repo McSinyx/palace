@@ -179,8 +179,8 @@ cdef object fileio_factory = None   # type: Optional[Callable[[str], FileIO]]
 def sample_size(length: int, channel_config: str, sample_type: str) -> int:
     """Return the size of the given number of sample frames.
 
-    Raises
-    ------
+    Raise
+    -----
     ValueError
         If either channel_config or sample_type is invalid.
     RuntimeError
@@ -203,8 +203,8 @@ def sample_size(length: int, channel_config: str, sample_type: str) -> int:
 def sample_length(size: int, channel_config: str, sample_type: str) -> int:
     """Return the number of frames stored in the given byte size.
 
-    Raises
-    ------
+    Raise
+    -----
     ValueError
         If either channel_config or sample_type is invalid.
     """
@@ -309,8 +309,8 @@ def cache(names: Iterable[str], context: Optional[Context] = None) -> None:
 
     If `context` is not given, `current_context()` will be used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
 
@@ -332,8 +332,8 @@ def free(names: Iterable[str], context: Optional[Context] = None) -> None:
 
     If `context` is not given, `current_context()` will be used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
     """
@@ -351,8 +351,8 @@ def decode(name: str, context: Optional[Context] = None) -> Decoder:
     This first tries user-registered decoder factories in
     lexicographical order, then fallback to the internal ones.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
 
@@ -460,13 +460,13 @@ cdef class Device:
     fallback : Iterable[str], optional
         Device names to fallback to, default to an empty tuple.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If device creation fails.
 
-    Warns
-    -----
+    Warn
+    ----
     RuntimeWarning
         Before each fallback.
 
@@ -685,8 +685,8 @@ cdef class Context:
     listener : Listener
         The listener instance of this context.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If context creation fails.
     """
@@ -857,8 +857,8 @@ cdef class Context:
         closer than its reference distance or farther than its max
         distance.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a preset cannot be found in `distance_models`.
         """
@@ -890,8 +890,8 @@ cdef class Listener:
         The context on which the listener instance is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
     """
@@ -928,7 +928,7 @@ cdef class Listener:
     def orientation(self, value: Tuple[Vector3, Vector3]) -> None:
         """3D orientation of the listener.
 
-        Attributes
+        Parameters
         ----------
         at : Tuple[float, float, float]
             Relative position.
@@ -974,8 +974,8 @@ cdef class Buffer:
     name : str
         Audio file or resource name.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
     """
@@ -1042,8 +1042,8 @@ cdef class Buffer:
             The context from which the buffer is to be created.
             By default `current_context()` is used.
 
-        Raises
-        ------
+        Raise
+        -----
         RuntimeError
             If there is neither any context specified nor current;
             or if `name` is already used for another buffer.
@@ -1114,8 +1114,8 @@ cdef class Buffer:
         current context, `start = 0` and `end = length` respectively.
         Otherwise, `start < end <= length`.
 
-        Attributes
-        ----------
+        Return
+        ------
         start : int
             Starting point, in sample frames (inclusive).
         end : int
@@ -1177,8 +1177,8 @@ cdef class Source:
         The context from which the source is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
     """
@@ -1356,8 +1356,8 @@ cdef class Source:
     def pitch(self) -> float:
         """Linear pitch shift base, default to 1.0.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a nonpositive value.
         """
@@ -1371,8 +1371,8 @@ cdef class Source:
     def gain(self) -> float:
         """Base linear volume gain, default to 1.0.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a negative value.
         """
@@ -1389,15 +1389,15 @@ cdef class Source:
         This is used after distance and cone attenuation are applied
         to the gain base and before the adjustments of the filter gain.
 
-        Attributes
-        ----------
+        Return
+        ------
         mingain : float
             Minimum gain, default to 0.
         maxgain : float
             Maximum gain, default to 1.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a value where `mingain` is greater than `maxgain`
             or either of them is outside of the [0, 1] interval.
@@ -1417,8 +1417,8 @@ cdef class Source:
         distance is clamped to the specified range before applying
         distance-related attenuation.
 
-        Attributes
-        ----------
+        Return
+        ------
         refdist : float
             The distance at which the source's volume will not have
             any extra attenuation (an effective gain multiplier of 1),
@@ -1428,8 +1428,8 @@ cdef class Source:
             maximum value of a single-precision floating-point variable
             (2**128 - 2**104).
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a value where `refdist` is greater than `maxdist`
             or either of them is outside of the [0, FLT_MAX] interval.
@@ -1468,8 +1468,8 @@ cdef class Source:
     def orientation(self) -> Tuple[Vector3, Vector3]:
         """3D orientation of the source.
 
-        Attributes
-        ----------
+        Return
+        ------
         at : Tuple[float, float, float]
             Relative position.
         up : Tuple[float, float, float]
@@ -1493,8 +1493,8 @@ cdef class Source:
     def cone_angles(self) -> Tuple[float, float]:
         """Cone inner and outer angles in degrees.
 
-        Attributes
-        ----------
+        Return
+        ------
         inner : float
             The area within which the listener will hear the source
             without extra attenuation, default to 360.
@@ -1502,8 +1502,8 @@ cdef class Source:
             The area outside of which the listener will hear the source
             attenuated according to `outer_cone_gains`, default to 360.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a value where `inner` is greater than `outer`
             or either of them is outside of the [0, 360] interval.
@@ -1525,8 +1525,8 @@ cdef class Source:
     def outer_cone_gains(self) -> Tuple[float, float]:
         """Gain when listener is out of the source's outer cone area.
 
-        Attributes
-        ----------
+        Return
+        ------
         gain : float
             Linear gain applying to all frequencies, default to 1.
         gain_hf : float
@@ -1534,8 +1534,8 @@ cdef class Source:
             creating a low-pass effect, default to 1.  It has no effect
             without the `ALC_EXT_EFX` extension.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If either of the gains is set to a value
             outside of the [0, 1] interval.
@@ -1554,8 +1554,8 @@ cdef class Source:
         This is effectively a distance scaling relative to
         the reference distance.
 
-        Attributes
-        ----------
+        Return
+        ------
         factor : float
             Rolloff factor.
         room_factor : float
@@ -1564,8 +1564,8 @@ cdef class Source:
             the reverb engine will, by default, apply a more realistic
             room decay based on the reverb decay time and distance.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If either of rolloff factors is set to a negative value.
         """
@@ -1583,8 +1583,8 @@ cdef class Source:
         This effectively scales the source and listener velocities
         for the doppler calculation.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a value outside of the [0, 1] interval.
         """
@@ -1613,8 +1613,8 @@ cdef class Source:
 
         This has no effect without `AL_EXT_SOURCE_RADIUS` extension.
 
-        Raises
-        ------
+        Raise
+        -----
         ValueError
             If set to a negative value.
         """
@@ -1699,8 +1699,8 @@ cdef class Source:
     def gain_auto(self) -> Tuple[bool, bool, bool]:
         """Whether automatically adjust gains.
 
-        Attributes
-        ----------
+        Return
+        ------
         direct_hf : bool
             Direct path's high frequency gain, default to `True`.
         send : bool
@@ -1826,8 +1826,8 @@ cdef class SourceGroup:
         The context from which the source group is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
     """
@@ -1872,8 +1872,8 @@ cdef class SourceGroup:
     def parent_group(self) -> SourceGroup:
         """The parent source group of this source group.
 
-        Raises
-        ------
+        Raise
+        -----
         RuntimeException
             If this group is being added to its sub-group
             (i.e. it would create a circular sub-group chain).
@@ -1973,8 +1973,8 @@ cdef class BaseEffect:
         The context from which the effect is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
 
@@ -2075,8 +2075,8 @@ cdef class ReverbEffect(BaseEffect):
         The context from which the effect is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     ValueError
         If the specified preset cannot be found in `reverb_preset_names`.
     RuntimeError
@@ -2433,8 +2433,8 @@ cdef class ChorusEffect(BaseEffect):
         The context from which the effect is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
     """
@@ -2534,8 +2534,8 @@ cdef class Decoder:
         The context from which the decoder is to be created.
         By default `current_context()` is used.
 
-    Raises
-    ------
+    Raise
+    -----
     RuntimeError
         If there is neither any context specified nor current.
 
