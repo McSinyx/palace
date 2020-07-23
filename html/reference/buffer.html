@@ -4,8 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Caching &#8212; palace 0.2.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resource Caching &#8212; palace 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -125,9 +125,9 @@ even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.  Multiple calls with the same name
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Audio file or resource name.  Multiple calls with the same name
 will return the same buffer.</p></li>
-<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the buffer is to be created and cached.
+<li><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context from which the buffer is to be created and cached.
 By default <cite>current_context()</cite> is used.</p></li>
 </ul>
 </dd>
@@ -138,7 +138,7 @@ By default <cite>current_context()</cite> is used.</p></li>
 <dd><p>Audio file or resource name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -174,10 +174,10 @@ By default <cite>current_context()</cite> is used.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>decoder</strong> (<a class="reference internal" href="decoder.html#palace.Decoder" title="palace.Decoder"><em>Decoder</em></a>) – The decoder from which the buffer is to be cached.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – The name to give to the buffer.  It may alias an audio file,
+<li><p><strong>decoder</strong> (<a class="reference internal" href="decoder.html#palace.Decoder" title="palace.Decoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decoder</span></code></a>) – The decoder from which the buffer is to be cached.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name to give to the buffer.  It may alias an audio file,
 but it must not currently exist in the buffer cache.</p></li>
-<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the buffer is to be created.
+<li><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context from which the buffer is to be created.
 By default <cite>current_context()</cite> is used.</p></li>
 </ul>
 </dd>
@@ -204,15 +204,16 @@ By default <cite>current_context()</cite> is used.</p></li>
 <dt id="palace.Buffer.loop_points">
 <code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.Buffer.loop_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loop points for looping sources.</p>
-<p>If the <cite>AL_SOFT_loop_points</cite> extension is not supported by the
+<p>If <cite>AL_SOFT_loop_points</cite> extension is not supported by the
 current context, <cite>start = 0</cite> and <cite>end = length</cite> respectively.
 Otherwise, <cite>start &lt; end &lt;= length</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>int</em>) – Starting point, in sample frames (inclusive).</p></li>
-<li><p><strong>end</strong> (<em>int</em>) – Ending point, in sample frames (exclusive).</p></li>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>start</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Starting point, in sample frames (inclusive).</p></li>
+<li><p><strong>end</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Ending point, in sample frames (exclusive).</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -335,7 +336,7 @@ an exception.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0+</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

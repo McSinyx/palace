@@ -4,8 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Streams &#8212; palace 0.2.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Streams &#8212; palace 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -121,8 +121,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.</p></li>
-<li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the decoder is to be created.
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Audio file or resource name.</p></li>
+<li><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context from which the decoder is to be created.
 By default <cite>current_context()</cite> is used.</p></li>
 </ul>
 </dd>
@@ -176,11 +176,12 @@ please call the module-level <cite>decode</cite> function instead.</p>
 <em class="property">property </em><code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.Decoder.loop_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loop points in sample frames.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>int</em>) – Inclusive starting loop point.</p></li>
-<li><p><strong>end</strong> (<em>int</em>) – Exclusive starting loop point.</p></li>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>start</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Inclusive starting loop point.</p></li>
+<li><p><strong>end</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Exclusive starting loop point.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -197,13 +198,13 @@ from elsewhere while in use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>chunk_len</strong> (<em>int</em>) – The number of sample frames to read for each chunk update.
+<li><p><strong>chunk_len</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of sample frames to read for each chunk update.
 Smaller values will require more frequent updates and
 larger values will handle more data with each chunk.</p></li>
-<li><p><strong>queue_size</strong> (<em>int</em>) – The number of chunks to keep queued during playback.
+<li><p><strong>queue_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of chunks to keep queued during playback.
 Smaller values use less memory while larger values
 improve protection against underruns.</p></li>
-<li><p><strong>source</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="source.html#palace.Source" title="palace.Source"><em>Source</em></a><em>]</em><em>, </em><em>optional</em>) – The source object to play audio.  If <cite>None</cite> is given,
+<li><p><strong>source</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Source]</span></code>, <em>optional</em>) – The source object to play audio.  If <cite>None</cite> is given,
 a new one will be created from the current context.</p></li>
 </ul>
 </dd>
@@ -240,7 +241,7 @@ the end of the audio has been reached.</p>
 <dl class="py method">
 <dt id="palace.Decoder.seek">
 <code class="sig-name descname">seek</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#palace.Decoder.seek" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seek to pos, specified in sample frames.</p>
+<dd><p>Seek to <cite>pos</cite>, specified in sample frames.</p>
 <p>Return if the seek was successful.</p>
 </dd></dl>
 
@@ -310,11 +311,12 @@ and use it in places the API wants a <cite>BaseDecoder</cite> object.</p>
 <em class="property">abstract property </em><code class="sig-name descname">loop_points</code><a class="headerlink" href="#palace.BaseDecoder.loop_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loop points in sample frames.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>int</em>) – Inclusive starting loop point.</p></li>
-<li><p><strong>end</strong> (<em>int</em>) – Exclusive starting loop point.</p></li>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>start</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Inclusive starting loop point.</p></li>
+<li><p><strong>end</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Exclusive starting loop point.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -350,13 +352,13 @@ the end of the audio has been reached.</p>
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="palace.sample_types">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_types</code><em class="property">: Tuple[str, …]</em><a class="headerlink" href="#palace.sample_types" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">sample_types</code><em class="property">: Tuple<span class="p">[</span>str<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#palace.sample_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of available sample types.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="palace.channel_configs">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">channel_configs</code><em class="property">: Tuple[str, …]</em><a class="headerlink" href="#palace.channel_configs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">channel_configs</code><em class="property">: Tuple<span class="p">[</span>str<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#palace.channel_configs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of available channel configurations.</p>
 </dd></dl>
 
@@ -414,7 +416,7 @@ the end of the audio has been reached.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0+</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

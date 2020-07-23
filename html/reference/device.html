@@ -4,8 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Devices &#8212; palace 0.2.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Devices &#8212; palace 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -123,8 +123,8 @@ completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the playback device.</p></li>
-<li><p><strong>fallback</strong> (<em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Device names to fallback to, default to an empty tuple.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – The name of the playback device.</p></li>
+<li><p><strong>fallback</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable[str]</span></code>, <em>optional</em>) – Device names to fallback to, default to an empty tuple.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -183,8 +183,7 @@ extension to retrieve the audio device’s real clock.</p>
 <dt id="palace.Device.efx_version">
 <em class="property">property </em><code class="sig-name descname">efx_version</code><a class="headerlink" href="#palace.Device.efx_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>EFX version supported by this device.</p>
-<p>If the <cite>ALC_EXT_EFX</cite> extension is unsupported,
-this will be <cite>(0, 0)</cite>.</p>
+<p>If <cite>ALC_EXT_EFX</cite> extension is unsupported, this will be (0, 0).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -197,7 +196,7 @@ this will be <cite>(0, 0)</cite>.</p>
 <dt id="palace.Device.hrtf_enabled">
 <em class="property">property </em><code class="sig-name descname">hrtf_enabled</code><a class="headerlink" href="#palace.Device.hrtf_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether HRTF is enabled on the device.</p>
-<p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
+<p>If <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will return False although there could still be
 HRTF applied at a lower hardware level.</p>
 </dd></dl>
@@ -208,7 +207,7 @@ HRTF applied at a lower hardware level.</p>
 <dd><p>List of available HRTF names.</p>
 <p>The order is retained from OpenAL, such that the index of
 a given name is the ID to use with <cite>ALC_HRTF_ID_SOFT</cite>.</p>
-<p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
+<p>If <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will be an empty list.</p>
 </dd></dl>
 
@@ -231,7 +230,7 @@ this will be an empty list.</p>
 <dd><p>Pause device processing and stop contexts’ updates.</p>
 <p>Multiple calls are allowed but it is not reference counted,
 so the device will resume after one <cite>resume_dsp</cite> call.</p>
-<p>This requires the <cite>ALC_SOFT_pause_device</cite> extension.</p>
+<p>This requires <cite>ALC_SOFT_pause_device</cite> extension.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -251,7 +250,7 @@ so the device will resume after one <cite>resume_dsp</cite> call.</p>
 <dt id="palace.Device.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attrs</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the device, using the specified attributes.</p>
-<p>If the <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
+<p>If <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
 this will be a no-op.</p>
 </dd></dl>
 
@@ -316,7 +315,7 @@ this will be a no-op.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0+</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

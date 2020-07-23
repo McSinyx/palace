@@ -4,8 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Library Contexts &#8212; palace 0.2.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Library Contexts &#8212; palace 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -138,8 +138,8 @@ such as sources, buffers and effects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><em>Device</em></a>) – The <cite>device</cite> on which the context is to be created.</p></li>
-<li><p><strong>attrs</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – Attributes specified for the context to be created.</p></li>
+<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>) – The <cite>device</cite> on which the context is to be created.</p></li>
+<li><p><strong>attrs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict[int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int]</span></code>) – Attributes specified for the context to be created.</p></li>
 </ul>
 </dd>
 </dl>
@@ -149,7 +149,7 @@ such as sources, buffers and effects.</p>
 <dd><p>The device this context was created from.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="device.html#palace.Device" title="palace.Device">Device</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="device.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -160,7 +160,7 @@ such as sources, buffers and effects.</p>
 <dd><p>The listener instance of this context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#palace.Listener" title="palace.Listener">Listener</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#palace.Listener" title="palace.Listener"><code class="xref py py-class docutils literal notranslate"><span class="pre">Listener</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -180,8 +180,8 @@ such as sources, buffers and effects.</p>
 <dt id="palace.Context.available_resamplers">
 <em class="property">property </em><code class="sig-name descname">available_resamplers</code><a class="headerlink" href="#palace.Context.available_resamplers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of resamplers supported by the context.</p>
-<p>If the <cite>AL_SOFT_source_resampler</cite> extension is unsupported
-this will be an empty list, otherwise there would be
+<p>If <cite>AL_SOFT_source_resampler</cite> extension is unsupported,
+this will be an empty list. Otherwise there would be
 at least one entry.</p>
 <p>This method require the context to be current.</p>
 </dd></dl>
@@ -190,8 +190,8 @@ at least one entry.</p>
 <dt id="palace.Context.default_resampler_index">
 <em class="property">property </em><code class="sig-name descname">default_resampler_index</code><a class="headerlink" href="#palace.Context.default_resampler_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The context’s default resampler index.</p>
-<p>If the <cite>AL_SOFT_source_resampler</cite> extension is unsupported
-the resampler list will be empty and this will return 0.</p>
+<p>If <cite>AL_SOFT_source_resampler</cite> extension is unsupported,
+this will return 0.</p>
 <p>If you try to access the resampler list with this index
 without extension, undefined behavior will occur
 (accessing an out of bounds array index).</p>
@@ -292,7 +292,7 @@ also be adjusted.</p>
 creation of the wrapper object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context on which the listener instance is to be created.
+<dd class="field-odd"><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context on which the listener instance is to be created.
 By default <cite>current_context()</cite> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -323,8 +323,8 @@ to maintain a realistic 343.3 m/s for sound propagation).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>at</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative position.</p></li>
-<li><p><strong>up</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative direction.</p></li>
+<li><p><strong>at</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Relative position.</p></li>
+<li><p><strong>up</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Relative direction.</p></li>
 </ul>
 </dd>
 </dl>
@@ -365,11 +365,11 @@ being loaded asynchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Resource name passed to <cite>Buffer</cite>.</p></li>
-<li><p><strong>channel_config</strong> (<em>str</em>) – Channel configuration of the given audio data.</p></li>
-<li><p><strong>sample_type</strong> (<em>str</em>) – Sample type of the given audio data.</p></li>
-<li><p><strong>sample_rate</strong> (<em>int</em>) – Sample rate of the given audio data.</p></li>
-<li><p><strong>data</strong> (<em>MutableSequence</em><em>[</em><em>int</em><em>]</em>) – <p>The audio data that is about to be fed to the OpenAL buffer.</p>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Resource name passed to <cite>Buffer</cite>.</p></li>
+<li><p><strong>channel_config</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Channel configuration of the given audio data.</p></li>
+<li><p><strong>sample_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Sample type of the given audio data.</p></li>
+<li><p><strong>sample_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Sample rate of the given audio data.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence[int]</span></code>) – <p>The audio data that is about to be fed to the OpenAL buffer.</p>
 <p>It is a mutable memory array of signed 8-bit integers,
 following Python buffer protocol.</p>
 </p></li>
@@ -383,7 +383,7 @@ following Python buffer protocol.</p>
 <code class="sig-name descname">device_disconnected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n"><a class="reference internal" href="device.html#palace.Device" title="palace.Device">palace.Device</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.device_disconnected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle disconnected device messages.</p>
 <p>This is called when the given device has been disconnected and
-is no longer usable for output.  As per the <cite>ALC_EXT_disconnect</cite>
+is no longer usable for output.  As per <cite>ALC_EXT_disconnect</cite>
 specification, disconnected devices remain valid, however all
 playing sources are automatically stopped, any sources that are
 attempted to play will immediately stop, and new contexts may
@@ -392,7 +392,7 @@ not be created on the device.</p>
 <p>Connection status is checked during <cite>Context.update</cite> calls, so
 method must be called regularly to be notified when a device is
 disconnected.  This method may not be called if the device lacks
-support for the <cite>ALC_EXT_disconnect</cite> extension.</p>
+support for <cite>ALC_EXT_disconnect</cite> extension.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -462,9 +462,9 @@ extension to be available.</p>
 
 <dl class="py function">
 <dt id="palace.thread_local">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">thread_local</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; Iterator[None]<a class="headerlink" href="#palace.thread_local" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">thread_local</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>None<span class="p">]</span><a class="headerlink" href="#palace.thread_local" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a context manager controlling preference of local thread.</p>
-<p>Effectively, it sets the fallback value for the <cite>thread</cite> argument
+<p>Effectively, it sets fallback value for <cite>thread</cite> argument
 for <cite>current_context</cite> and <cite>use_context</cite>.</p>
 <p>Initially, globally current <cite>Context</cite> is preferred.</p>
 </dd></dl>
@@ -533,7 +533,7 @@ auxiliary source sends.</p>
 
 <dl class="py data">
 <dt id="palace.distance_models">
-<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">distance_models</code><em class="property">: Tuple[str, …]</em><a class="headerlink" href="#palace.distance_models" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">palace.</code><code class="sig-name descname">distance_models</code><em class="property">: Tuple<span class="p">[</span>str<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#palace.distance_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Names of available distance models.</p>
 </dd></dl>
 
@@ -566,7 +566,7 @@ auxiliary source sends.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0+</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
