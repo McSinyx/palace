@@ -18,12 +18,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with palace.  If not, see <https://www.gnu.org/licenses/>.
 
-import sys
 import re
 from distutils import log
 from distutils.command.clean import clean
 from distutils.dir_util import mkpath
-from distutils.errors import DistutilsFileError
+from distutils.errors import DistutilsExecError, DistutilsFileError
 from distutils.file_util import copy_file
 from operator import methodcaller
 from os import environ, unlink
@@ -57,15 +56,14 @@ class BuildAlure2Ext(build_ext):
         """
         super().finalize_options()
         mkpath(self.build_temp)
-        copy_file(join(dirname(__file__), 'CMakeLists.txt'),
-                  self.build_temp)
+        copy_file(join(dirname(__file__), 'CMakeLists.txt'), self.build_temp)
         try:
-            cmake = run(['cmake', '.'],
-                        check=True, stdout=DEVNULL, stderr=PIPE,
-                        cwd=self.build_temp, universal_newlines=True)
+            cmake = run(
+                ['cmake', '.'], check=True, stdout=DEVNULL, stderr=PIPE,
+                cwd=self.build_temp, universal_newlines=True)
         except CalledProcessError as e:
-            print(e.stderr, file=sys.stderr)
-            raise e from None
+            log.error(e.stderr.strip())
+            raise DistutilsExecError(str(e))
 
         for key, value in map(methodcaller('groups'),
                               re.finditer(r'^alure2_(\w*)=(.*)$',
