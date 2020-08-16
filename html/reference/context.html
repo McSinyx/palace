@@ -138,8 +138,8 @@ such as sources, buffers and effects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>) – The <cite>device</cite> on which the context is to be created.</p></li>
-<li><p><strong>attrs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict[int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int]</span></code>) – Attributes specified for the context to be created.</p></li>
+<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><em>Device</em></a>) – The <cite>device</cite> on which the context is to be created.</p></li>
+<li><p><strong>attrs</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – Attributes specified for the context to be created.</p></li>
 </ul>
 </dd>
 </dl>
@@ -149,7 +149,7 @@ such as sources, buffers and effects.</p>
 <dd><p>The device this context was created from.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="device.html#palace.Device" title="palace.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="device.html#palace.Device" title="palace.Device">Device</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -160,7 +160,7 @@ such as sources, buffers and effects.</p>
 <dd><p>The listener instance of this context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#palace.Listener" title="palace.Listener"><code class="xref py py-class docutils literal notranslate"><span class="pre">Listener</span></code></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#palace.Listener" title="palace.Listener">Listener</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -292,7 +292,7 @@ also be adjusted.</p>
 creation of the wrapper object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context on which the listener instance is to be created.
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context on which the listener instance is to be created.
 By default <cite>current_context()</cite> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -323,8 +323,8 @@ to maintain a realistic 343.3 m/s for sound propagation).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>at</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Relative position.</p></li>
-<li><p><strong>up</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Relative direction.</p></li>
+<li><p><strong>at</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative position.</p></li>
+<li><p><strong>up</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Relative direction.</p></li>
 </ul>
 </dd>
 </dl>
@@ -365,11 +365,11 @@ being loaded asynchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Resource name passed to <cite>Buffer</cite>.</p></li>
-<li><p><strong>channel_config</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Channel configuration of the given audio data.</p></li>
-<li><p><strong>sample_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Sample type of the given audio data.</p></li>
-<li><p><strong>sample_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Sample rate of the given audio data.</p></li>
-<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence[int]</span></code>) – <p>The audio data that is about to be fed to the OpenAL buffer.</p>
+<li><p><strong>name</strong> (<em>str</em>) – Resource name passed to <cite>Buffer</cite>.</p></li>
+<li><p><strong>channel_config</strong> (<em>str</em>) – Channel configuration of the given audio data.</p></li>
+<li><p><strong>sample_type</strong> (<em>str</em>) – Sample type of the given audio data.</p></li>
+<li><p><strong>sample_rate</strong> (<em>int</em>) – Sample rate of the given audio data.</p></li>
+<li><p><strong>data</strong> (<em>MutableSequence</em><em>[</em><em>int</em><em>]</em>) – <p>The audio data that is about to be fed to the OpenAL buffer.</p>
 <p>It is a mutable memory array of signed 8-bit integers,
 following Python buffer protocol.</p>
 </p></li>
@@ -566,7 +566,7 @@ auxiliary source sends.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0+</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

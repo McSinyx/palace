@@ -124,7 +124,7 @@ unless the context manager is used, which guarantees the source’s
 destructioni upon completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context from which the source is to be created.
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the source is to be created.
 By default <cite>current_context()</cite> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -147,9 +147,9 @@ foggy air and lower values simulating dryer air; default to 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>inner</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The area within which the listener will hear the source
+<li><p><strong>inner</strong> (<em>float</em>) – The area within which the listener will hear the source
 without extra attenuation, default to 360.</p></li>
-<li><p><strong>outer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The area outside of which the listener will hear the source
+<li><p><strong>outer</strong> (<em>float</em>) – The area outside of which the listener will hear the source
 attenuated according to <cite>outer_cone_gains</cite>, default to 360.</p></li>
 </ul>
 </p>
@@ -181,10 +181,10 @@ distance-related attenuation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>refdist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The distance at which the source’s volume will not have
+<li><p><strong>refdist</strong> (<em>float</em>) – The distance at which the source’s volume will not have
 any extra attenuation (an effective gain multiplier of 1),
 default to 0.</p></li>
-<li><p><strong>maxdist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The maximum distance, default to FLT_MAX, which is the
+<li><p><strong>maxdist</strong> (<em>float</em>) – The maximum distance, default to FLT_MAX, which is the
 maximum value of a single-precision floating-point variable
 (2**128 - 2**104).</p></li>
 </ul>
@@ -233,9 +233,9 @@ for the fading to be smooth.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Linear gain applying to all frequencies, default to 1.</p></li>
-<li><p><strong>gain_hf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Linear gain applying to high frequencies, default to 1.</p></li>
-<li><p><strong>gain_lf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Linear gain applying to low frequencies, default to 1.</p></li>
+<li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
+<li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying to high frequencies, default to 1.</p></li>
+<li><p><strong>gain_lf</strong> (<em>float</em>) – Linear gain applying to low frequencies, default to 1.</p></li>
 </ul>
 </dd>
 </dl>
@@ -259,9 +259,9 @@ for the fading to be smooth.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>direct_hf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Direct path’s high frequency gain, default to <cite>True</cite>.</p></li>
-<li><p><strong>send</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Send paths’ gain, default to <cite>True</cite>.</p></li>
-<li><p><strong>send_hf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Send paths’ high-frequency, default to <cite>True</cite>.</p></li>
+<li><p><strong>direct_hf</strong> (<em>bool</em>) – Direct path’s high frequency gain, default to <cite>True</cite>.</p></li>
+<li><p><strong>send</strong> (<em>bool</em>) – Send paths’ gain, default to <cite>True</cite>.</p></li>
+<li><p><strong>send_hf</strong> (<em>bool</em>) – Send paths’ high-frequency, default to <cite>True</cite>.</p></li>
 </ul>
 </p>
 </dd>
@@ -277,8 +277,8 @@ to the gain base and before the adjustments of the filter gain.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>mingain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum gain, default to 0.</p></li>
-<li><p><strong>maxgain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Maximum gain, default to 1.</p></li>
+<li><p><strong>mingain</strong> (<em>float</em>) – Minimum gain, default to 0.</p></li>
+<li><p><strong>maxgain</strong> (<em>float</em>) – Maximum gain, default to 1.</p></li>
 </ul>
 </p>
 </dd>
@@ -354,8 +354,8 @@ the decoder’s read position.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>at</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Relative position.</p></li>
-<li><p><strong>up</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple[float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float]</span></code>) – Relative direction.</p></li>
+<li><p><strong>at</strong> (<em>Tuple[float, float, float]</em>) – Relative position.</p></li>
+<li><p><strong>up</strong> (<em>Tuple[float, float, float]</em>) – Relative direction.</p></li>
 </ul>
 </p>
 </dd>
@@ -372,8 +372,8 @@ comes from, this also affects the facing direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>gain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Linear gain applying to all frequencies, default to 1.</p></li>
-<li><p><strong>gain_hf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Linear gain applying extra attenuation to high frequencies
+<li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
+<li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying extra attenuation to high frequencies
 creating a low-pass effect, default to 1.  It has no effect
 without the <cite>ALC_EXT_EFX</cite> extension.</p></li>
 </ul>
@@ -474,8 +474,8 @@ the reference distance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Rolloff factor.</p></li>
-<li><p><strong>room_factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Room rolloff factor, default to 0 which disables
+<li><p><strong>factor</strong> (<em>float</em>) – Rolloff factor.</p></li>
+<li><p><strong>room_factor</strong> (<em>float</em>) – Room rolloff factor, default to 0 which disables
 distance attenuation for send paths.  This is because
 the reverb engine will, by default, apply a more realistic
 room decay based on the reverb decay time and distance.</p></li>
@@ -555,7 +555,7 @@ of all sources in the group.</p>
 completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>context</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Optional[Context]</span></code>, <em>optional</em>) – The context from which the source group is to be created.
+<dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the source group is to be created.
 By default <cite>current_context()</cite> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -658,7 +658,7 @@ By default <cite>current_context()</cite> is used.</p>
       &copy;2019, 2020  Nguyễn Gia Phong et al.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0+</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
