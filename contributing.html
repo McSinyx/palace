@@ -154,21 +154,19 @@ requested by someone who requires them.</p>
 <div class="section" id="submitting-a-patch">
 <h2>Submitting a Patch<a class="headerlink" href="#submitting-a-patch" title="Permalink to this headline">¶</a></h2>
 <p>We accept all kinds of patches, from documentation and CI/CD setup
-to bug fixes, feature implementations and tests.  Except for documentation
-located in the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch, others should be filed against
-the development branch <code class="docutils literal notranslate"><span class="pre">master</span></code>.  These are hosted on GitHub and
-one may create a local repository by running:</p>
+to bug fixes, feature implementations and tests.  These are hosted on GitHub
+and one may create a local repository by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">McSinyx</span><span class="o">/</span><span class="n">palace</span>
 </pre></div>
 </div>
 <p>While the patch can be submitted via email, it is preferable to file
-a pull request on GitHub to allow more people to review it, since we do not
-have any mail list.  Either way, contributors must have legal permission
-to distribute the code and it must be available under <a class="reference external" href="https://www.gnu.org/licenses/lgpl-3.0.en.html">LGPLv3+</a>.  Furthermore,
-each contributor retains the copyrights of their patch, to ensure that
-the licence can never be revoked even if others wants to.  It is advisable
-that the author list per legal name under the copyright header
-of each source file they modify, like so:</p>
+a pull request on GitHub against the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch to allow more people
+to review it, since we do not have any mail list.  Either way, contributors
+must have legal permission to distribute the code and it must be available
+under <a class="reference external" href="https://www.gnu.org/licenses/lgpl-3.0.en.html">LGPLv3+</a>.  Furthermore, each contributor retains the copyrights
+of their patch, to ensure that the licence can never be revoked even if
+others wants to.  It is advisable that the author list per legal name
+under the copyright header of each source file they modify, like so:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mi">2038</span>  <span class="n">Foo</span> <span class="n">Bar</span>
 </pre></div>
 </div>
@@ -236,11 +234,6 @@ since the previous release.  This will trigger the CD services
 to build the wheels and publish them to PyPI.</p></li>
 <li><p>Wait for the wheel for your platform to arrive to PyPI and install it.
 Play around with it for a little to make sure that everything is OK.</p></li>
-<li><p>Under the local repository, checkout the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch.
-Often, is it necessary to update the credits under the <a class="reference internal" href="copying.html"><span class="doc">Copying</span></a>
-section and review if the <a class="reference internal" href="reference/index.html"><span class="doc">Reference</span></a> section needs any change
-before running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code> to rebuild to documentation.</p></li>
-<li><p>View the documentation locally then push it to GitHub.</p></li>
 </ol>
 </div>
 <div class="section" id="style-guidelines">
