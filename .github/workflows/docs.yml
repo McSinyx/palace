@@ -1,0 +1,66 @@
+name: Deploy documentation
+
+on:
+  push:
+    branches:
+    - master
+    paths-ignore:
+    - examples/**
+    - tests/**
+    - LICENSE
+    - README.md
+    - .*.yml
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9.0-beta.4 - 3.9.0
+
+    - name: Checkout palace
+      uses: actions/checkout@v2
+
+    - name: Checkout alure
+      uses: actions/checkout@v2
+      with:
+        repository: kcat/alure
+        path: alure
+
+    - name: Install dependencies
+      run: |
+        sudo apt install \
+          cmake libopenal-dev libvorbis-dev libopusfile-dev libsndfile1-dev
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -S alure -B alure/build
+        sudo cmake --build alure/build --parallel `nproc` --target install
+        rm -fr alure
+        python -m pip install Sphinx .
+
+    - name: Build site
+      working-directory: docs
+      run: make html
+
+    - name: Configure git
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config user.email mcsinyx@disroot.org
+        git config user.name Nguyễn\ Gia\ Phong
+        git remote set-url origin \
+          https://token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY
+        git fetch origin gh-pages
+
+    - name: Deploy site
+      run: |
+        git switch gh-pages
+        git rm -r .
+        shopt -s dotglob
+        mv docs/build/html/* .
+
+        rm -r docs
+        git add .
+        git commit -m "Build at $(date --iso-8601=seconds)"
+        git push origin gh-pages

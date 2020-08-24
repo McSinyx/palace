@@ -48,21 +48,19 @@ Submitting a Patch
 ------------------
 
 We accept all kinds of patches, from documentation and CI/CD setup
-to bug fixes, feature implementations and tests.  Except for documentation
-located in the ``gh-pages`` branch, others should be filed against
-the development branch ``master``.  These are hosted on GitHub and
-one may create a local repository by running::
+to bug fixes, feature implementations and tests.  These are hosted on GitHub
+and one may create a local repository by running::
 
    git clone https://github.com/McSinyx/palace
 
 While the patch can be submitted via email, it is preferable to file
-a pull request on GitHub to allow more people to review it, since we do not
-have any mail list.  Either way, contributors must have legal permission
-to distribute the code and it must be available under `LGPLv3+`_.  Furthermore,
-each contributor retains the copyrights of their patch, to ensure that
-the licence can never be revoked even if others wants to.  It is advisable
-that the author list per legal name under the copyright header
-of each source file they modify, like so::
+a pull request on GitHub against the ``master`` branch to allow more people
+to review it, since we do not have any mail list.  Either way, contributors
+must have legal permission to distribute the code and it must be available
+under `LGPLv3+`_.  Furthermore, each contributor retains the copyrights
+of their patch, to ensure that the licence can never be revoked even if
+others wants to.  It is advisable that the author list per legal name
+under the copyright header of each source file they modify, like so::
 
    Copyright (C) 2038  Foo Bar
 
@@ -128,11 +126,6 @@ to improve the CI/CD may find it helpful.
    to build the wheels and publish them to PyPI.
 #. Wait for the wheel for your platform to arrive to PyPI and install it.
    Play around with it for a little to make sure that everything is OK.
-#. Under the local repository, checkout the ``gh-pages`` branch.
-   Often, is it necessary to update the credits under the :doc:`copying`
-   section and review if the :doc:`reference/index` section needs any change
-   before running ``make html`` to rebuild to documentation.
-#. View the documentation locally then push it to GitHub.
 
 Style Guidelines
 ----------------
