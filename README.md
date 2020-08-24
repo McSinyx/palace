@@ -66,8 +66,8 @@ can be found in our documentation.
 [PyPI]: https://pypi.org/project/palace/
 [GH-1]: https://github.com/McSinyx/palace/issues/1
 [CMake]: https://cmake.org/
-[API]: https://mcsinyx.github.io/palace/html/reference.html
-[contrib]: https://mcsinyx.github.io/palace/html/contributing.html
-[design]: https://mcsinyx.github.io/palace/html/design.html
+[API]: https://mcsinyx.github.io/palace/reference.html
+[contrib]: https://mcsinyx.github.io/palace/contributing.html
+[design]: https://mcsinyx.github.io/palace/design.html
 [LGPLv3+]: https://www.gnu.org/licenses/lgpl-3.0.en.html
-[copying]: https://mcsinyx.github.io/palace/html/copying.html
+[copying]: https://mcsinyx.github.io/palace/copying.html
