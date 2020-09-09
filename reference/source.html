@@ -119,13 +119,13 @@
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Source</code><a class="headerlink" href="#palace.Source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sound source for playing audio.</p>
 <p>There is no practical limit to the number of sources one may create.</p>
-<p>When the source is no longer needed, <cite>destroy</cite> must be called,
+<p>When the source is no longer needed, <a class="reference internal" href="#palace.Source.destroy" title="palace.Source.destroy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">destroy</span></code></a> must be called,
 unless the context manager is used, which guarantees the source’s
 destructioni upon completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the source is to be created.
-By default <cite>current_context()</cite> is used.</p>
+By default <a class="reference internal" href="context.html#palace.current_context" title="palace.current_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_context()</span></code></a> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
@@ -150,12 +150,12 @@ foggy air and lower values simulating dryer air; default to 0.</p>
 <li><p><strong>inner</strong> (<em>float</em>) – The area within which the listener will hear the source
 without extra attenuation, default to 360.</p></li>
 <li><p><strong>outer</strong> (<em>float</em>) – The area outside of which the listener will hear the source
-attenuated according to <cite>outer_cone_gains</cite>, default to 360.</p></li>
+attenuated according to <a class="reference internal" href="#palace.Source.outer_cone_gains" title="palace.Source.outer_cone_gains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outer_cone_gains</span></code></a>, default to 360.</p></li>
 </ul>
 </p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <cite>inner</cite> is greater than <cite>outer</cite>
+<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <code class="xref py py-obj docutils literal notranslate"><span class="pre">inner</span></code> is greater than <code class="xref py py-obj docutils literal notranslate"><span class="pre">outer</span></code>
     or either of them is outside of the [0, 360] interval.</p>
 </dd>
 </dl>
@@ -191,7 +191,7 @@ maximum value of a single-precision floating-point variable
 </p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <cite>refdist</cite> is greater than <cite>maxdist</cite>
+<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <code class="xref py py-obj docutils literal notranslate"><span class="pre">refdist</span></code> is greater than <code class="xref py py-obj docutils literal notranslate"><span class="pre">maxdist</span></code>
     or either of them is outside of the [0, FLT_MAX] interval.</p>
 </dd>
 </dl>
@@ -213,15 +213,15 @@ for the doppler calculation.</p>
 <dl class="py method">
 <dt id="palace.Source.fade_out_to_stop">
 <code class="sig-name descname">fade_out_to_stop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gain</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ms</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Source.fade_out_to_stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fade the source to <cite>gain</cite> over <cite>ms</cite> milliseconds.</p>
-<p><cite>gain</cite> is in addition to the base gain and must be within
-the [0, 1] interval.  <cite>ms</cite> must be positive.</p>
+<dd><p>Fade the source to <a class="reference internal" href="#palace.Source.gain" title="palace.Source.gain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gain</span></code></a> over <code class="xref py py-obj docutils literal notranslate"><span class="pre">ms</span></code> milliseconds.</p>
+<p><a class="reference internal" href="#palace.Source.gain" title="palace.Source.gain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gain</span></code></a> is in addition to the base gain and must be within
+the [0, 1] interval.  <code class="xref py py-obj docutils literal notranslate"><span class="pre">ms</span></code> must be positive.</p>
 <p>The fading is logarithmic.  As a result, the initial drop-off
 may happen faster than expected but the fading is more
 perceptually consistant over the given duration.  It will take
 just as much time to go from -6 dB to -12 dB as it will to go
 from -40 dB to -46 dB, for example.</p>
-<p>Fading is updated during calls to <cite>Context.update</cite>,
+<p>Fading is updated during calls to <a class="reference internal" href="context.html#palace.Context.update" title="palace.Context.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.update</span></code></a>,
 which should be called regularly (30 to 50 times per second)
 for the fading to be smooth.</p>
 </dd></dl>
@@ -259,9 +259,9 @@ for the fading to be smooth.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>direct_hf</strong> (<em>bool</em>) – Direct path’s high frequency gain, default to <cite>True</cite>.</p></li>
-<li><p><strong>send</strong> (<em>bool</em>) – Send paths’ gain, default to <cite>True</cite>.</p></li>
-<li><p><strong>send_hf</strong> (<em>bool</em>) – Send paths’ high-frequency, default to <cite>True</cite>.</p></li>
+<li><p><strong>direct_hf</strong> (<em>bool</em>) – Direct path’s high frequency gain, default to <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>send</strong> (<em>bool</em>) – Send paths’ gain, default to <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>send_hf</strong> (<em>bool</em>) – Send paths’ high-frequency, default to <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </p>
 </dd>
@@ -283,7 +283,7 @@ to the gain base and before the adjustments of the filter gain.</p>
 </p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <cite>mingain</cite> is greater than <cite>maxgain</cite>
+<dd class="field-even"><p><strong>ValueError</strong> – If set to a value where <code class="xref py py-obj docutils literal notranslate"><span class="pre">mingain</span></code> is greater than <code class="xref py py-obj docutils literal notranslate"><span class="pre">maxgain</span></code>
     or either of them is outside of the [0, 1] interval.</p>
 </dd>
 </dl>
@@ -294,15 +294,15 @@ to the gain base and before the adjustments of the filter gain.</p>
 <code class="sig-name descname">group</code><a class="headerlink" href="#palace.Source.group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parent group of this source.</p>
 <p>The parent group influences all sources that belong to it.
-A source may only be the child of one <cite>SourceGroup</cite> at a time,
+A source may only be the child of one <a class="reference internal" href="#palace.SourceGroup" title="palace.SourceGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup</span></code></a> at a time,
 although that source group may belong to another source group.</p>
-<p>This is <cite>None</cite> when the source does not belong to any group.
-On the other hand, setting it to <cite>None</cite> removes the source
+<p>This is <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> when the source does not belong to any group.
+On the other hand, setting it to <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> removes the source
 from its current group.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#palace.SourceGroup" title="palace.SourceGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup</span></code></a></dt><dd><p>A group of <cite>Source</cite> references</p>
+<dt><a class="reference internal" href="#palace.SourceGroup" title="palace.SourceGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup</span></code></a></dt><dd><p>A group of <a class="reference internal" href="#palace.Source" title="palace.Source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Source</span></code></a> references</p>
 </dd>
 </dl>
 </div>
@@ -312,7 +312,7 @@ from its current group.</p>
 <dt id="palace.Source.latency">
 <em class="property">property </em><code class="sig-name descname">latency</code><a class="headerlink" href="#palace.Source.latency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source latency in nanoseconds.</p>
-<p>If <cite>AL_SOFT_source_latency</cite> extension is unsupported,
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_SOFT_source_latency</span></code> extension is unsupported,
 this will be 0.</p>
 </dd></dl>
 
@@ -320,7 +320,7 @@ this will be 0.</p>
 <dt id="palace.Source.latency_seconds">
 <em class="property">property </em><code class="sig-name descname">latency_seconds</code><a class="headerlink" href="#palace.Source.latency_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source latency in seconds.</p>
-<p>If <cite>AL_SOFT_source_latency</cite> extension is unsupported,
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_SOFT_source_latency</span></code> extension is unsupported,
 this will be 0.</p>
 </dd></dl>
 
@@ -361,7 +361,7 @@ the decoder’s read position.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Unlike <cite>AL_EXT_BFORMAT</cite> extension this property
+<p>Unlike <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_EXT_BFORMAT</span></code> extension this property
 comes from, this also affects the facing direction.</p>
 </dd></dl>
 
@@ -375,7 +375,7 @@ comes from, this also affects the facing direction.</p>
 <li><p><strong>gain</strong> (<em>float</em>) – Linear gain applying to all frequencies, default to 1.</p></li>
 <li><p><strong>gain_hf</strong> (<em>float</em>) – Linear gain applying extra attenuation to high frequencies
 creating a low-pass effect, default to 1.  It has no effect
-without the <cite>ALC_EXT_EFX</cite> extension.</p></li>
+without the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_EFX</span></code> extension.</p></li>
 </ul>
 </p>
 </dd>
@@ -434,7 +434,7 @@ sources are played.</p>
 <dt id="palace.Source.radius">
 <code class="sig-name descname">radius</code><a class="headerlink" href="#palace.Source.radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radius of the source, as if it is a sound-emitting sphere.</p>
-<p>This has no effect without <cite>AL_EXT_SOURCE_RADIUS</cite> extension.</p>
+<p>This has no effect without <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_EXT_SOURCE_RADIUS</span></code> extension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If set to a negative value.</p>
@@ -446,8 +446,8 @@ sources are played.</p>
 <dt id="palace.Source.relative">
 <code class="sig-name descname">relative</code><a class="headerlink" href="#palace.Source.relative" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the source’s 3D parameters are relative to listener.</p>
-<p>The affected parameters includes <cite>position</cite>, <cite>velocity</cite>,
-and <cite>orientation</cite>.</p>
+<p>The affected parameters includes <a class="reference internal" href="#palace.Source.position" title="palace.Source.position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">position</span></code></a>, <a class="reference internal" href="#palace.Source.velocity" title="palace.Source.velocity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">velocity</span></code></a>,
+and <a class="reference internal" href="#palace.Source.orientation" title="palace.Source.orientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orientation</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -455,8 +455,8 @@ and <cite>orientation</cite>.</p>
 <code class="sig-name descname">resampler_index</code><a class="headerlink" href="#palace.Source.resampler_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Index of the resampler to use for this source.</p>
 <p>The index must be nonnegative, from the resamplers returned
-by <cite>Context.get_available_resamplers</cite>, and has no effect
-without the <cite>AL_SOFT_source_resampler</cite> extension.</p>
+by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.get_available_resamplers</span></code>, and has no effect
+without the <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_SOFT_source_resampler</span></code> extension.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -493,9 +493,9 @@ room decay based on the reverb decay time and distance.</p></li>
 <em class="property">property </em><code class="sig-name descname">sends</code><a class="headerlink" href="#palace.Source.sends" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collection of send path signals.</p>
 <p>Send paths can be retrieved using a nonnegative index, which has
-no effect if not less than the device’s <cite>max_auxiliary_sends</cite>.</p>
+no effect if not less than the device’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">max_auxiliary_sends</span></code>.</p>
 <p>Each send path has two write-only descriptors,
-<cite>effect</cite> and <cite>filter</cite>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">effect</span></code> and <a class="reference internal" href="#palace.Source.filter" title="palace.Source.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span>
@@ -507,12 +507,12 @@ no effect if not less than the device’s <cite>max_auxiliary_sends</cite>.</p>
 <dt id="palace.Source.spatialize">
 <code class="sig-name descname">spatialize</code><a class="headerlink" href="#palace.Source.spatialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether to enable 3D spatialization.</p>
-<p>Either <cite>True</cite> (the source always has 3D spatialization
-features), <cite>False</cite> (never has 3D spatialization features),
-or <cite>None</cite> (spatialization is enabled based on playing
+<p>Either <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code> (the source always has 3D spatialization
+features), <code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code> (never has 3D spatialization features),
+or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> (spatialization is enabled based on playing
 a mono sound or not, default).</p>
 <p>This has no effect without
-<cite>AL_SOFT_source_spatialize</cite> extension.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_SOFT_source_spatialize</span></code> extension.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -522,7 +522,7 @@ a mono sound or not, default).</p>
 <p>The angles go counter-clockwise, with 0 being in front
 and positive values going left.</p>
 <p>This is only used for stereo playback and has no effect
-without <cite>AL_EXT_STEREO_ANGLES</cite> extension.</p>
+without <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_EXT_STEREO_ANGLES</span></code> extension.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -548,15 +548,15 @@ by the doppler effect.</p>
 <dl class="py class">
 <dt id="palace.SourceGroup">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">SourceGroup</code><a class="headerlink" href="#palace.SourceGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>A group of <cite>Source</cite> references.</p>
-<p>For instance, setting <cite>SourceGroup.gain</cite> to 0.5 will halve the gain
+<dd><p>A group of <a class="reference internal" href="#palace.Source" title="palace.Source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Source</span></code></a> references.</p>
+<p>For instance, setting <a class="reference internal" href="#palace.SourceGroup.gain" title="palace.SourceGroup.gain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup.gain</span></code></a> to 0.5 will halve the gain
 of all sources in the group.</p>
-<p>This can be used as a context manager that calls <cite>destroy</cite> upon
+<p>This can be used as a context manager that calls <a class="reference internal" href="#palace.SourceGroup.destroy" title="palace.SourceGroup.destroy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">destroy</span></code></a> upon
 completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the source group is to be created.
-By default <cite>current_context()</cite> is used.</p>
+By default <a class="reference internal" href="context.html#palace.current_context" title="palace.current_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_context()</span></code></a> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>

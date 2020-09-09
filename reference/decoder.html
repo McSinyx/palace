@@ -123,7 +123,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Audio file or resource name.</p></li>
 <li><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="context.html#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context from which the decoder is to be created.
-By default <cite>current_context()</cite> is used.</p></li>
+By default <a class="reference internal" href="context.html#palace.current_context" title="palace.current_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_context()</span></code></a> is used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -133,16 +133,16 @@ By default <cite>current_context()</cite> is used.</p></li>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code></a></dt><dd><p>Preloaded PCM samples coming from a <cite>Decoder</cite></p>
+<dt><a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code></a></dt><dd><p>Preloaded PCM samples coming from a <a class="reference internal" href="#palace.Decoder" title="palace.Decoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decoder</span></code></a></p>
 </dd>
 </dl>
 </div>
 <p class="rubric">Notes</p>
 <p>Due to implementation details, while this creates decoder objects
 from filenames using contexts, it is the superclass of the ABC
-(abstract base class) <cite>BaseDecoder</cite>.  Because of this, <cite>Decoder</cite>
+(abstract base class) <a class="reference internal" href="#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDecoder</span></code></a>.  Because of this, <a class="reference internal" href="#palace.Decoder" title="palace.Decoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decoder</span></code></a>
 may only initialize an internal one.  To use registered factories,
-please call the module-level <cite>decode</cite> function instead.</p>
+please call the module-level <a class="reference internal" href="#palace.decode" title="palace.decode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode</span></code></a> function instead.</p>
 <dl class="py method">
 <dt id="palace.Decoder.channel_config">
 <em class="property">property </em><code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Decoder.channel_config" title="Permalink to this definition">¶</a></dt>
@@ -160,7 +160,7 @@ please call the module-level <cite>decode</cite> function instead.</p>
 <em class="property">property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.Decoder.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in sample frames, falling-back to 0.</p>
 <p class="rubric">Notes</p>
-<p>Zero-length decoders may not be used to load a <cite>Buffer</cite>.</p>
+<p>Zero-length decoders may not be used to load a <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -168,7 +168,7 @@ please call the module-level <cite>decode</cite> function instead.</p>
 <em class="property">property </em><code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Decoder.length_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in seconds, falling-back to 0.0.</p>
 <p class="rubric">Notes</p>
-<p>Zero-length decoders may not be used to load a <cite>Buffer</cite>.</p>
+<p>Zero-length decoders may not be used to load a <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -185,7 +185,7 @@ please call the module-level <cite>decode</cite> function instead.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If <cite>start &gt;= end</cite>, all available samples are included
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span> <span class="pre">&gt;=</span> <span class="pre">end</span></code>, all available samples are included
 in the loop.</p>
 </dd></dl>
 
@@ -193,7 +193,7 @@ in the loop.</p>
 <dt id="palace.Decoder.play">
 <code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chunk_len</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">queue_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a><a class="headerlink" href="#palace.Decoder.play" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stream audio asynchronously from the decoder.</p>
-<p>The decoder must NOT have its <cite>read</cite> or <cite>seek</cite> called
+<p>The decoder must NOT have its <a class="reference internal" href="#palace.Decoder.read" title="palace.Decoder.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> or <a class="reference internal" href="#palace.Decoder.seek" title="palace.Decoder.seek"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seek</span></code></a> called
 from elsewhere while in use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -204,7 +204,7 @@ larger values will handle more data with each chunk.</p></li>
 <li><p><strong>queue_size</strong> (<em>int</em>) – The number of chunks to keep queued during playback.
 Smaller values use less memory while larger values
 improve protection against underruns.</p></li>
-<li><p><strong>source</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="source.html#palace.Source" title="palace.Source"><em>Source</em></a><em>]</em><em>, </em><em>optional</em>) – The source object to play audio.  If <cite>None</cite> is given,
+<li><p><strong>source</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="source.html#palace.Source" title="palace.Source"><em>Source</em></a><em>]</em><em>, </em><em>optional</em>) – The source object to play audio.  If <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> is given,
 a new one will be created from the current context.</p></li>
 </ul>
 </dd>
@@ -220,7 +220,7 @@ a new one will be created from the current context.</p></li>
 <dl class="py method">
 <dt id="palace.Decoder.read">
 <code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="headerlink" href="#palace.Decoder.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decode and return <cite>count</cite> sample frames.</p>
+<dd><p>Decode and return <code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code> sample frames.</p>
 <p>If less than the requested count samples is returned,
 the end of the audio has been reached.</p>
 <div class="admonition seealso">
@@ -241,7 +241,7 @@ the end of the audio has been reached.</p>
 <dl class="py method">
 <dt id="palace.Decoder.seek">
 <code class="sig-name descname">seek</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#palace.Decoder.seek" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seek to <cite>pos</cite>, specified in sample frames.</p>
+<dd><p>Seek to <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code>, specified in sample frames.</p>
 <p>Return if the seek was successful.</p>
 </dd></dl>
 
@@ -284,8 +284,8 @@ lexicographical order, then fallback to the internal ones.</p>
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">BaseDecoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#palace.BaseDecoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio decoder interface.</p>
 <p>Applications may derive from this, implement necessary methods,
-and use it in places the API wants a <cite>BaseDecoder</cite> object.</p>
-<p>Exceptions raised from <cite>BaseDecoder</cite> instances are ignored.</p>
+and use it in places the API wants a <a class="reference internal" href="#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDecoder</span></code></a> object.</p>
+<p>Exceptions raised from <a class="reference internal" href="#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDecoder</span></code></a> instances are ignored.</p>
 <dl class="py method">
 <dt id="palace.BaseDecoder.channel_config">
 <em class="property">abstract property </em><code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.BaseDecoder.channel_config" title="Permalink to this definition">¶</a></dt>
@@ -303,7 +303,7 @@ and use it in places the API wants a <cite>BaseDecoder</cite> object.</p>
 <em class="property">abstract property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.BaseDecoder.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in sample frames, falling-back to 0.</p>
 <p class="rubric">Notes</p>
-<p>Zero-length decoders may not be used to load a <cite>Buffer</cite>.</p>
+<p>Zero-length decoders may not be used to load a <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -320,14 +320,14 @@ and use it in places the API wants a <cite>BaseDecoder</cite> object.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If <cite>start &gt;= end</cite>, all available samples are included
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span> <span class="pre">&gt;=</span> <span class="pre">end</span></code>, all available samples are included
 in the loop.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="palace.BaseDecoder.read">
 <em class="property">abstract </em><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="headerlink" href="#palace.BaseDecoder.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decode and return <cite>count</cite> sample frames.</p>
+<dd><p>Decode and return <code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code> sample frames.</p>
 <p>If less than the requested count samples is returned,
 the end of the audio has been reached.</p>
 </dd></dl>

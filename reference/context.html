@@ -138,7 +138,7 @@ such as sources, buffers and effects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><em>Device</em></a>) – The <cite>device</cite> on which the context is to be created.</p></li>
+<li><p><strong>device</strong> (<a class="reference internal" href="device.html#palace.Device" title="palace.Device"><em>Device</em></a>) – The <a class="reference internal" href="#palace.Context.device" title="palace.Context.device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></a> on which the context is to be created.</p></li>
 <li><p><strong>attrs</strong> (<em>Dict</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – Attributes specified for the context to be created.</p></li>
 </ul>
 </dd>
@@ -180,7 +180,7 @@ such as sources, buffers and effects.</p>
 <dt id="palace.Context.available_resamplers">
 <em class="property">property </em><code class="sig-name descname">available_resamplers</code><a class="headerlink" href="#palace.Context.available_resamplers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of resamplers supported by the context.</p>
-<p>If <cite>AL_SOFT_source_resampler</cite> extension is unsupported,
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_SOFT_source_resampler</span></code> extension is unsupported,
 this will be an empty list. Otherwise there would be
 at least one entry.</p>
 <p>This method require the context to be current.</p>
@@ -190,7 +190,7 @@ at least one entry.</p>
 <dt id="palace.Context.default_resampler_index">
 <em class="property">property </em><code class="sig-name descname">default_resampler_index</code><a class="headerlink" href="#palace.Context.default_resampler_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The context’s default resampler index.</p>
-<p>If <cite>AL_SOFT_source_resampler</cite> extension is unsupported,
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">AL_SOFT_source_resampler</span></code> extension is unsupported,
 this will return 0.</p>
 <p>If you try to access the resampler list with this index
 without extension, undefined behavior will occur
@@ -218,7 +218,7 @@ closer than its reference distance or farther than its max
 distance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – If set to a preset cannot be found in <cite>distance_models</cite>.</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – If set to a preset cannot be found in <a class="reference internal" href="#palace.distance_models" title="palace.distance_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distance_models</span></code></a>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -265,7 +265,7 @@ distance.</p>
 distance-related time effects.</p>
 <p>The default is 343.3 units per second (a realistic speed
 assuming 1 meter per unit). If this is adjusted for a
-different unit scale, <cite>Listener.meters_per_unit</cite> should
+different unit scale, <a class="reference internal" href="#palace.Listener.meters_per_unit" title="palace.Listener.meters_per_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Listener.meters_per_unit</span></code></a> should
 also be adjusted.</p>
 </dd></dl>
 
@@ -288,12 +288,12 @@ also be adjusted.</p>
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Listener</code><a class="headerlink" href="#palace.Listener" title="Permalink to this definition">¶</a></dt>
 <dd><p>Listener instance of the given context.</p>
 <p>It is recommended that applications access the listener via
-<cite>Context.listener</cite>, which avoid the overhead caused by the
+<a class="reference internal" href="#palace.Context.listener" title="palace.Context.listener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.listener</span></code></a>, which avoid the overhead caused by the
 creation of the wrapper object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>context</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#palace.Context" title="palace.Context"><em>Context</em></a><em>]</em><em>, </em><em>optional</em>) – The context on which the listener instance is to be created.
-By default <cite>current_context()</cite> is used.</p>
+By default <a class="reference internal" href="#palace.current_context" title="palace.current_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_context()</span></code></a> is used.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – If there is neither any context specified nor current.</p>
@@ -312,7 +312,7 @@ By default <cite>current_context()</cite> is used.</p>
 <p>This is used for various effects relying on the distance
 in meters including air absorption and initial reverb decay.
 If this is changed, so should the speed of sound
-(e.g. <cite>context.speed_of_sound = 343.3 / meters_per_unit</cite>
+(e.g. <code class="xref py py-obj docutils literal notranslate"><span class="pre">context.speed_of_sound</span> <span class="pre">=</span> <span class="pre">343.3</span> <span class="pre">/</span> <span class="pre">meters_per_unit</span></code>
 to maintain a realistic 343.3 m/s for sound propagation).</p>
 </dd></dl>
 
@@ -354,7 +354,7 @@ the doppler effect.</p>
 <p>Applications may derive from this and set an instance on a context
 to receive messages.  The base methods are no-ops, so subclasses
 only need to implement methods for relevant messages.</p>
-<p>Exceptions raised from <cite>MessageHandler</cite> instances are ignored.</p>
+<p>Exceptions raised from <a class="reference internal" href="#palace.MessageHandler" title="palace.MessageHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MessageHandler</span></code></a> instances are ignored.</p>
 <dl class="py method">
 <dt id="palace.MessageHandler.buffer_loading">
 <code class="sig-name descname">buffer_loading</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">channel_config</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sample_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sample_rate</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.buffer_loading" title="Permalink to this definition">¶</a></dt>
@@ -365,7 +365,7 @@ being loaded asynchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Resource name passed to <cite>Buffer</cite>.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Resource name passed to <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p></li>
 <li><p><strong>channel_config</strong> (<em>str</em>) – Channel configuration of the given audio data.</p></li>
 <li><p><strong>sample_type</strong> (<em>str</em>) – Sample type of the given audio data.</p></li>
 <li><p><strong>sample_rate</strong> (<em>int</em>) – Sample rate of the given audio data.</p></li>
@@ -383,23 +383,23 @@ following Python buffer protocol.</p>
 <code class="sig-name descname">device_disconnected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n"><a class="reference internal" href="device.html#palace.Device" title="palace.Device">palace.Device</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.device_disconnected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle disconnected device messages.</p>
 <p>This is called when the given device has been disconnected and
-is no longer usable for output.  As per <cite>ALC_EXT_disconnect</cite>
+is no longer usable for output.  As per <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_disconnect</span></code>
 specification, disconnected devices remain valid, however all
 playing sources are automatically stopped, any sources that are
 attempted to play will immediately stop, and new contexts may
 not be created on the device.</p>
 <p class="rubric">Notes</p>
-<p>Connection status is checked during <cite>Context.update</cite> calls, so
+<p>Connection status is checked during <a class="reference internal" href="#palace.Context.update" title="palace.Context.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.update</span></code></a> calls, so
 method must be called regularly to be notified when a device is
 disconnected.  This method may not be called if the device lacks
-support for <cite>ALC_EXT_disconnect</cite> extension.</p>
+support for <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_disconnect</span></code> extension.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="palace.MessageHandler.resource_not_found">
 <code class="sig-name descname">resource_not_found</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#palace.MessageHandler.resource_not_found" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the fallback resource for the one of the given name.</p>
-<p>This is called when <cite>name</cite> is not found, allowing substitution
+<p>This is called when <code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code> is not found, allowing substitution
 of a different resource until the returned string either points
 to a valid resource or is empty (default).</p>
 <p>For buffers being cached, the original name will still be used
@@ -416,9 +416,9 @@ because of one of the following reasons:</p>
 <ul class="simple">
 <li><p>There were no more mixing sources and a higher-priority source
 preempted it.</p></li>
-<li><p><cite>source</cite> is part of a <cite>SourceGroup</cite> (or sub-group thereof)
-that had its <cite>SourceGroup.stop_all</cite> method called.</p></li>
-<li><p><cite>source</cite> was playing a buffer that’s getting removed.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code> is part of a <a class="reference internal" href="source.html#palace.SourceGroup" title="palace.SourceGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup</span></code></a> (or sub-group thereof)
+that had its <a class="reference internal" href="source.html#palace.SourceGroup.stop_all" title="palace.SourceGroup.stop_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceGroup.stop_all</span></code></a> method called.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code> was playing a buffer that’s getting removed.</p></li>
 </ul>
 </dd></dl>
 
@@ -427,7 +427,7 @@ that had its <cite>SourceGroup.stop_all</cite> method called.</p></li>
 <code class="sig-name descname">source_stopped</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n"><a class="reference internal" href="source.html#palace.Source" title="palace.Source">palace.Source</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.MessageHandler.source_stopped" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle end-of-buffer/stream messages.</p>
 <p>This is called when the given source reaches the end of buffer
-or stream, which is detected upon a call to <cite>Context.update</cite>.</p>
+or stream, which is detected upon a call to <a class="reference internal" href="#palace.Context.update" title="palace.Context.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.update</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -440,33 +440,33 @@ or stream, which is detected upon a call to <cite>Context.update</cite>.</p>
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">thread</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make the specified context current for OpenAL operations.</p>
 <p>This fails silently if the given context has been destroyed.
-In case <cite>thread</cite> is not specified, fallback to preference made by
-<cite>thread_local</cite>.</p>
-<p>If <cite>thread</cite> is <cite>True</cite>, make the context current
+In case <code class="xref py py-obj docutils literal notranslate"><span class="pre">thread</span></code> is not specified, fallback to preference made by
+<a class="reference internal" href="#palace.thread_local" title="palace.thread_local"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_local</span></code></a>.</p>
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">thread</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code>, make the context current
 for OpenAL operations on the calling thread only.
 This requires the non-device-specific as well as the context’s
-device <cite>ALC_EXT_thread_local_context</cite> extension to be available.</p>
+device <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_thread_local_context</span></code> extension to be available.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="palace.current_context">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">current_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thread</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#palace.Context" title="palace.Context">palace.Context</a><span class="p">]</span><a class="headerlink" href="#palace.current_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the context that is currently used.</p>
-<p>If <cite>thread</cite> is set to <cite>True</cite>, return the thread-specific context
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">thread</span></code> is set to <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code>, return the thread-specific context
 used for OpenAL operations.  This requires the non-device-specific
-as well as the context’s device <cite>ALC_EXT_thread_local_context</cite>
+as well as the context’s device <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_thread_local_context</span></code>
 extension to be available.</p>
-<p>In case <cite>thread</cite> is not specified, fallback to preference made by
-<cite>thread_local</cite>.</p>
+<p>In case <code class="xref py py-obj docutils literal notranslate"><span class="pre">thread</span></code> is not specified, fallback to preference made by
+<a class="reference internal" href="#palace.thread_local" title="palace.thread_local"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_local</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="palace.thread_local">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">thread_local</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>None<span class="p">]</span><a class="headerlink" href="#palace.thread_local" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a context manager controlling preference of local thread.</p>
-<p>Effectively, it sets fallback value for <cite>thread</cite> argument
-for <cite>current_context</cite> and <cite>use_context</cite>.</p>
-<p>Initially, globally current <cite>Context</cite> is preferred.</p>
+<p>Effectively, it sets fallback value for <code class="xref py py-obj docutils literal notranslate"><span class="pre">thread</span></code> argument
+for <a class="reference internal" href="#palace.current_context" title="palace.current_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_context</span></code></a> and <a class="reference internal" href="#palace.use_context" title="palace.use_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">use_context</span></code></a>.</p>
+<p>Initially, globally current <a class="reference internal" href="#palace.Context" title="palace.Context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context</span></code></a> is preferred.</p>
 </dd></dl>
 
 </div>

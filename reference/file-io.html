@@ -116,14 +116,14 @@
 <dt id="palace.current_fileio">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">current_fileio</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>str<span class="p">]</span><span class="p">, </span><a class="reference internal" href="#palace.FileIO" title="palace.FileIO">palace.FileIO</a><span class="p">]</span><span class="p">]</span><a class="headerlink" href="#palace.current_fileio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the file I/O factory currently in used by audio decoders.</p>
-<p>If the default is being used, return <cite>None</cite>.</p>
+<p>If the default is being used, return <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="palace.use_fileio">
 <code class="sig-prename descclassname">palace.</code><code class="sig-name descname">use_fileio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>str<span class="p">]</span><span class="p">, </span><a class="reference internal" href="#palace.FileIO" title="palace.FileIO">FileIO</a><span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">buffer_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">8192</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.use_fileio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the file I/O factory instance to be used by audio decoders.</p>
-<p>If <cite>factory=None</cite> is provided, revert to the default.</p>
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">factory=None</span></code> is provided, revert to the default.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -131,9 +131,9 @@
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">FileIO</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#palace.FileIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>File I/O protocol.</p>
 <p>This static duck type defines methods required to be used by
-palace decoders.  Despite its name, a <cite>FileIO</cite> is not necessarily
+palace decoders.  Despite its name, a <a class="reference internal" href="#palace.FileIO" title="palace.FileIO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileIO</span></code></a> is not necessarily
 created from a file, but any seekable finite input stream.</p>
-<p>Many classes defined in the standard library module <cite>io</cite>
+<p>Many classes defined in the standard library module <code class="xref py py-obj docutils literal notranslate"><span class="pre">io</span></code>
 are compatible with this protocol.</p>
 <p class="rubric">Notes</p>
 <p>Since PEP 544 is only implemented in Python 3.8+, type checking

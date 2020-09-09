@@ -118,7 +118,7 @@
 <dt id="palace.Device">
 <em class="property">class </em><code class="sig-prename descclassname">palace.</code><code class="sig-name descname">Device</code><a class="headerlink" href="#palace.Device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Audio mix output, via either a system stream or a hardware port.</p>
-<p>This can be used as a context manager that calls <cite>close</cite> upon
+<p>This can be used as a context manager that calls <a class="reference internal" href="#palace.Device.close" title="palace.Device.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a> upon
 completion of the block, even if an error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -176,14 +176,14 @@ extension to retrieve the audio device’s real clock.</p>
 <dt id="palace.Device.current_hrtf">
 <em class="property">property </em><code class="sig-name descname">current_hrtf</code><a class="headerlink" href="#palace.Device.current_hrtf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the HRTF currently being used by this device.</p>
-<p>If HRTF is not currently enabled, this will be <cite>None</cite>.</p>
+<p>If HRTF is not currently enabled, this will be <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="palace.Device.efx_version">
 <em class="property">property </em><code class="sig-name descname">efx_version</code><a class="headerlink" href="#palace.Device.efx_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>EFX version supported by this device.</p>
-<p>If <cite>ALC_EXT_EFX</cite> extension is unsupported, this will be (0, 0).</p>
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_EFX</span></code> extension is unsupported, this will be (0, 0).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -196,7 +196,7 @@ extension to retrieve the audio device’s real clock.</p>
 <dt id="palace.Device.hrtf_enabled">
 <em class="property">property </em><code class="sig-name descname">hrtf_enabled</code><a class="headerlink" href="#palace.Device.hrtf_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether HRTF is enabled on the device.</p>
-<p>If <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_SOFT_HRTF</span></code> extension is unavailable,
 this will return False although there could still be
 HRTF applied at a lower hardware level.</p>
 </dd></dl>
@@ -206,8 +206,8 @@ HRTF applied at a lower hardware level.</p>
 <em class="property">property </em><code class="sig-name descname">hrtf_names</code><a class="headerlink" href="#palace.Device.hrtf_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of available HRTF names.</p>
 <p>The order is retained from OpenAL, such that the index of
-a given name is the ID to use with <cite>ALC_HRTF_ID_SOFT</cite>.</p>
-<p>If <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
+a given name is the ID to use with <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_HRTF_ID_SOFT</span></code>.</p>
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_SOFT_HRTF</span></code> extension is unavailable,
 this will be an empty list.</p>
 </dd></dl>
 
@@ -215,7 +215,7 @@ this will be an empty list.</p>
 <dt id="palace.Device.max_auxiliary_sends">
 <em class="property">property </em><code class="sig-name descname">max_auxiliary_sends</code><a class="headerlink" href="#palace.Device.max_auxiliary_sends" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum number of auxiliary source sends.</p>
-<p>If <cite>ALC_EXT_EFX</cite> is unsupported, this will be 0.</p>
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_EFX</span></code> is unsupported, this will be 0.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -229,8 +229,8 @@ this will be an empty list.</p>
 <code class="sig-name descname">pause_dsp</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.pause_dsp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause device processing and stop contexts’ updates.</p>
 <p>Multiple calls are allowed but it is not reference counted,
-so the device will resume after one <cite>resume_dsp</cite> call.</p>
-<p>This requires <cite>ALC_SOFT_pause_device</cite> extension.</p>
+so the device will resume after one <a class="reference internal" href="#palace.Device.resume_dsp" title="palace.Device.resume_dsp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resume_dsp</span></code></a> call.</p>
+<p>This requires <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_SOFT_pause_device</span></code> extension.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -250,7 +250,7 @@ so the device will resume after one <cite>resume_dsp</cite> call.</p>
 <dt id="palace.Device.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attrs</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#palace.Device.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the device, using the specified attributes.</p>
-<p>If <cite>ALC_SOFT_HRTF</cite> extension is unavailable,
+<p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_SOFT_HRTF</span></code> extension is unavailable,
 this will be a no-op.</p>
 </dd></dl>
 
