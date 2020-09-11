@@ -4,12 +4,10 @@ on:
   push:
     branches:
     - master
-    paths-ignore:
-    - examples/**
-    - tests/**
-    - LICENSE
-    - README.md
-    - .*.yml
+    paths:
+    - .github/workflows/*
+    - docs/**
+    - src/**
 
 jobs:
   docs:
@@ -62,5 +60,7 @@ jobs:
 
         rm -r docs
         git add .
-        git commit -m "Build at $(date --iso-8601=seconds)"
-        git push origin gh-pages
+        if git commit -m "Build at $(date --iso-8601=seconds)"
+        then
+          git push origin gh-pages
+        fi
