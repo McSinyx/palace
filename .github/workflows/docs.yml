@@ -41,26 +41,8 @@ jobs:
       working-directory: docs
       run: make html
 
-    - name: Configure git
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git config user.email mcsinyx@disroot.org
-        git config user.name Nguyễn\ Gia\ Phong
-        git remote set-url origin \
-          https://token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY
-        git fetch origin gh-pages
-
     - name: Deploy site
-      run: |
-        git switch gh-pages
-        git rm -r .
-        shopt -s dotglob
-        mv docs/build/html/* .
-
-        rm -r docs
-        git add .
-        if git commit -m "Build at $(date --iso-8601=seconds)"
-        then
-          git push origin gh-pages
-        fi
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/build/html
