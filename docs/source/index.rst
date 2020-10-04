@@ -13,10 +13,8 @@ Palace wraps around the C++ interface alure_ using Cython_ for a safe and
 convenient interface with type hinting, data descriptors and context managers,
 following :pep:`8#naming-conventions` (``PascalCase.snake_case``).
 
-Table of Contents
------------------
-
 .. toctree::
+   :caption: Table of Contents
    :maxdepth: 2
 
    installation
@@ -25,6 +23,16 @@ Table of Contents
    design
    contributing
    copying
+
+.. toctree::
+   :caption: Quick Navigation
+   :hidden:
+
+   Python Package Index <https://pypi.org/project/palace/>
+   Travis CI Build <https://travis-ci.com/github/McSinyx/palace>
+   AppVeyor Build <https://ci.appveyor.com/project/McSinyx/palace>
+   GitHub Repository <https://github.com/McSinyx/palace>
+   Matrix Chat Room <https://matrix.to/#/#palace-dev:matrix.org>
 
 Indices and Tables
 ------------------

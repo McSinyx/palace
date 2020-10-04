@@ -35,7 +35,7 @@ jobs:
         cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -S alure -B alure/build
         sudo cmake --build alure/build --parallel `nproc` --target install
         rm -fr alure
-        python -m pip install Sphinx .
+        python -m pip install Sphinx sphinx_rtd_theme .
 
     - name: Build site
       working-directory: docs

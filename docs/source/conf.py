@@ -27,11 +27,7 @@ templates_path = ['templates']
 exclude_patterns = []
 
 # Options for HTML output
-html_theme = 'alabaster'
-html_theme_options = {'fixed_sidebar': True, 'show_relbars': True}
-
-html_sidebars = {
-    '**': ['globaltoc.html', 'quicknav.html', 'searchbox.html']}
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets)
 # here, relative to this directory.  They are copied after the builtin
