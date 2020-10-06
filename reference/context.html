@@ -457,11 +457,13 @@ specification, disconnected devices remain valid, however all
 playing sources are automatically stopped, any sources that are
 attempted to play will immediately stop, and new contexts may
 not be created on the device.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Connection status is checked during <a class="reference internal" href="#palace.Context.update" title="palace.Context.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.update</span></code></a> calls, so
 method must be called regularly to be notified when a device is
 disconnected.  This method may not be called if the device lacks
 support for <code class="xref py py-obj docutils literal notranslate"><span class="pre">ALC_EXT_disconnect</span></code> extension.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

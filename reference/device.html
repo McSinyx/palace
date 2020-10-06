@@ -225,12 +225,14 @@ completion of the block, even if an error occurs.</p>
 <dt id="palace.Device.clock_time">
 <em class="property">property </em><code class="sig-name descname">clock_time</code><a class="headerlink" href="#palace.Device.clock_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Current clock time for the device.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>This starts relative to the device being opened, and does not
 increment while there are no contexts nor while processing
 is paused.  Currently, this may not exactly match the rate
 that sources play at.  In the future it may utilize an OpenAL
 extension to retrieve the audio device’s real clock.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

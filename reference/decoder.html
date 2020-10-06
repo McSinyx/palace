@@ -206,12 +206,14 @@ By default <a class="reference internal" href="context.html#palace.current_conte
 </dd>
 </dl>
 </div>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Due to implementation details, while this creates decoder objects
 from filenames using contexts, it is the superclass of the ABC
 (abstract base class) <a class="reference internal" href="#palace.BaseDecoder" title="palace.BaseDecoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDecoder</span></code></a>.  Because of this, <a class="reference internal" href="#palace.Decoder" title="palace.Decoder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decoder</span></code></a>
 may only initialize an internal one.  To use registered factories,
 please call the module-level <a class="reference internal" href="#palace.decode" title="palace.decode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode</span></code></a> function instead.</p>
+</div>
 <dl class="py method">
 <dt id="palace.Decoder.channel_config">
 <em class="property">property </em><code class="sig-name descname">channel_config</code><a class="headerlink" href="#palace.Decoder.channel_config" title="Permalink to this definition">¶</a></dt>
@@ -228,16 +230,20 @@ please call the module-level <a class="reference internal" href="#palace.decode"
 <dt id="palace.Decoder.length">
 <em class="property">property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.Decoder.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in sample frames, falling-back to 0.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Zero-length decoders may not be used to load a <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt id="palace.Decoder.length_seconds">
 <em class="property">property </em><code class="sig-name descname">length_seconds</code><a class="headerlink" href="#palace.Decoder.length_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in seconds, falling-back to 0.0.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Zero-length decoders may not be used to load a <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -253,9 +259,11 @@ please call the module-level <a class="reference internal" href="#palace.decode"
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span> <span class="pre">&gt;=</span> <span class="pre">end</span></code>, all available samples are included
 in the loop.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -371,8 +379,10 @@ and use it in places the API wants a <a class="reference internal" href="#palace
 <dt id="palace.BaseDecoder.length">
 <em class="property">abstract property </em><code class="sig-name descname">length</code><a class="headerlink" href="#palace.BaseDecoder.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of audio in sample frames, falling-back to 0.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Zero-length decoders may not be used to load a <a class="reference internal" href="buffer.html#palace.Buffer" title="palace.Buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer</span></code></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -388,9 +398,11 @@ and use it in places the API wants a <a class="reference internal" href="#palace
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span> <span class="pre">&gt;=</span> <span class="pre">end</span></code>, all available samples are included
 in the loop.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

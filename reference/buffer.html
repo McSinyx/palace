@@ -284,8 +284,10 @@ Otherwise, <code class="xref py py-obj docutils literal notranslate"><span class
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The buffer must not be in use when this property is set.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -307,20 +309,24 @@ create a new one.</p>
 <dt id="palace.Buffer.size">
 <em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#palace.Buffer.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Storage size used by the buffer, in bytes.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The size in bytes may not be what you expect from the length,
 as it may take more space internally than the <a class="reference internal" href="#palace.Buffer.channel_config" title="palace.Buffer.channel_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">channel_config</span></code></a>
 and <a class="reference internal" href="#palace.Buffer.sample_type" title="palace.Buffer.sample_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_type</span></code></a> suggest.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt id="palace.Buffer.source_count">
 <em class="property">property </em><code class="sig-name descname">source_count</code><a class="headerlink" href="#palace.Buffer.source_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of sources currently using the buffer.</p>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p><a class="reference internal" href="context.html#palace.Context.update" title="palace.Context.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Context.update</span></code></a> needs to be called to reliably ensure the count
 is kept updated for when sources reach their end.  This is
 equivalent to calling <code class="xref py py-obj docutils literal notranslate"><span class="pre">len(self.sources)</span></code>.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
