@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Adding an Effect &mdash; palace 0.2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Source Manipulation" href="source.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> palace
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="context.html">Context Creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="play-audio.html">Play an Audio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source.html">Source Manipulation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Adding an Effect</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reverb-effect">Reverb Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chorus-effect">Chorus Effect</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Getting Involved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../copying.html">Copying</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Quick Navigation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/palace/">Python Package Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://travis-ci.com/github/McSinyx/palace">Travis CI Build</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ci.appveyor.com/project/McSinyx/palace">AppVeyor Build</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/McSinyx/palace">GitHub Repository</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://matrix.to/#/#palace-dev:matrix.org">Matrix Chat Room</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">palace</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorial</a> &raquo;</li>
+        
+      <li>Adding an Effect</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/effect.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="adding-an-effect">
+<h1>Adding an Effect<a class="headerlink" href="#adding-an-effect" title="Permalink to this headline">¶</a></h1>
+<p>This section will focus on how to add effects to the audio.</p>
+<p>There are two set of audio effects supported by palace: <a class="reference internal" href="../reference/effect.html#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a>
+and <a class="reference internal" href="../reference/effect.html#palace.ChorusEffect" title="palace.ChorusEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChorusEffect</span></code></a>.</p>
+<div class="section" id="reverb-effect">
+<h2>Reverb Effect<a class="headerlink" href="#reverb-effect" title="Permalink to this headline">¶</a></h2>
+<p>Reverb happens when a sound is reflected and then decay as the sound is absorbed
+by the objects in the medium.  <a class="reference internal" href="../reference/effect.html#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a> facilitates such effect.</p>
+<p>Creating a reverb effect can be as simple as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ReverbEffect</span><span class="p">()</span> <span class="k">as</span> <span class="n">effect</span><span class="p">:</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../reference/source.html#palace.Source.sends" title="palace.Source.sends"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Source.sends</span></code></a> is a collection of send path signals, each of which
+contains <code class="xref py py-obj docutils literal notranslate"><span class="pre">effects</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code> that describes it.  Here we are only concerned
+about the former.</p>
+<p>The above code would yield a <em>generic</em> reverb effect by default.
+There are several other presets that you can use, which are listed
+by <a class="reference internal" href="../reference/effect.html#palace.reverb_preset_names" title="palace.reverb_preset_names"><code class="xref py py-data docutils literal notranslate"><span class="pre">reverb_preset_names</span></code></a>.  To use these preset, you can simply provide
+the preset effect name as the first parameter for the constructor.  For example,
+to use <code class="xref py py-obj docutils literal notranslate"><span class="pre">PIPE_LARGE</span></code> preset effect, you can initialize the effect like below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ReverbEffect</span><span class="p">(</span><span class="s1">&#39;PIPE_LARGE&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">effect</span><span class="p">:</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span>
+</pre></div>
+</div>
+<p>These effects can be modified via their attributes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">effect</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">effect</span><span class="o">.</span><span class="n">diffusion</span> <span class="o">=</span> <span class="mf">0.65</span>
+<span class="n">late_reverb_pan</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span>
+</pre></div>
+</div>
+<p>The list of these attributes and their constraints can be found
+in the documentation of <a class="reference internal" href="../reference/effect.html#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a>.</p>
+</div>
+<div class="section" id="chorus-effect">
+<h2>Chorus Effect<a class="headerlink" href="#chorus-effect" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/effect.html#palace.ChorusEffect" title="palace.ChorusEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChorusEffect</span></code></a> does not have preset effects like
+<a class="reference internal" href="../reference/effect.html#palace.ReverbEffect" title="palace.ReverbEffect"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReverbEffect</span></code></a>, so you would have to initialize the effect attributes
+on creation.</p>
+<p>There are five parameters to initialize the effect, respectively: waveform,
+phase, depth, feedback, and delay.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ChorusEffect</span><span class="p">(</span><span class="s1">&#39;sine&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">)</span> <span class="k">as</span> <span class="n">effect</span><span class="p">:</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">sends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span>
+</pre></div>
+</div>
+<p>For the constraints of these parameters, please refer to the documentation.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../reference/index.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="source.html" class="btn btn-neutral float-left" title="Source Manipulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, 2020  Nguyễn Gia Phong et al
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

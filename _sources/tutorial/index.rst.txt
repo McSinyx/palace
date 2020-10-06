@@ -9,7 +9,7 @@ This tutorial will guide you on:
    context
    play-audio
    source
+   effect
 .. comment these to add later
-   Adding effects
    Customize decoder
    Generate sounds
