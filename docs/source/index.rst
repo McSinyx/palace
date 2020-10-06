@@ -38,7 +38,6 @@ Indices and Tables
 ------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
 .. _HRTF: https://en.wikipedia.org/wiki/Head-related_transfer_function

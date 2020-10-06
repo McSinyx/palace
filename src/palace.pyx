@@ -632,8 +632,8 @@ cdef class Device:
     def clock_time(self) -> int:
         """Current clock time for the device.
 
-        Notes
-        -----
+        Note
+        ----
         This starts relative to the device being opened, and does not
         increment while there are no contexts nor while processing
         is paused.  Currently, this may not exactly match the rate
@@ -1086,8 +1086,8 @@ cdef class Buffer:
     def size(self) -> int:
         """Storage size used by the buffer, in bytes.
 
-        Notes
-        -----
+        Note
+        ----
         The size in bytes may not be what you expect from the length,
         as it may take more space internally than the `channel_config`
         and `sample_type` suggest.
@@ -1121,8 +1121,8 @@ cdef class Buffer:
         end : int
             Ending point, in sample frames (exclusive).
 
-        Notes
-        -----
+        Note
+        ----
         The buffer must not be in use when this property is set.
         """
         return self.impl.get_loop_points()
@@ -1146,8 +1146,8 @@ cdef class Buffer:
     def source_count(self) -> int:
         """Number of sources currently using the buffer.
 
-        Notes
-        -----
+        Note
+        ----
         `Context.update` needs to be called to reliably ensure the count
         is kept updated for when sources reach their end.  This is
         equivalent to calling `len(self.sources)`.
@@ -1475,8 +1475,8 @@ cdef class Source:
         up : Tuple[float, float, float]
             Relative direction.
 
-        Notes
-        -----
+        Note
+        ----
         Unlike `AL_EXT_BFORMAT` extension this property
         comes from, this also affects the facing direction.
         """
@@ -1508,8 +1508,8 @@ cdef class Source:
             If set to a value where `inner` is greater than `outer`
             or either of them is outside of the [0, 360] interval.
 
-        Notes
-        -----
+        Note
+        ----
         The areas follow the facing direction, so for example
         an inner angle of 180 means the entire front face of
         the source is in the inner cone.
@@ -2543,8 +2543,8 @@ cdef class Decoder:
     --------
     Buffer : Preloaded PCM samples coming from a `Decoder`
 
-    Notes
-    -----
+    Note
+    ----
     Due to implementation details, while this creates decoder objects
     from filenames using contexts, it is the superclass of the ABC
     (abstract base class) `BaseDecoder`.  Because of this, `Decoder`
@@ -2580,8 +2580,8 @@ cdef class Decoder:
     def length(self) -> int:
         """Length of audio in sample frames, falling-back to 0.
 
-        Notes
-        -----
+        Note
+        ----
         Zero-length decoders may not be used to load a `Buffer`.
         """
         return self.pimpl.get()[0].get_length()
@@ -2590,8 +2590,8 @@ cdef class Decoder:
     def length_seconds(self) -> float:
         """Length of audio in seconds, falling-back to 0.0.
 
-        Notes
-        -----
+        Note
+        ----
         Zero-length decoders may not be used to load a `Buffer`.
         """
         return self.length / self.frequency
@@ -2614,8 +2614,8 @@ cdef class Decoder:
         end : int
             Exclusive starting loop point.
 
-        Notes
-        -----
+        Note
+        ----
         If `start >= end`, all available samples are included
         in the loop.
         """
@@ -2715,8 +2715,8 @@ class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
     def length(self) -> int:
         """Length of audio in sample frames, falling-back to 0.
 
-        Notes
-        -----
+        Note
+        ----
         Zero-length decoders may not be used to load a `Buffer`.
         """
 
@@ -2739,8 +2739,8 @@ class BaseDecoder(_BaseDecoder, metaclass=ABCMeta):
         end : int
             Exclusive starting loop point.
 
-        Notes
-        -----
+        Note
+        ----
         If `start >= end`, all available samples are included
         in the loop.
         """
@@ -2814,8 +2814,8 @@ class FileIO(Protocol):
     Many classes defined in the standard library module `io`
     are compatible with this protocol.
 
-    Notes
-    -----
+    Note
+    ----
     Since PEP 544 is only implemented in Python 3.8+, type checking
     for this on earlier Python version might not work as expected.
     """
@@ -2911,8 +2911,8 @@ cdef class MessageHandler:
         attempted to play will immediately stop, and new contexts may
         not be created on the device.
 
-        Notes
-        -----
+        Note
+        ----
         Connection status is checked during `Context.update` calls, so
         method must be called regularly to be notified when a device is
         disconnected.  This method may not be called if the device lacks
