@@ -33,11 +33,13 @@ jobs:
       language: shell
       env: CIBW_BUILD=cp36-macosx_x86_64
     - services: docker
-      env: CIBW_BUILD=cp36-manylinux_x86_64
+      env: CIBW_BUILD="cp36-manylinux_x86_64 cp36-manylinux_aarch64"
     - services: docker
-      env: CIBW_BUILD=cp37-manylinux_x86_64
+      env: CIBW_BUILD="cp37-manylinux_x86_64 cp37-manylinux_aarch64"
     - services: docker
-      env: CIBW_BUILD=cp38-manylinux_x86_64
+      env: CIBW_BUILD="cp38-manylinux_x86_64 cp38-manylinux_aarch64"
+    - services: docker
+      env: CIBW_BUILD="cp39-manylinux_x86_64 cp39-manylinux_aarch64"
 
 script: python3 -m cibuildwheel --output-dir=dist
 
